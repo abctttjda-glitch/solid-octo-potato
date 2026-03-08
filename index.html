@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.28</title>
+<title>RELICORE - v1.29</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -208,7 +208,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.28</div>
+<div class="ver-footer">RELICORE v1.29</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -284,6 +284,7 @@ const RELIC_MASTER = [
 {id:0, star:999, name:"再起の誓い", atk:0, hp:0, desc:"不屈の魂に刻まれた、再誕の原点。"},
 {id:101, star:1, name:"剣士の欠片", atk:7.4, hp:0}, {id:102, star:1, name:"狩人の欠片", atk:8.1, hp:0}, {id:103, star:1, name:"暗殺者の欠片", atk:9.6, hp:0}, {id:104, star:1, name:"狂戦士の欠片", atk:10.3, hp:0}, {id:105, star:1, name:"武闘家の欠片", atk:6.7, hp:0}, {id:106, star:1, name:"衛兵の欠片", atk:0, hp:45.2}, {id:107, star:1, name:"騎士の欠片", atk:0, hp:55.9}, {id:108, star:1, name:"重装兵の欠片", atk:0, hp:65.4}, {id:109, star:1, name:"修道士の欠片", atk:0, hp:40.3}, {id:110, star:1, name:"盾持ちの欠片", atk:0, hp:50.8}, {id:111, star:1, name:"魔法使いの欠片", atk:4.2, hp:35.7}, {id:112, star:1, name:"斥候の欠片", atk:3.9, hp:48.1}, {id:113, star:1, name:"冒険者の欠片", atk:5.4, hp:42.6}, {id:114, star:1, name:"見習いの欠片", atk:2.1, hp:30.5}, {id:115, star:1, name:"放浪者の欠片", atk:4.7, hp:44.2}, {id:116, star:1, name:"メモリーダスト", atk:1.3, hp:10.9},
 {id:117, star:2, name:"メモリースターダスト", atk:111, hp:1111},
+{id:311, star:3, name:"メモリースターバスター", atk:111111, hp:1111111, desc:"記憶の力が詰まった結果"},
 {id:201, star:2, name:"聖騎士の欠片", atk:41.2, hp:682.4}, {id:202, star:2, name:"龍騎士の欠片", atk:86.7, hp:423.1}, {id:203, star:2, name:"暗黒騎士の欠片", atk:134.2, hp:0}, {id:204, star:2, name:"賢者の欠片", atk:52.1, hp:711.2}, {id:205, star:2, name:"大魔道士の欠片", atk:118.9, hp:24.3}, {id:206, star:2, name:"暗殺王の欠片", atk:156.3, hp:12.7}, {id:207, star:2, name:"重装騎士の欠片", atk:0, hp:1248.6}, {id:208, star:2, name:"拳聖の欠片", atk:99.2, hp:315.4}, {id:209, star:2, name:"守護騎士の欠片", atk:45.8, hp:980.5}, {id:210, star:2, name:"冒険王の欠片", atk:73.3, hp:594.1},
 {id:301, star:3, name:"聖龍騎士の欠片", atk:874.3, hp:6924.1}, {id:302, star:3, name:"深淵魔導の欠片", atk:1324.1, hp:214.7}, {id:303, star:3, name:"金剛武神の欠片", atk:412.8, hp:14863.2}, {id:304, star:3, name:"暗黒皇帝の欠片", atk:1568.4, hp:0}, {id:305, star:3, name:"大聖者の欠片", atk:52.7, hp:15241.4}, {id:306, star:3, name:"影の支配者の欠片", atk:1410.9, hp:128.4}, {id:307, star:3, name:"竜血闘士の欠片", atk:1024.2, hp:4210.9}, {id:308, star:3, name:"天界騎士の欠片", atk:612.7, hp:9845.1}, {id:309, star:3, name:"虚空の暗殺者の欠片", atk:1624.8, hp:42.1}, {id:310, star:3, name:"極大賢者の欠片", atk:542.1, hp:11840.7},
 {id:401, star:4, name:"【不退転】武神の魂", atk:65000, hp:180000, desc:"獲得遺物ボーナス増加。(上限40個分)"}, {id:402, star:4, name:"【刹那】聖者の遺志", atk:50000, hp:250000, desc:"HP増加時の増加幅を+5（上限5万個分）。"}, {id:403, star:4, name:"【因果】魔導王の記憶", atk:75000, hp:150000, desc:"攻撃無効化率の下限を底上げ。(上限10%)"}, {id:404, star:4, name:"【反撃】勇者の残光", atk:90000, hp:120000, desc:"反撃の狼煙で★3遺物も獲得。"}, {id:405, star:4, name:"【魂研】賢者の叡智", atk:55000, hp:220000, desc:"獲得戦闘経験値が向上。(上限1000個分)"}, {id:406, star:4, name:"【死刻】死神の鎌", atk:110000, hp:80000, desc:"最終ダメージ倍率を固定で+0.004%加算する。"},
@@ -292,7 +293,7 @@ const RELIC_MASTER = [
 {id:601, star:6, name:"絶対統率レリック・オーバーロード", atk:1500000, hp:4500000, desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+8%。"}, {id:602, star:6, name:"魂律解放レリ・クシア", atk:2500000, hp:3500000, desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"}, {id:603, star:6, name:"原初核冠レリコア・レガリア", atk:2000000, hp:4000000, desc:"★1〜6遺物のステータス上昇効果を20%増加させる。"}, {id:604, star:6, name:"虚無終焉レリ・ノヴァ", atk:5555555, hp:0, desc:"攻撃時0.1%の確率で与ダメージ+500%。"},
 {id:605, star:6, name:"戦碑累功レリ・エンス", atk:3000000, hp:3000000, desc:"獲得基礎経験値を1.5倍にする。(上限1個)"},
 {id:701, star:7, name:"パンドラの箱", atk:155528931, hp:355528931, desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"}, {id:702, star:7, name:"終焉の福音", atk:200000000, hp:450000000, desc:"敵HPが50%以下のとき、与ダメージ+30%。(重複不可)"}, {id:703, star:7, name:"神滅のアカシックレコード", atk:100000000, hp:550000000, desc:"与ダメージの最終倍率にさらに+20%。(重複不可)"},
-{id:704, star:7, name:"災厄の残滓", atk:500000000, hp:500000000, desc:"すべての遺物のステータス上昇値を100倍にする。(効果は重複しない)"},
+{id:704, star:8, name:"災厄の残滓", atk:500000000, hp:500000000, desc:"全ての遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},
 {id:801, star:8, name:"天律崩壊オメガ・コア", atk:1000000000, hp:1000000000, desc:"統合・乗算コア：計算ロジックを最適化し、ステータスを乗算強化する。"},
 {id:802, star:8, name:"特異演算機関：ジェネシスコード", atk:0, hp:0, desc:"敵が強すぎる場合、演算機関が自己進化する。"},
 {id:999, star:999, name:"秩序のリバランス", atk:0, hp:0, desc:"【救済】低ダメージを敵最大HP割合の絶対ダメージに変換。討伐数に応じて威力が上昇。"}
@@ -325,7 +326,7 @@ currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMa
 
 Object.keys(player.inventory).forEach(id => {
   let r = RELIC_MASTER.find(m => m.id == id);
-  if (r && r.star >= 7 && player.inventory[id] > 1) player.inventory[id] = 1;
+  if (r && r.star >= 7 && r.star !== 8 && player.inventory[id] > 1) player.inventory[id] = 1;
 });
 
 if(player.isCleared && (player.rebalanceSeen === false || player.rebalanceSeen === undefined)) {
@@ -484,7 +485,7 @@ const hasZansai = (player.inventory[704] || 0) > 0;
 
 let compCount = 0;
 for (let s = 1; s <= 8; s++) {
-const allOfType = RELIC_MASTER.filter(m => m.star === s && m.id !== 117 && m.id !== 0 && m.id !== 999);
+const allOfType = RELIC_MASTER.filter(m => m.star === s && m.id !== 117 && m.id !== 0 && m.id !== 999 && m.id !== 311);
 if (allOfType.length > 0 && allOfType.every(m => (player.inventory[m.id] || 0) > 0)) {
  compCount++;
 }
@@ -504,7 +505,7 @@ if(r.star === 5 && player.hasCrown) { bA *= 100; bH *= 100; }
 if(r.star === 6 && player.hasMeta) { bA *= 100; bH *= 100; }
 
 if(hasRegalia && r.star <= 6) { bA *= 1.2; bH *= 1.2; }
-if(hasZansai) { bA *= 10; bH *= 10; }
+if(hasZansai && r.star !== 8) { bA *= 1000; bH *= 1000; }
 
 atk += bA; hp += bH; if(r.mult) mult *= Math.pow(r.mult, count);
 });
@@ -539,9 +540,13 @@ let evolAtkMult = 1.0 + (player.evolutionStack * 0.002);
 let evolHpMult = 1.0 + (player.evolutionStack * 0.004);
 
 const totalBase = applyOmegaCore((player.baseAtk + bonus.atk) * BigInt(Math.floor(evolAtkMult * 1000)) / 1000n, (player.baseHP + bonus.hp) * BigInt(Math.floor(evolHpMult * 1000)) / 1000n);
-const totalAtkVal = BigInt(Math.floor(Number(totalBase.atk) * bonus.mult * skillMult));
+let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult;
 
-let rawDmg = BigInt(Math.floor(Number(totalAtkVal) * (0.8 + Math.random() * 0.4)));
+if ((player.inventory[704] || 0) > 0) {
+    totalAtkVal *= (1 + Math.log10(player.killCount + 1) * 0.06);
+}
+
+let rawDmg = BigInt(Math.floor(totalAtkVal * (0.8 + Math.random() * 0.4)));
 let finalDmg = rawDmg;
 let specialTags = "";
 
@@ -562,10 +567,10 @@ player.soujinCounter++;
 if (player.soujinCounter >= 150) { finalDmg *= 2n; specialTags += `<span style="color:#00ff00; font-weight:bold;">【双刃】</span>`; player.soujinCounter = 0; }
 }
 if ((player.inventory[702] || 0) > 0 && currentBossHP * 2n <= bossMaxHP) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.3)); specialTags += `<span style="color:#ffcc00; font-weight:bold;">【福音】</span>`; }
-if((player.inventory[601] || 0) > 0 && currentBossHP >= totalAtkVal * 100n) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.08)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率】</span>`; }
+if((player.inventory[601] || 0) > 0 && currentBossHP >= BigInt(Math.floor(totalAtkVal)) * 100n) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.08)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率】</span>`; }
 if((player.inventory[602] || 0) > 0) { kushiaCounter++; if(kushiaCounter >= 100) { finalDmg *= 3n; specialTags += `<span style="color:var(--gold); font-weight:bold;">【魂律】</span>`; kushiaCounter = 0; } }
 if((player.inventory[604] || 0) > 0 && Math.random() < 0.001) { finalDmg *= 6n; specialTags += `<span style="color:#fd7e14; font-weight:bold;">【虚無】</span>`; }
-if ((player.inventory[504] || 0) > 0 && Math.random() < 0.001) { finalDmg += totalAtkVal; specialTags += `<span style="color:#ff0000; font-weight:bold;">【破壊】</span>`; }
+if ((player.inventory[504] || 0) > 0 && Math.random() < 0.001) { finalDmg += BigInt(Math.floor(totalAtkVal)); specialTags += `<span style="color:#ff0000; font-weight:bold;">【破壊】</span>`; }
 if ((player.inventory[503] || 0) > 0 && Math.random() < 0.001) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.5)); specialTags += `<span style="color:var(--growth); font-weight:bold;">【超越】</span>`; }
 }
 
@@ -675,19 +680,16 @@ let sel;
 if (star === 2 && player.hasDivineGuide && Math.random() < 0.1) {
 sel = RELIC_MASTER.find(m => m.id === 117);
 } else {
-let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 999 && m.star < 9 && m.id !== 117);
+let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 999 && m.star < 9 && m.id !== 117 && m.id !== 311);
+if (star === 3) cands.push(RELIC_MASTER.find(m => m.id === 311));
 if(cands.length === 0) cands = RELIC_MASTER.filter(m => m.star === 1);
 sel = cands[Math.floor(Math.random() * cands.length)];
 
 if(sel.id === 704) {
-   if(!player.inventory[704] && player.isCleared) {
-       if(Math.random() > 0.001) { sel = RELIC_MASTER.find(m => m.star === 1); star = 1; }
-   } else if(!player.isCleared) {
-       sel = RELIC_MASTER.find(m => m.star === 1); star = 1;
-   }
+   if(!player.hasMeta) { sel = RELIC_MASTER.find(m => m.star === 1); star = 1; }
 }
 }
-if (sel.star >= 7 && player.inventory[sel.id] >= 1) { }
+if (sel.star >= 7 && player.inventory[sel.id] >= 1 && sel.star !== 8) { }
 else { player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1; }
 player.totalRelics++; starCounts[star]++; starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
 if (sel.star >= 4 && player.inventory[sel.id] === 1) { if (!showRare || sel.star > showRare.star) showRare = sel; }
@@ -827,7 +829,7 @@ if(m.star === 5 && player.hasCrown) { baseA *= 100; baseH *= 100; }
 if(m.star === 6 && player.hasMeta) { baseA *= 100; baseH *= 100; }
 
 if(hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
-if(hasZansai) { baseA *= 10; baseH *= 10; }
+if(hasZansai && m.star !== 8) { baseA *= 1000; baseH *= 1000; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
 let countdownHtml = "";
