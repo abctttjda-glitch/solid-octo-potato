@@ -266,7 +266,7 @@ const RELIC_MASTER = [
 {id:401, star:4, name:"【不退転】武神の魂", atk:65000, hp:180000, desc:"獲得遺物ボーナス増加。(上限40個分)"}, {id:402, star:4, name:"【刹那】聖者の遺志", atk:50000, hp:250000, desc:"HP増加時の増加幅を+5（上限5万個分）。"}, {id:403, star:4, name:"【因果】魔導王の記憶", atk:75000, hp:150000, desc:"攻撃無効化率の下限を底上げ。(上限10%)"}, {id:404, star:4, name:"【反撃】勇者の残光", atk:90000, hp:120000, desc:"反撃の狼煙で★3遺物も獲得。"}, {id:405, star:4, name:"【魂研】賢者の叡智", atk:55000, hp:220000, desc:"獲得戦闘経験値が向上。(上限1000個分)"}, {id:406, star:4, name:"【死刻】死神の鎌", atk:110000, hp:80000, desc:"最終ダメージ倍率を固定で+0.004%加算する。"},
 {id:501, star:5, name:"断絶の権能", atk:382660, hp:916330, desc:"1つにつき、受けるダメージを50万軽減。"}, {id:502, star:5, name:"強欲の権能", atk:649800, hp:812400, desc:"1つにつき、獲得遺物数を+5増加。(上限10個分)"}, {id:503, star:5, name:"超越の権能", atk:524180, hp:689450, desc:"0.1%の確率で、その一撃のダメージを1.5倍にする。"}, {id:504, star:5, name:"破壊の権能", atk:999999, hp:0, desc:"0.1%の確率で、総ATK分のダメージを最終ダメージに直接加算する。"},
 {id:505, star:5, name:"再生の権能", atk:222222, hp:1528931, desc:"被弾時10%の確率でHP増加(再起)が2回発生。(重複不可)"}, {id:506, star:5, name:"双刃の権能", atk:454649, hp:519700, desc:"150回攻撃ごとに次の一撃のダメージ+100%。(重複不可)"},
-{id:601, star:6, name:"絶対統率レリック・オーバーロード", atk:1500000, hp:4500000, desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+8%。"}, {id:602, star:6, name:"魂律解放レリ・クシア", atk:2500000, hp:3500000, desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"}, {id:603, star:6, name:"原初核冠レリコア・レガリア", atk:2000000, hp:4000000, desc:"★1〜3遺物のステータス上昇効果を20%増加させる。"}, {id:604, star:6, name:"虚無終焉レリ・ノヴァ", atk:5555555, hp:0, desc:"攻撃時0.1%の確率で与ダメージ+500%。"},
+{id:601, star:6, name:"絶対統率レリック・オーバーロード", atk:1500000, hp:4500000, desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+8%。"}, {id:602, star:6, name:"魂律解放レリ・クシア", atk:2500000, hp:3500000, desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"}, {id:603, star:6, name:"原初核冠レリコア・レガリア", atk:2000000, hp:4000000, desc:"★1〜6遺物のステータス上昇効果を20%増加させる。"}, {id:604, star:6, name:"虚無終焉レリ・ノヴァ", atk:5555555, hp:0, desc:"攻撃時0.1%の確率で与ダメージ+500%。"},
 {id:605, star:6, name:"戦碑累功レリ・エンス", atk:3000000, hp:3000000, desc:"獲得基礎経験値を1.5倍にする。(上限1個)"},
 {id:701, star:7, name:"パンドラの箱", atk:155528931, hp:355528931, desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"}, {id:702, star:7, name:"終焉の福音", atk:200000000, hp:450000000, desc:"敵HPが50%以下のとき、与ダメージ+30%。(重複不可)"}, {id:703, star:7, name:"神滅のアカシックレコード", atk:100000000, hp:550000000, desc:"与ダメージの最終倍率にさらに+20%。(重複不可)"},
 {id:704, star:7, name:"災厄の残滓", atk:500000000, hp:500000000, desc:"すべての遺物のステータス上昇値を100倍にする。(効果は重複しない)"},
@@ -475,7 +475,7 @@ if(r.star === 4 && player.hasWorldOrder) { bA *= 100; bH *= 100; }
 if(r.star === 5 && player.hasCrown) { bA *= 100; bH *= 100; }
 if(r.star === 6 && player.hasMeta) { bA *= 100; bH *= 100; }
 
-if(hasRegalia && r.star <= 3) { bA *= 1.2; bH *= 1.2; }
+if(hasRegalia && r.star <= 6) { bA *= 1.2; bH *= 1.2; }
 if(hasZansai) { bA *= 10; bH *= 10; }
 
 atk += bA; hp += bH; if(r.mult) mult *= Math.pow(r.mult, count);
@@ -778,7 +778,7 @@ if(m.star === 4 && player.hasWorldOrder) { baseA *= 100; baseH *= 100; }
 if(m.star === 5 && player.hasCrown) { baseA *= 100; baseH *= 100; }
 if(m.star === 6 && player.hasMeta) { baseA *= 100; baseH *= 100; }
 
-if(hasRegalia && m.star <= 3) { baseA *= 1.2; baseH *= 1.2; }
+if(hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
 if(hasZansai) { baseA *= 10; baseH *= 10; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
