@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.29</title>
+<title>RELICORE - v1.30</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -208,10 +208,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.29</div>
+<div class="ver-footer">RELICORE v1.30</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
+let enemyMemoryStarburstUsed = false;
 
 const RANK_NAMES = ["初心者", "修練者", "熟練者", "探求者", "到達者", "解放者", "支配者", "超越者", "救世主", "極致：唯一神"];
 const BASE_DROP_DATA = { 1:{p:98.98889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,cond:0n}, 4:{p:0.001,cond:100000n}, 5:{p:0.0001,cond:1000000n}, 6:{p:0.00001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n} };
@@ -305,7 +306,7 @@ let omegaMult = BigInt(player.inventory[801]) * 2n;
 return { atk: baseAtk * omegaMult, hp: baseHp * omegaMult };
 }
 
-function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString() }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
+function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString(), enemyMemoryStarburstUsed: enemyMemoryStarburstUsed }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
 
 function loadGame() {
 let saved = localStorage.getItem(SAVE_KEY);
@@ -321,6 +322,7 @@ player.soujinCounter = p.soujinCounter || 0;
 player.totalLevel = p.totalLevel || 1;
 player.hadoExpAccum = p.hadoExpAccum || 0;
 player.evolutionStack = p.evolutionStack || 0;
+enemyMemoryStarburstUsed = p.enemyMemoryStarburstUsed || false;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
 } else { currentBossHP = BigInt(player.bossMaxHP); }
 
@@ -506,7 +508,6 @@ if(r.star === 6 && player.hasMeta) { bA *= 100; bH *= 100; }
 
 if(hasRegalia && r.star <= 6) { bA *= 1.2; bH *= 1.2; }
 if(hasZansai && r.star !== 8) { bA *= 1000; bH *= 1000; }
-
 atk += bA; hp += bH; if(r.mult) mult *= Math.pow(r.mult, count);
 });
 
@@ -519,11 +520,36 @@ compBonus
 };
 }
 
+function activateMemoryStarburst(bonus, skillMult) {
+    const memoryCoreId = 311;
+    player.inventory[memoryCoreId] -= 100;
+    
+    const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+    const totalAtk = Number(totalBase.atk) * bonus.mult * skillMult;
+    
+    const damage = BigInt(Math.floor(totalAtk * 15));
+    currentBossHP -= damage;
+    
+    const enemyMaxHP = BigInt(player.bossMaxHP);
+    const ratio = Number(enemyMaxHP) / Number(totalBase.atk);
+    const growth = BigInt(Math.floor(Number(totalBase.atk) * Math.log10(ratio) * 0.05));
+    
+    player.baseAtk += growth;
+    player.baseHP += growth;
+    enemyMemoryStarburstUsed = true;
+    
+    addLog(`<div><span style="color:#d4af37; font-weight:bold;">災禍殲星発動！記憶の力が迸る！ATKとHPが大きく成長した！</span></div>`);
+}
+
 function attack() {
 if(isModalOpen) return;
 player.totalClicks++;
 const bonus = getRelicBonus();
 const skillMult = calcFinalDmgMult();
+
+if (!enemyMemoryStarburstUsed && (player.inventory[311] || 0) >= 100 && BigInt(player.bossMaxHP) > (player.baseAtk + bonus.atk) && Math.random() < 0.0001) {
+    activateMemoryStarburst(bonus, skillMult);
+}
 
 if ((player.inventory[802] || 0) > 0) {
    if (player.evolutionStack < 100000) {
@@ -577,17 +603,6 @@ if ((player.inventory[503] || 0) > 0 && Math.random() < 0.001) { finalDmg = BigI
 if(finalDmg < 1n) finalDmg = 1n;
 if(finalDmg > player.maxDmg) player.maxDmg = finalDmg;
 
-const dust = player.inventory[116] || 0;
-const stardust = player.inventory[117] || 0;
-
-if(!player.hasHado && dust >= 100000 && player.hadoExpAccum >= 100000 && Math.random() < 0.00001) { openHadoModal('hado'); return; }
-if(player.hasHado && !player.hasGreatHado && dust >= 200000 && player.hadoExpAccum >= 200000 && Math.random() < 0.000005) { openHadoModal('great'); return; }
-if(player.hasGreatHado && !player.hasDivineGuide && dust >= 300000 && player.hadoExpAccum >= 300000 && Math.random() < 0.00000333) { openHadoModal('divine'); return; }
-
-if(!player.hasWorldOrder && stardust >= 100000 && player.hadoExpAccum >= 1000000 && Math.random() < 0.00001) { openCosmicModal('world'); return; }
-if(player.hasWorldOrder && !player.hasCrown && stardust >= 200000 && player.hadoExpAccum >= 2000000 && Math.random() < 0.000005) { openCosmicModal('crown'); return; }
-if(player.hasCrown && !player.hasMeta && stardust >= 300000 && player.hadoExpAccum >= 3000000 && Math.random() < 0.00000333) { openCosmicModal('meta'); return; }
-
 const skillLv = Math.min(10, player.totalLevel);
 const bushinCount = Math.min(40, player.inventory[401] || 0); const gouyokuCount = Math.min(10, player.inventory[502] || 0);
 let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(skillLv + bushinCount + (gouyokuCount * 5));
@@ -599,6 +614,7 @@ if((player.inventory[701] || 0) > 0) {
     player.killCount++;
     player.isCleared = true;
     player.evolutionStack = 0;
+    enemyMemoryStarburstUsed = false;
     stopAttack();
     isModalOpen = true;
     document.getElementById("clear-modal-title").innerText = "神話の終焉";
@@ -607,12 +623,14 @@ if((player.inventory[701] || 0) > 0) {
 } else {
     currentBossHP = BigInt(player.bossMaxHP);
     player.evolutionStack = 0;
+    enemyMemoryStarburstUsed = false;
     logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
 }
 } else {
 currentBossHP = 0n;
 player.killCount++;
 player.evolutionStack = 0;
+enemyMemoryStarburstUsed = false;
 handleBossDefeat();
 }
 } else {
@@ -620,6 +638,7 @@ currentBossHP -= finalDmg;
 if(currentBossHP < 1n && !player.isCleared) {
 currentBossHP = BigInt(player.bossMaxHP);
 player.evolutionStack = 0;
+enemyMemoryStarburstUsed = false;
 logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
 }
 }
@@ -684,10 +703,6 @@ let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 9
 if (star === 3) cands.push(RELIC_MASTER.find(m => m.id === 311));
 if(cands.length === 0) cands = RELIC_MASTER.filter(m => m.star === 1);
 sel = cands[Math.floor(Math.random() * cands.length)];
-
-if(sel.id === 704) {
-   if(!player.hasMeta) { sel = RELIC_MASTER.find(m => m.star === 1); star = 1; }
-}
 }
 if (sel.star >= 7 && player.inventory[sel.id] >= 1 && sel.star !== 8) { }
 else { player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1; }
@@ -832,22 +847,7 @@ if(hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
 if(hasZansai && m.star !== 8) { baseA *= 1000; baseH *= 1000; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
-let countdownHtml = "";
-if (m.id == 116) {
-let target = 0, label = "";
-if (!player.hasHado) { target = 100000; label = "号令覚醒まで"; }
-else if (!player.hasGreatHado) { target = 200000; label = "大号令覚醒まで"; }
-else if (!player.hasDivineGuide) { target = 300000; label = "天帝覚醒まで"; }
-if (target > 0) countdownHtml = `<div class="relic-countdown">${label}: ${Math.max(0, target - c).toLocaleString()}</div>`;
-} else if (m.id == 117) {
-let target = 0, label = "";
-if (!player.hasWorldOrder) { target = 100000; label = "秩序覚醒まで"; }
-else if (!player.hasCrown) { target = 200000; label = "権威覚醒まで"; }
-else if (!player.hasMeta) { target = 300000; label = "超克覚醒まで"; }
-if (target > 0) countdownHtml = `<div class="relic-countdown">${label}: ${Math.max(0, target - c).toLocaleString()}</div>`;
-}
-
-return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 7 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 7 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}</div></div>`;
 }).join("");
 }
 
