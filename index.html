@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.24</title>
+<title>RELICORE - v1.25</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -208,7 +208,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.24</div>
+<div class="ver-footer">RELICORE v1.25</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -219,7 +219,7 @@ const HADO_DROP_DATA = { 1:{p:88.8888,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,con
 const GREAT_HADO_DROP_DATA = { 1:{p:78.8888,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
 const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.8888,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
 
-let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, maxDmgReset_v21: true, soujinCounter: 0 };
+let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0 };
 let currentBossHP = BigInt(player.bossMaxHP);
 let attackInterval = null;
 let isModalOpen = false;
@@ -297,6 +297,12 @@ player.totalLevel = p.totalLevel || 1;
 player.hadoExpAccum = p.hadoExpAccum || 0;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
 } else { currentBossHP = BigInt(player.bossMaxHP); }
+
+// 強制的に★7以上を1にする
+Object.keys(player.inventory).forEach(id => {
+    let r = RELIC_MASTER.find(m => m.id == id);
+    if (r && r.star >= 7 && player.inventory[id] > 1) player.inventory[id] = 1;
+});
 
 if(player.isCleared && (player.rebalanceSeen === false || player.rebalanceSeen === undefined)) {
 if (player.inventory[999] > 0) {
@@ -455,8 +461,8 @@ const hasRegalia = (player.inventory[603] || 0) > 0;
 const hasZansai = (player.inventory[704] || 0) > 0;
 
 let compCount = 0;
-for (let s = 1; s <= 7; s++) {
-const allOfType = RELIC_MASTER.filter(m => m.star === s && m.id !== 117 && m.id !== 0);
+for (let s = 1; s <= 8; s++) {
+const allOfType = RELIC_MASTER.filter(m => m.star === s && m.id !== 117 && m.id !== 0 && m.id !== 999);
 if (allOfType.length > 0 && allOfType.every(m => (player.inventory[m.id] || 0) > 0)) {
    compCount++;
 }
@@ -640,8 +646,12 @@ if (star === 2 && player.hasDivineGuide && Math.random() < 0.1) {
      }
  }
 }
-if (sel.star >= 4 && !player.inventory[sel.id]) { if (!showRare || sel.star > showRare.star) showRare = sel; }
-player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1; player.totalRelics++; starCounts[star]++; starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
+if (sel.star >= 7 && player.inventory[sel.id] >= 1) { /* Already maxed */ }
+else {
+    player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
+}
+player.totalRelics++; starCounts[star]++; starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
+if (sel.star >= 4 && player.inventory[sel.id] === 1) { if (!showRare || sel.star > showRare.star) showRare = sel; }
 }
 if(showRare) openRareModal(showRare);
 let finalEntries = [];
@@ -797,7 +807,7 @@ else if (!player.hasMeta) { target = 300000; label = "超克覚醒まで"; }
 if (target > 0) countdownHtml = `<div class="relic-countdown">${label}: ${Math.max(0, target - c).toLocaleString()}</div>`;
 }
 
-return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}×${c.toLocaleString()}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 7 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
 }).join("");
 }
 
@@ -826,7 +836,14 @@ function closeStory() { player.storySeen = true; document.getElementById("story-
 
 function handleBossDefeat() {
 player.isCleared = true;
-player.bossMaxHP = (BigInt(player.bossMaxHP) * 2n).toString();
+let n = BigInt(player.killCount);
+let base = BOSS_MAX_HP_BASE;
+// 新式: HP = base * (1.35 + 0.15 * exp(-n/50))^n
+// BigIntでの計算は近似値を必要とするため、浮動小数点計算を利用
+let n_float = Number(n);
+let factor = 1.35 + 0.15 * Math.exp(-n_float / 50);
+let newHP = Number(base) * Math.pow(factor, n_float);
+player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
 currentBossHP = BigInt(player.bossMaxHP);
 }
 
