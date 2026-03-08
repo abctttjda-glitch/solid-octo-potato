@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.21</title>
+<title>RELICORE - v1.22</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -208,7 +208,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.21</div>
+<div class="ver-footer">RELICORE v1.22</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -219,7 +219,7 @@ const HADO_DROP_DATA = { 1:{p:88.8888,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,con
 const GREAT_HADO_DROP_DATA = { 1:{p:78.8888,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
 const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.8888,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
 
-let player = { inventory: { 0:1 }, deathCount:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, maxDmgReset_v21: true, soujinCounter: 0 };
+let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, maxDmgReset_v21: true, soujinCounter: 0 };
 let currentBossHP = BigInt(player.bossMaxHP);
 let attackInterval = null;
 let isModalOpen = false;
@@ -294,6 +294,7 @@ player.totalRelics = p.totalRelics || 0;
 player.killCount = p.killCount || 0;
 player.soujinCounter = p.soujinCounter || 0;
 player.totalLevel = p.totalLevel || 1;
+player.hadoExpAccum = p.hadoExpAccum || 0;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
 } else { currentBossHP = BigInt(player.bossMaxHP); }
 
@@ -336,6 +337,7 @@ if(type === 'hado') {
 document.getElementById("hado-modal-title").innerText = title;
 document.getElementById("hado-modal-msg").innerHTML = msg;
 document.getElementById("hado-awaken-modal").style.display = "flex";
+updateLog("再起の誓いによって新たなる力を得た");
 }
 function closeHadoModal() { document.getElementById("hado-awaken-modal").style.display = "none"; isModalOpen = false; saveGame(); triggerUIUpdate(); }
 
@@ -358,6 +360,7 @@ if(type === 'world') {
 document.getElementById("cosmic-modal-title").innerText = title;
 document.getElementById("cosmic-modal-msg").innerHTML = msg;
 document.getElementById("cosmic-awaken-modal").style.display = "flex";
+updateLog("再起の誓いによって新たなる力を得た");
 }
 function closeCosmicModal() { document.getElementById("cosmic-awaken-modal").style.display = "none"; isModalOpen = false; saveGame(); triggerUIUpdate(); }
 
@@ -393,6 +396,7 @@ function applySerialCode() {
  if (code === "DEBUG_READY_2026") {
      player.totalLevel = 300;
      player.killCount = 1000000;
+     player.hadoExpAccum = 1000000;
 
      for (let i = 0; i < RELIC_MASTER.length; i++) {
          let rId = RELIC_MASTER[i].id;
@@ -527,16 +531,14 @@ if(finalDmg > player.maxDmg) player.maxDmg = finalDmg;
 
 const dust = player.inventory[116] || 0;
 const stardust = player.inventory[117] || 0;
-const expTotal = player.totalLevel * 1000;
 
-// 覚醒条件：ダスト所持数 かつ (累計経験値 または 低確率)
-if(!player.hasHado && dust >= 100000 && (Math.random() < (1/100000) || expTotal >= 100000)) { openHadoModal('hado'); return; }
-if(player.hasHado && !player.hasGreatHado && dust >= 200000 && (Math.random() < (1/200000) || expTotal >= 200000)) { openHadoModal('great'); return; }
-if(player.hasGreatHado && !player.hasDivineGuide && dust >= 300000 && (Math.random() < (1/300000) || expTotal >= 300000)) { openHadoModal('divine'); return; }
+if(!player.hasHado && dust >= 100000 && player.hadoExpAccum >= 100000 && Math.random() < 0.00001) { openHadoModal('hado'); return; }
+if(player.hasHado && !player.hasGreatHado && dust >= 200000 && player.hadoExpAccum >= 200000 && Math.random() < 0.000005) { openHadoModal('great'); return; }
+if(player.hasGreatHado && !player.hasDivineGuide && dust >= 300000 && player.hadoExpAccum >= 300000 && Math.random() < 0.00000333) { openHadoModal('divine'); return; }
 
-if(!player.hasWorldOrder && stardust >= 100000 && (Math.random() < (1/100000) || expTotal >= 1000000)) { openCosmicModal('world'); return; }
-if(player.hasWorldOrder && !player.hasCrown && stardust >= 200000 && (Math.random() < (1/200000) || expTotal >= 2000000)) { openCosmicModal('crown'); return; }
-if(player.hasCrown && !player.hasMeta && stardust >= 300000 && (Math.random() < (1/300000) || expTotal >= 3000000)) { openCosmicModal('meta'); return; }
+if(!player.hasWorldOrder && stardust >= 100000 && player.hadoExpAccum >= 1000000 && Math.random() < 0.00001) { openCosmicModal('world'); return; }
+if(player.hasWorldOrder && !player.hasCrown && stardust >= 200000 && player.hadoExpAccum >= 2000000 && Math.random() < 0.000005) { openCosmicModal('crown'); return; }
+if(player.hasCrown && !player.hasMeta && stardust >= 300000 && player.hadoExpAccum >= 3000000 && Math.random() < 0.00000333) { openCosmicModal('meta'); return; }
 
 const skillLv = Math.min(10, player.totalLevel);
 const bushinCount = Math.min(40, player.inventory[401] || 0); const gouyokuCount = Math.min(10, player.inventory[502] || 0);
@@ -581,6 +583,7 @@ let finalMitigated = BigInt(Math.floor(Number(rawEnemyAtk) * (1 - (Math.floor(Ma
 if(finalMitigated < 0n) finalMitigated = 0n;
 
 let gainedExp = skillLv + (player.inventory[405] || 0) + ((player.inventory[605] || 0) * 5);
+player.hadoExpAccum += gainedExp;
 if (currentTotalHP > finalMitigated) {
 player.deathCount += gainedExp;
 logHtml += `<div><span style="color:#28a745; font-weight:bold;">敵の攻撃！${formatV(finalMitigated)} ダメージ。障壁展開！</span></div>` + getGuaranteedDrop();
@@ -764,7 +767,6 @@ const m = RELIC_MASTER.find(x => x.id == id); if(!m) return "";
 if (m.star === 999) { return `<div class="relic-card relic-unique"><div class="relic-name"><span class="unique-relic-text">${m.name}</span></div><div class="relic-effect-box">${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}</div></div>`; }
 let baseA = m.atk || 0, baseH = m.hp || 0;
 
-// ステータス表示への反映：100倍
 if(m.star === 1 && player.hasHado) { baseA *= 100; baseH *= 100; }
 else if(m.star === 2 && player.hasGreatHado) { baseA *= 100; baseH *= 100; }
 else if(m.star === 3 && player.hasDivineGuide) { baseA *= 100; baseH *= 100; }
