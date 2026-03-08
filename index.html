@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.25</title>
+<title>RELICORE - v1.26</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -165,19 +165,19 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 
 <div id="serial-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:70000; justify-content:center; align-items:center; padding:20px;">
 <div class="modal-content" id="serial-modal-content">
-   <h3 style="color:var(--gold); letter-spacing:2px;">シリアルコード入力</h3>
-   <div id="serial-input-area">
-       <p style="font-size:0.85em; color:#aaa; margin-bottom:15px;">有効なコードを入力してください</p>
-       <input type="text" id="serial-input-box" placeholder="CODE HERE" ontouchstart="event.stopPropagation()">
-       <div style="display:flex; gap:10px;">
-           <button class="story-btn" style="flex:1;" onclick="applySerialCode()">適用</button>
-           <button class="story-btn" style="flex:1; border-color:#666; color:#666;" onclick="closeSerialModal()">戻る</button>
-       </div>
-   </div>
-   <div id="serial-result-area" style="display:none;">
-       <p id="serial-result-msg" class="clear-main-msg" style="text-align:center;"></p>
-       <button class="story-btn" onclick="closeSerialModal()">閉じる</button>
-   </div>
+  <h3 style="color:var(--gold); letter-spacing:2px;">シリアルコード入力</h3>
+  <div id="serial-input-area">
+      <p style="font-size:0.85em; color:#aaa; margin-bottom:15px;">有効なコードを入力してください</p>
+      <input type="text" id="serial-input-box" placeholder="CODE HERE" ontouchstart="event.stopPropagation()">
+      <div style="display:flex; gap:10px;">
+          <button class="story-btn" style="flex:1;" onclick="applySerialCode()">適用</button>
+          <button class="story-btn" style="flex:1; border-color:#666; color:#666;" onclick="closeSerialModal()">戻る</button>
+      </div>
+  </div>
+  <div id="serial-result-area" style="display:none;">
+      <p id="serial-result-msg" class="clear-main-msg" style="text-align:center;"></p>
+      <button class="story-btn" onclick="closeSerialModal()">閉じる</button>
+  </div>
 </div>
 </div>
 
@@ -208,7 +208,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.25</div>
+<div class="ver-footer">RELICORE v1.26</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -228,22 +228,45 @@ let kushiaCounter = 0;
 
 function formatV(val) {
 let n = BigInt(val);
-if (n < 1000000000000000n) return n.toLocaleString();
+if (n < 100000000000000n) return n.toLocaleString();
 const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
 let unitIdx = -1;
+let divisor = 100000000000000n;
 let base = n;
-let remainder = 0n;
-base /= 1000000000000n;
-while (base >= 1000n && unitIdx < units.length - 1) {
-remainder = base % 1000n;
-base /= 1000n;
-unitIdx++;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+    base /= 100000000000000n;
+    unitIdx++;
 }
 if (unitIdx === -1) return n.toLocaleString();
-let display = base.toString() + "." + remainder.toString().padStart(3, '0').substring(0, 2);
-return display + units[unitIdx];
+let remainder = (n % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+return base.toString() + "." + remainder + units[unitIdx];
 }
-function formatFix(val) { return BigInt(Math.floor(Number(val))).toLocaleString(); }
+function formatFix(val) {
+let v = BigInt(Math.floor(Number(val)));
+if (v < 100000000000000n) return v.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = v;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+    base /= 100000000000000n;
+    unitIdx++;
+}
+let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+return base.toString() + "." + remainder + units[unitIdx];
+}
+function formatMaxDmg(val) {
+let v = BigInt(val);
+if (v < 100000000000000n) return v.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = v;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+    base /= 100000000000000n;
+    unitIdx++;
+}
+let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
+return base.toString() + "." + remainder + units[unitIdx];
+}
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
@@ -298,15 +321,14 @@ player.hadoExpAccum = p.hadoExpAccum || 0;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
 } else { currentBossHP = BigInt(player.bossMaxHP); }
 
-// 強制的に★7以上を1にする
 Object.keys(player.inventory).forEach(id => {
-    let r = RELIC_MASTER.find(m => m.id == id);
-    if (r && r.star >= 7 && player.inventory[id] > 1) player.inventory[id] = 1;
+   let r = RELIC_MASTER.find(m => m.id == id);
+   if (r && r.star >= 7 && player.inventory[id] > 1) player.inventory[id] = 1;
 });
 
 if(player.isCleared && (player.rebalanceSeen === false || player.rebalanceSeen === undefined)) {
 if (player.inventory[999] > 0) {
-  showClearStartMsg();
+ showClearStartMsg();
 }
 }
 
@@ -400,45 +422,43 @@ let success = false;
 let message = "";
 
 if (code === "DEBUG_READY_2026") {
-   player.totalLevel = 300;
-   player.killCount = 1000000;
-   player.hadoExpAccum = 1000000;
-
-   for (let i = 0; i < RELIC_MASTER.length; i++) {
-       let rId = RELIC_MASTER[i].id;
-       if (rId === 0 || rId === 999) continue;
-
-       if (rId === 116 || rId === 117) {
-           player.inventory[rId] = 300000;
-       } else {
-           player.inventory[rId] = 1;
-       }
-   }
-   success = true;
-   message = "再起の誓いによって新たなる力を得た";
-   updateLog("再起の誓いによって新たなる力を得た");
+  player.totalLevel = 300;
+  player.killCount = 1000000;
+  player.hadoExpAccum = 1000000;
+  for (let i = 0; i < RELIC_MASTER.length; i++) {
+      let rId = RELIC_MASTER[i].id;
+      if (rId === 0 || rId === 999) continue;
+      if (rId === 116 || rId === 117) {
+          player.inventory[rId] = 300000;
+      } else {
+          player.inventory[rId] = 1;
+      }
+  }
+  success = true;
+  message = "再起の誓いによって新たなる力を得た";
+  updateLog("再起の誓いによって新たなる力を得た");
 } else if (code === "REBALANCE2026") {
-   if (player.isCleared) {
-       if (!player.inventory[999]) {
-           player.inventory[999] = 1;
-           player.rebalanceSeen = true;
-           success = true;
-           message = `シリアルコード承認。<br><br><span style="color:var(--gold); font-weight:bold;">【特別遺物付与】</span><br><span class="unique-relic-text">秩序のリバランス</span> を獲得しました。<br>理の崩壊を止める力としてお使いください。`;
-       } else {
-           message = "このコードはすでに適用されています。";
-       }
-   } else {
-       message = `<span style="color:#ff4444;">「まだその時ではない……」</span><br><br>このコードは神（アポカリス＝ティア）を討ちし者のみが使用可能です。`;
-   }
+  if (player.isCleared) {
+      if (!player.inventory[999]) {
+          player.inventory[999] = 1;
+          player.rebalanceSeen = true;
+          success = true;
+          message = `シリアルコード承認。<br><br><span style="color:var(--gold); font-weight:bold;">【特別遺物付与】</span><br><span class="unique-relic-text">秩序のリバランス</span> を獲得しました。<br>理の崩壊を止める力としてお使いください。`;
+      } else {
+          message = "このコードはすでに適用されています。";
+      }
+  } else {
+      message = `<span style="color:#ff4444;">「まだその時ではない……」</span><br><br>このコードは神（アポカリス＝ティア）を討ちし者のみが使用可能です。`;
+  }
 } else if (code === "FIX_GENESIS") {
-   player.bossMaxHP = BOSS_MAX_HP_BASE.toString();
-   currentBossHP = BOSS_MAX_HP_BASE;
-   success = true;
-   message = `シリアルコード承認：ステータス初期化。<br><br><span style="color:var(--hp); font-weight:bold;">終末神の異常活性を抑制しました。</span><br>神のHPがリバランス後の初期値へ正常化されました。`;
+  player.bossMaxHP = BOSS_MAX_HP_BASE.toString();
+  currentBossHP = BOSS_MAX_HP_BASE;
+  success = true;
+  message = `シリアルコード承認：ステータス初期化。<br><br><span style="color:var(--hp); font-weight:bold;">終末神の異常活性を抑制しました。</span><br>神のHPがリバランス後の初期値へ正常化されました。`;
 } else if (code === "") {
-   return;
+  return;
 } else {
-   message = "無効なシリアルコードです。";
+  message = "無効なシリアルコードです。";
 }
 
 resultMsg.innerHTML = message;
@@ -464,7 +484,7 @@ let compCount = 0;
 for (let s = 1; s <= 8; s++) {
 const allOfType = RELIC_MASTER.filter(m => m.star === s && m.id !== 117 && m.id !== 0 && m.id !== 999);
 if (allOfType.length > 0 && allOfType.every(m => (player.inventory[m.id] || 0) > 0)) {
-   compCount++;
+  compCount++;
 }
 }
 const compBonus = Math.pow(2.0, compCount);
@@ -552,29 +572,29 @@ let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;"
 
 if(finalDmg >= currentBossHP) {
 if(!player.isCleared) {
-  if((player.inventory[701] || 0) > 0) {
-      currentBossHP = 0n;
-      player.killCount++;
-      player.isCleared = true;
-      stopAttack();
-      isModalOpen = true;
-      document.getElementById("clear-modal-title").innerText = "神話の終焉";
-      document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
-      document.getElementById("clear-modal").style.display = "flex";
-  } else {
-      currentBossHP = BigInt(player.bossMaxHP);
-      logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
-  }
+ if((player.inventory[701] || 0) > 0) {
+     currentBossHP = 0n;
+     player.killCount++;
+     player.isCleared = true;
+     stopAttack();
+     isModalOpen = true;
+     document.getElementById("clear-modal-title").innerText = "神話の終焉";
+     document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
+     document.getElementById("clear-modal").style.display = "flex";
+ } else {
+     currentBossHP = BigInt(player.bossMaxHP);
+     logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
+ }
 } else {
-  currentBossHP = 0n;
-  player.killCount++;
-  handleBossDefeat();
+ currentBossHP = 0n;
+ player.killCount++;
+ handleBossDefeat();
 }
 } else {
 currentBossHP -= finalDmg;
 if(currentBossHP < 1n && !player.isCleared) {
-  currentBossHP = BigInt(player.bossMaxHP);
-  logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
+ currentBossHP = BigInt(player.bossMaxHP);
+ logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
 }
 }
 
@@ -602,8 +622,8 @@ let repeatCount = 1;
 if ((player.inventory[505] || 0) > 0 && Math.random() < 0.1) { repeatCount = 2; specialTags += `【再起】`; }
 let totalUpHP = 0n;
 for (let i = 0; i < repeatCount; i++) {
-  let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + skillLv + Math.min(50000, player.inventory[402] || 0) * 5);
-  totalUpHP += up;
+ let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + skillLv + Math.min(50000, player.inventory[402] || 0) * 5);
+ totalUpHP += up;
 }
 player.baseHP += totalUpHP; player.deathCount += gainedExp;
 logHtml += `<div><span style="color:#dc3545;">敵の攻撃！${formatV(finalMitigated)} ダメージ。</span><span style="color:#007bff; font-weight:bold;">再起の誓いによって新たなる力を得た </span>${repeatCount > 1 ? '<span style="color:gold; font-weight:bold;">【双重再起】</span>' : ''}<span style="color:var(--growth); font-weight:bold;">(基礎HP+${formatV(totalUpHP)})</span></div>`;
@@ -632,24 +652,22 @@ if (player.maxDmg < rates[star].cond) star=1;
 
 let sel;
 if (star === 2 && player.hasDivineGuide && Math.random() < 0.1) {
- sel = RELIC_MASTER.find(m => m.id === 117);
+sel = RELIC_MASTER.find(m => m.id === 117);
 } else {
- let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 999 && m.star < 9 && m.id !== 117);
- if(cands.length === 0) cands = RELIC_MASTER.filter(m => m.star === 1);
- sel = cands[Math.floor(Math.random() * cands.length)];
+let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 999 && m.star < 9 && m.id !== 117);
+if(cands.length === 0) cands = RELIC_MASTER.filter(m => m.star === 1);
+sel = cands[Math.floor(Math.random() * cands.length)];
 
- if(sel.id === 704) {
-     if(!player.inventory[704] && player.isCleared) {
-         if(Math.random() > 0.001) { sel = RELIC_MASTER.find(m => m.star === 1); star = 1; }
-     } else if(!player.isCleared) {
-         sel = RELIC_MASTER.find(m => m.star === 1); star = 1;
-     }
- }
+if(sel.id === 704) {
+    if(!player.inventory[704] && player.isCleared) {
+        if(Math.random() > 0.001) { sel = RELIC_MASTER.find(m => m.star === 1); star = 1; }
+    } else if(!player.isCleared) {
+        sel = RELIC_MASTER.find(m => m.star === 1); star = 1;
+    }
 }
-if (sel.star >= 7 && player.inventory[sel.id] >= 1) { /* Already maxed */ }
-else {
-    player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
 }
+if (sel.star >= 7 && player.inventory[sel.id] >= 1) { }
+else { player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1; }
 player.totalRelics++; starCounts[star]++; starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
 if (sel.star >= 4 && player.inventory[sel.id] === 1) { if (!showRare || sel.star > showRare.star) showRare = sel; }
 }
@@ -657,7 +675,7 @@ if(showRare) openRareModal(showRare);
 let finalEntries = [];
 for (let s = 1; s <= 8; s++) {
 if (starCounts[s] === 0) continue;
-if (starCounts[s] > 30) { finalEntries.push(`<span class="c${s}">★${s}遺物 合計${starCounts[s]}個</span>`); }
+if (starCounts[s] > 20) { finalEntries.push(`<span class="c${s}">★${s}遺物 合計${starCounts[s]}個</span>`); }
 else { Object.entries(starGroups[s]).forEach(([id, c]) => { const m = RELIC_MASTER.find(x => x.id == id); finalEntries.push(`<span class="c${s}">★${s} ${m.name}${c > 1 ? '×' + c : ''}</span>`); }); }
 }
 return finalEntries.length > 0 ? `<div style="font-size:0.82em;">獲得：${finalEntries.join("、 ")}</div>` : "";
@@ -760,17 +778,16 @@ if (!container) return;
 const sortedInventory = Object.entries(player.inventory)
 .filter(([id, c]) => c > 0)
 .sort((a, b) => {
-   const idA = Number(a[0]);
-   const idB = Number(b[0]);
-   const rA = RELIC_MASTER.find(x => x.id === idA);
-   const rB = RELIC_MASTER.find(x => x.id === idB);
-
-   if (!rA || !rB) return 0;
-   if (rA.star === 999 && rB.star !== 999) return -1;
-   if (rA.star !== 999 && rB.star === 999) return 1;
-   if (rA.star === 999 && rB.star === 999) return idA - idB;
-   if (rA.star !== rB.star) return rA.star - rB.star;
-   return idA - idB;
+  const idA = Number(a[0]);
+  const idB = Number(b[0]);
+  const rA = RELIC_MASTER.find(x => x.id === idA);
+  const rB = RELIC_MASTER.find(x => x.id === idB);
+  if (!rA || !rB) return 0;
+  if (rA.star === 999 && rB.star !== 999) return -1;
+  if (rA.star !== 999 && rB.star === 999) return 1;
+  if (rA.star === 999 && rB.star === 999) return idA - idB;
+  if (rA.star !== rB.star) return rA.star - rB.star;
+  return idA - idB;
 });
 
 const hasRegalia = (player.inventory[603] || 0) > 0;
@@ -817,7 +834,7 @@ const nextExp = getExpThreshold(player.totalLevel);
 document.getElementById("st-totalclicks").textContent = formatV(player.totalClicks);
 document.getElementById("v-death").textContent = `${formatV(player.deathCount)} / ${formatV(nextExp)}`;
 document.getElementById("st-totalrelics").textContent = formatV(player.totalRelics || 0);
-document.getElementById("st-maxdmg").textContent = formatV(player.maxDmg);
+document.getElementById("st-maxdmg").textContent = formatMaxDmg(player.maxDmg);
 document.getElementById("st-dmgmult").textContent = "x" + (calcFinalDmgMult() * b.mult).toFixed(4);
 const rates = getCurrentDropRates(); let maxStar = 1; for(let s in rates) { if(player.maxDmg >= rates[s].cond) maxStar = Math.max(maxStar, parseInt(s)); }
 document.getElementById("st-rank").textContent = `★${maxStar}まで`;
@@ -838,8 +855,6 @@ function handleBossDefeat() {
 player.isCleared = true;
 let n = BigInt(player.killCount);
 let base = BOSS_MAX_HP_BASE;
-// 新式: HP = base * (1.35 + 0.15 * exp(-n/50))^n
-// BigIntでの計算は近似値を必要とするため、浮動小数点計算を利用
 let n_float = Number(n);
 let factor = 1.35 + 0.15 * Math.exp(-n_float / 50);
 let newHP = Number(base) * Math.pow(factor, n_float);
