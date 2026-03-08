@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.27</title>
+<title>RELICORE - v1.28</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -208,16 +208,16 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.27</div>
+<div class="ver-footer">RELICORE v1.28</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
 
 const RANK_NAMES = ["初心者", "修練者", "熟練者", "探求者", "到達者", "解放者", "支配者", "超越者", "救世主", "極致：唯一神"];
-const BASE_DROP_DATA = { 1:{p:98.88888,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.1,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
-const HADO_DROP_DATA = { 1:{p:88.8888,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
-const GREAT_HADO_DROP_DATA = { 1:{p:78.8888,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
-const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.8888,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
+const BASE_DROP_DATA = { 1:{p:98.98889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,cond:0n}, 4:{p:0.001,cond:100000n}, 5:{p:0.0001,cond:1000000n}, 6:{p:0.00001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n} };
+const HADO_DROP_DATA = { 1:{p:88.9888,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n} };
+const GREAT_HADO_DROP_DATA = { 1:{p:78.9888,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n} };
+const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.9888,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n} };
 
 let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
 let currentBossHP = BigInt(player.bossMaxHP);
@@ -528,7 +528,6 @@ if ((player.inventory[802] || 0) > 0) {
    if (player.evolutionStack < 100000) {
        let currentBossHPVal = Number(currentBossHP);
        if (currentBossHPVal > 0 && 0 < currentBossHPVal) {
-            // 簡易的なダメージ計算前段階
             let testDmg = Number(player.baseAtk + bonus.atk) * bonus.mult * skillMult;
             if (testDmg < currentBossHPVal * 0.01) {
                 player.evolutionStack++;
@@ -863,7 +862,7 @@ document.getElementById("st-rank").textContent = `★${maxStar}まで`;
 document.getElementById("st-collection").textContent = `${Object.keys(player.inventory).length}/60`;
 document.getElementById("st-comp-count").textContent = b.compCount;
 document.getElementById("st-comp-bonus").textContent = "x" + b.compBonus.toFixed(2);
-document.getElementById("prob-list").innerHTML = Object.entries(rates).map(([s,d])=>`<tr><td class="c${s}">★${s}</td><td style="text-align:right;">${d.p.toFixed(6)}%</td></tr>`).join("");
+document.getElementById("prob-list").innerHTML = Object.entries(rates).map(([s,d])=>`<tr><td class="c${s}">★${s}</td><td style="text-align:right;">${d.p.toFixed(7)}%</td></tr>`).join("");
 }
 
 function getCurrentDropRates() { if(player.hasDivineGuide) return DIVINE_GUIDE_DROP_DATA; if(player.hasGreatHado) return GREAT_HADO_DROP_DATA; if(player.hasHado) return HADO_DROP_DATA; return BASE_DROP_DATA; }
