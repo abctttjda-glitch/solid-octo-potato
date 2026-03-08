@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.26</title>
+<title>RELICORE - v1.27</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -208,7 +208,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.26</div>
+<div class="ver-footer">RELICORE v1.27</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -219,7 +219,7 @@ const HADO_DROP_DATA = { 1:{p:88.8888,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,con
 const GREAT_HADO_DROP_DATA = { 1:{p:78.8888,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
 const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.8888,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000009,cond:100000000n}, 8:{p:0.000001,cond:1000000000n} };
 
-let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0 };
+let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
 let currentBossHP = BigInt(player.bossMaxHP);
 let attackInterval = null;
 let isModalOpen = false;
@@ -294,6 +294,7 @@ const RELIC_MASTER = [
 {id:701, star:7, name:"パンドラの箱", atk:155528931, hp:355528931, desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"}, {id:702, star:7, name:"終焉の福音", atk:200000000, hp:450000000, desc:"敵HPが50%以下のとき、与ダメージ+30%。(重複不可)"}, {id:703, star:7, name:"神滅のアカシックレコード", atk:100000000, hp:550000000, desc:"与ダメージの最終倍率にさらに+20%。(重複不可)"},
 {id:704, star:7, name:"災厄の残滓", atk:500000000, hp:500000000, desc:"すべての遺物のステータス上昇値を100倍にする。(効果は重複しない)"},
 {id:801, star:8, name:"天律崩壊オメガ・コア", atk:1000000000, hp:1000000000, desc:"統合・乗算コア：計算ロジックを最適化し、ステータスを乗算強化する。"},
+{id:802, star:8, name:"特異演算機関：ジェネシスコード", atk:0, hp:0, desc:"敵が強すぎる場合、演算機関が自己進化する。"},
 {id:999, star:999, name:"秩序のリバランス", atk:0, hp:0, desc:"【救済】低ダメージを敵最大HP割合の絶対ダメージに変換。討伐数に応じて威力が上昇。"}
 ];
 
@@ -318,6 +319,7 @@ player.killCount = p.killCount || 0;
 player.soujinCounter = p.soujinCounter || 0;
 player.totalLevel = p.totalLevel || 1;
 player.hadoExpAccum = p.hadoExpAccum || 0;
+player.evolutionStack = p.evolutionStack || 0;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
 } else { currentBossHP = BigInt(player.bossMaxHP); }
 
@@ -521,7 +523,23 @@ if(isModalOpen) return;
 player.totalClicks++;
 const bonus = getRelicBonus();
 const skillMult = calcFinalDmgMult();
-const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+
+if ((player.inventory[802] || 0) > 0) {
+    if (player.evolutionStack < 100000) {
+        let currentBossHPVal = Number(currentBossHP);
+        if (currentBossHPVal > 0 && 0 < currentBossHPVal) {
+             // 簡易的なダメージ計算前段階
+             let testDmg = Number(player.baseAtk + bonus.atk) * bonus.mult * skillMult;
+             if (testDmg < currentBossHPVal * 0.01) {
+                 player.evolutionStack++;
+             }
+        }
+    }
+}
+let evolAtkMult = 1.0 + (player.evolutionStack * 0.002);
+let evolHpMult = 1.0 + (player.evolutionStack * 0.004);
+
+const totalBase = applyOmegaCore((player.baseAtk + bonus.atk) * BigInt(Math.floor(evolAtkMult * 1000)) / 1000n, (player.baseHP + bonus.hp) * BigInt(Math.floor(evolHpMult * 1000)) / 1000n);
 const totalAtkVal = BigInt(Math.floor(Number(totalBase.atk) * bonus.mult * skillMult));
 
 let rawDmg = BigInt(Math.floor(Number(totalAtkVal) * (0.8 + Math.random() * 0.4)));
@@ -576,6 +594,7 @@ if(!player.isCleared) {
      currentBossHP = 0n;
      player.killCount++;
      player.isCleared = true;
+     player.evolutionStack = 0;
      stopAttack();
      isModalOpen = true;
      document.getElementById("clear-modal-title").innerText = "神話の終焉";
@@ -583,17 +602,20 @@ if(!player.isCleared) {
      document.getElementById("clear-modal").style.display = "flex";
  } else {
      currentBossHP = BigInt(player.bossMaxHP);
+     player.evolutionStack = 0;
      logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
  }
 } else {
  currentBossHP = 0n;
  player.killCount++;
+ player.evolutionStack = 0;
  handleBossDefeat();
 }
 } else {
 currentBossHP -= finalDmg;
 if(currentBossHP < 1n && !player.isCleared) {
  currentBossHP = BigInt(player.bossMaxHP);
+ player.evolutionStack = 0;
  logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
 }
 }
