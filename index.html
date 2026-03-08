@@ -715,7 +715,7 @@ hlContent = `<span class="vow-tag">ボーナス：+${lv + bushinCount + (gouyoku
 }
 else if(s.id === "setsuna") {
 const setsunaVal = Math.min(50000, player.inventory[402] || 0) * 5;
-hlContent = `<span class="vow-tag">HP増加：+${lv + setsunaVal}</span><span class="vow-tag">/ 上限1〜：${formatV(player.deathCount || 100)}</span><span class="vow-tag">【刹那：+${setsunaVal}】</span>`;
+hlContent = `<span class="vow-tag">HP増加：+${lv + setsunaVal}</span><span class="vow-tag">/ 上限1〜：${formatV(player.deathCount || 100)}</span><span class="vow-tag">【刹那+${setsunaVal}】</span>`;
 }
 else if(s.id === "inga") {
 let baseCut = Math.min(20, Math.floor(lv/5) * 5);
