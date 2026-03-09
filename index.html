@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.18
+<title>RELICORE - v1.19
 </title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
@@ -219,7 +219,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.18</div>
+<div class="ver-footer">RELICORE v1.19</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -342,7 +342,7 @@ currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMa
 
 Object.keys(player.inventory).forEach(id => {
  let r = RELIC_MASTER.find(m => m.id == id);
- if (r && r.star >= 7 && player.inventory[id] > 1) player.inventory[id] = 1;
+ if (r && (r.star === 6 || r.star === 7) && player.inventory[id] > 1) player.inventory[id] = 1;
 });
 
 if(player.isCleared && (player.rebalanceSeen === false || player.rebalanceSeen === undefined)) {
@@ -713,7 +713,7 @@ function getDropLog(count) {
            sel = cands[Math.floor(Math.random() * cands.length)];
        }
 
-       if (sel.star >= 7 && (player.inventory[sel.id] || 0) >= 1) {
+       if (sel.star >= 6 && (player.inventory[sel.id] || 0) >= 1) {
        } else {
            player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
        }
@@ -870,7 +870,7 @@ if(hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
 if(hasZansai && m.star !== 6) { baseA *= 1000; baseH *= 1000; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
-return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 7 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}</div></div>`;
 }).join("");
 }
 
