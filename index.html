@@ -612,7 +612,7 @@ if((player.inventory[701] || 0) > 0) {
 } else {
     currentBossHP = BigInt(player.bossMaxHP);
     enemyDisasterStarUsed = false;
-    logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
+    logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
 }
 } else {
 currentBossHP = 0n;
@@ -625,7 +625,7 @@ currentBossHP -= finalDmg;
 if(currentBossHP < 1n && !player.isCleared) {
 currentBossHP = BigInt(player.bossMaxHP);
 enemyDisasterStarUsed = false;
-logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終焉の回帰……！ (HP全回復)</span></div>`;
+logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
 }
 }
 
