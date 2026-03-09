@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.17
+<title>RELICORE - v1.18
 </title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
@@ -219,7 +219,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.17</div>
+<div class="ver-footer">RELICORE v1.18</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -243,7 +243,6 @@ let n = BigInt(val);
 if (n < 100000000000000n) return n.toLocaleString();
 const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
 let unitIdx = -1;
-let divisor = 100000000000000n;
 let base = n;
 while (base >= 100000000000000n && unitIdx < units.length - 1) {
 base /= 100000000000000n;
@@ -690,56 +689,63 @@ return `<div style="font-size:0.82em;">【狼煙】獲得：${entries.join("、 
 }
 
 function getDropLog(count) {
-let starCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
-let starGroups = { 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {}, 8: {} };
-const rates = getCurrentDropRates();
-let showRare = null;
-
-for(let i=0; i < count; i++) {
-    let rv = Math.random()*100, star=1, curP=0;
-    for(let s in rates) {
-        curP += rates[s].p;
-        if(rv <= curP) { star=parseInt(s); break; }
-    }
-    if (player.maxDmg < rates[star].cond) star=1;
-
-    let sel;
-    if (star === 2 && player.hasDivineGuide && Math.random() < 0.1) {
-        sel = RELIC_MASTER.find(m => m.id === 117);
-    } else {
-        let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 999 && m.star < 9 && m.id !== 117 && m.id !== 311 && m.id !== 803);
-        if (star === 3) cands.push(RELIC_MASTER.find(m => m.id === 311));
-        if(cands.length === 0) cands = RELIC_MASTER.filter(m => m.star === 1);
-        sel = cands[Math.floor(Math.random() * cands.length)];
+    const rawRates = getCurrentDropRates();
+    // 確率の総和を計算して正規化
+    const totalP = Object.values(rawRates).reduce((sum, item) => sum + item.p, 0);
+    const rates = {};
+    for (let s in rawRates) {
+        rates[s] = { p: (rawRates[s].p / totalP) * 100, cond: rawRates[s].cond };
     }
 
-    if (sel.star >= 6 && (player.inventory[sel.id] || 0) >= 1) {
-    } else {
-        player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
+    let starCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+    let starGroups = { 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {}, 8: {} };
+    let showRare = null;
+
+    for(let i=0; i < count; i++) {
+        let rv = Math.random()*100, star=1, curP=0;
+        for(let s in rates) {
+            curP += rates[s].p;
+            if(rv <= curP) { star=parseInt(s); break; }
+        }
+        if (player.maxDmg < rates[star].cond) star=1;
+
+        let sel;
+        if (star === 2 && player.hasDivineGuide && Math.random() < 0.1) {
+            sel = RELIC_MASTER.find(m => m.id === 117);
+        } else {
+            let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 999 && m.star < 9 && m.id !== 117 && m.id !== 311 && m.id !== 803);
+            if (star === 3) cands.push(RELIC_MASTER.find(m => m.id === 311));
+            if(cands.length === 0) cands = RELIC_MASTER.filter(m => m.star === 1);
+            sel = cands[Math.floor(Math.random() * cands.length)];
+        }
+
+        if (sel.star >= 6 && (player.inventory[sel.id] || 0) >= 1) {
+        } else {
+            player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
+        }
+
+        player.totalRelics++;
+        starCounts[star]++;
+        starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
+        if (sel.star >= 4 && player.inventory[sel.id] === 1) {
+            if (!showRare || sel.star > showRare.star) showRare = sel;
+        }
     }
 
-    player.totalRelics++;
-    starCounts[star]++;
-    starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
-    if (sel.star >= 4 && player.inventory[sel.id] === 1) {
-        if (!showRare || sel.star > showRare.star) showRare = sel;
+    if(showRare) openRareModal(showRare);
+    let finalEntries = [];
+    for (let s = 1; s <= 8; s++) {
+        if (starCounts[s] === 0) continue;
+        if (starCounts[s] > 20) {
+            finalEntries.push(`<span class="c${s}">★${s}遺物 合計${starCounts[s]}個</span>`);
+        } else {
+            Object.entries(starGroups[s]).forEach(([id, c]) => {
+                const m = RELIC_MASTER.find(x => x.id == id);
+                finalEntries.push(`<span class="c${m.star}">★${m.star} ${m.name}${c > 1 ? '×' + c : ''}</span>`);
+            });
+        }
     }
-}
-
-if(showRare) openRareModal(showRare);
-let finalEntries = [];
-for (let s = 1; s <= 8; s++) {
-    if (starCounts[s] === 0) continue;
-    if (starCounts[s] > 20) {
-        finalEntries.push(`<span class="c${s}">★${s}遺物 合計${starCounts[s]}個</span>`);
-    } else {
-        Object.entries(starGroups[s]).forEach(([id, c]) => {
-            const m = RELIC_MASTER.find(x => x.id == id);
-            finalEntries.push(`<span class="c${m.star}">★${m.star} ${m.name}${c > 1 ? '×' + c : ''}</span>`);
-        });
-    }
-}
-return finalEntries.length > 0 ? `<div style="font-size:0.82em;">獲得：${finalEntries.join("、 ")}</div>` : "";
+    return finalEntries.length > 0 ? `<div style="font-size:0.82em;">獲得：${finalEntries.join("、 ")}</div>` : "";
 }
 
 function triggerUIUpdate() { if (!needsUIUpdate) { needsUIUpdate = true; requestAnimationFrame(updateUIFrame); } }
