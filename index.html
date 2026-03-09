@@ -412,7 +412,6 @@ function closeCosmicModal() { document.getElementById("cosmic-awaken-modal").sty
 
 function openPolicy() { stopAttack(); isModalOpen = true; document.getElementById("policy-modal").style.display = "flex"; }
 function closePolicy() { document.getElementById("policy-modal").style.display = "none"; isModalOpen = false; }
-function stopAttack() { if (attackInterval) { clearInterval(attackInterval); attackInterval = null; } }
 
 function openRareModal(relic) {
 stopAttack(); isModalOpen = true;
