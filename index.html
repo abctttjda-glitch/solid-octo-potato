@@ -595,7 +595,7 @@ if(finalDmg > player.maxDmg) player.maxDmg = finalDmg;
 
 const skillLv = Math.min(10, player.totalLevel);
 const bushinCount = Math.min(40, player.inventory[401] || 0); const gouyokuCount = Math.min(10, player.inventory[502] || 0);
-let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(skillLv + bushinCount + (gouyokuCount * 5));
+let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(Math.min(100,skillLv + bushinCount + (gouyokuCount * 5));
 
 if(finalDmg >= currentBossHP) {
 if(!player.isCleared) {
