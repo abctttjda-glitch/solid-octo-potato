@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.17</title>
+<title>RELICORE - v1.18</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -218,7 +218,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.17</div>
+<div class="ver-footer">RELICORE v1.18</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -319,38 +319,82 @@ let omegaMult = BigInt(player.inventory[801]) * 2n;
 return { atk: baseAtk * omegaMult, hp: baseHp * omegaMult };
 }
 
-function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString(), enemyDisasterStarUsed: enemyDisasterStarUsed }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
+function saveGame() {
+    const data = {
+        inventory: player.inventory,
+        deathCount: player.deathCount,
+        hadoExpAccum: player.hadoExpAccum,
+        totalLevel: player.totalLevel,
+        baseAtk: player.baseAtk.toString(),
+        baseHP: player.baseHP.toString(),
+        maxDmg: player.maxDmg.toString(),
+        storySeen: player.storySeen,
+        rebalanceSeen: player.rebalanceSeen,
+        hasHado: player.hasHado,
+        hasGreatHado: player.hasGreatHado,
+        hasDivineGuide: player.hasDivineGuide,
+        hasWorldOrder: player.hasWorldOrder,
+        hasCrown: player.hasCrown,
+        hasMeta: player.hasMeta,
+        isUra: player.isUra,
+        bossMaxHP: player.bossMaxHP,
+        totalClicks: player.totalClicks,
+        totalRelics: player.totalRelics,
+        killCount: player.killCount,
+        isCleared: player.isCleared,
+        soujinCounter: player.soujinCounter,
+        evolutionStack: player.evolutionStack,
+        currentBossHP: currentBossHP.toString(),
+        enemyDisasterStarUsed: enemyDisasterStarUsed
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+}
 
 function loadGame() {
-let saved = localStorage.getItem(SAVE_KEY);
-if(saved) {
-const p = JSON.parse(saved);
-Object.assign(player, p);
-player.baseAtk = BigInt(p.baseAtk || "10");
-player.baseHP = BigInt(p.baseHP || "100");
-player.maxDmg = BigInt(p.maxDmg || "0");
-player.totalRelics = p.totalRelics || 0;
-player.killCount = p.killCount || 0;
-player.soujinCounter = p.soujinCounter || 0;
-player.totalLevel = p.totalLevel || 1;
-player.hadoExpAccum = p.hadoExpAccum || 0;
-player.evolutionStack = p.evolutionStack || 0;
-enemyDisasterStarUsed = p.enemyDisasterStarUsed || false;
-currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
-} else { currentBossHP = BigInt(player.bossMaxHP); }
+    let saved = localStorage.getItem(SAVE_KEY);
+    if(saved) {
+        const p = JSON.parse(saved);
+        player.inventory = p.inventory || {0:1};
+        player.deathCount = p.deathCount || 0;
+        player.hadoExpAccum = p.hadoExpAccum || 0;
+        player.totalLevel = p.totalLevel || 1;
+        player.baseAtk = BigInt(p.baseAtk || "10");
+        player.baseHP = BigInt(p.baseHP || "100");
+        player.maxDmg = BigInt(p.maxDmg || "0");
+        player.storySeen = p.storySeen || false;
+        player.rebalanceSeen = p.rebalanceSeen || false;
+        player.hasHado = p.hasHado || false;
+        player.hasGreatHado = p.hasGreatHado || false;
+        player.hasDivineGuide = p.hasDivineGuide || false;
+        player.hasWorldOrder = p.hasWorldOrder || false;
+        player.hasCrown = p.hasCrown || false;
+        player.hasMeta = p.hasMeta || false;
+        player.isUra = p.isUra || false;
+        player.bossMaxHP = p.bossMaxHP || BOSS_MAX_HP_BASE.toString();
+        player.totalClicks = p.totalClicks || 0;
+        player.totalRelics = p.totalRelics || 0;
+        player.killCount = p.killCount || 0;
+        player.isCleared = p.isCleared || false;
+        player.soujinCounter = p.soujinCounter || 0;
+        player.evolutionStack = p.evolutionStack || 0;
+        currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
+        enemyDisasterStarUsed = p.enemyDisasterStarUsed || false;
+    } else {
+        currentBossHP = BigInt(player.bossMaxHP);
+    }
 
-Object.keys(player.inventory).forEach(id => {
-  let r = RELIC_MASTER.find(m => m.id == id);
-  if (r && r.star >= 7 && player.inventory[id] > 1) player.inventory[id] = 1;
-});
+    Object.keys(player.inventory).forEach(id => {
+      let r = RELIC_MASTER.find(m => m.id == id);
+      if (r && r.star >= 7 && player.inventory[id] > 1) player.inventory[id] = 1;
+    });
 
-if(player.isCleared && (player.rebalanceSeen === false || player.rebalanceSeen === undefined)) {
-if (player.inventory[999] > 0) {
-showClearStartMsg();
-}
-}
+    if(player.isCleared && (player.rebalanceSeen === false || player.rebalanceSeen === undefined)) {
+        if (player.inventory[999] > 0) {
+            showClearStartMsg();
+        }
+    }
 
-if(!player.storySeen) document.getElementById("story-modal").style.display = "flex";
+    if(!player.storySeen) document.getElementById("story-modal").style.display = "flex";
 }
 
 function showClearStartMsg() {
@@ -487,6 +531,8 @@ inputArea.style.display = "none";
 resultArea.style.display = "block";
 if(success) { saveGame(); triggerUIUpdate(); }
 }
+
+function stopAttack() { clearInterval(attackInterval); attackInterval = null; }
 
 function calcFinalDmgMult() {
 const lv = Math.min(10, player.totalLevel);
