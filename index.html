@@ -673,6 +673,16 @@ totalUpHP += up;
 player.baseHP += totalUpHP; player.deathCount += gainedExp;
 logHtml += `<div><span style="color:#dc3545;">敵の攻撃！${formatV(finalMitigated)} ダメージ。</span><span style="color:#007bff; font-weight:bold;">再起の誓いによって新たなる力を得た </span>${repeatCount > 1 ? '<span style="color:gold; font-weight:bold;">【双重再起】</span>' : ''}<span style="color:var(--growth); font-weight:bold;">(基礎HP+${formatV(totalUpHP)})</span></div>`;
 }
+if (!player.hasHado && (player.inventory[116] || 0) >= 100000 && player.hadoExpAccum >= 1000000) {
+    openHadoModal('hado');
+}
+if (!player.hasGreatHado && (player.inventory[116] || 0) >= 200000 && player.hadoExpAccum >= 2000000) {
+    openHadoModal('great');
+}
+if (!player.hasDivineGuide && (player.inventory[116] || 0) >= 300000 && player.hadoExpAccum >= 3000000) {
+    openHadoModal('divine');
+}
+
 if(checkLevelUp()) {}
 }
 addLog(logHtml); saveGame(); triggerUIUpdate();
