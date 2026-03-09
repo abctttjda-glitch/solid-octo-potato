@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.17</title>
+<title>RELICORE - v1.18</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -60,7 +60,15 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 .story-vow { color: gold; font-weight: bold; display: inline-block; animation: heart-beat 1.5s infinite; text-shadow: 0 0 10px rgba(212, 175, 55, 0.8); }
 @keyframes heart-beat { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
 .story-btn { background: none; border: 1px solid gold; color: gold; padding: 12px 40px; font-size: 1em; cursor: pointer; transition: 0.3s; }
-.c1 { color: #888888; font-weight: bold; } .c2 { color: #28a745; font-weight: bold; } .c3 { color: #007bff; font-weight: bold; } .c4 { color: #6610f2; font-weight: bold; } .c5 { color: #e83e8c; font-weight: bold; } .c6 { color: #fd7e14; font-weight: bold; } .c7 { color: #ff0000; font-weight: bold; } .c8 { color: #ffffff; font-weight: bold; text-shadow: 0 0 8px #fff, 0 0 15px gold; }
+.c1 { color: #888888; font-weight: bold; }
+.c2 { color: #28a745; font-weight: bold; }
+.c3 { color: #007bff; font-weight: bold; }
+.c4 { color: #6610f2; font-weight: bold; }
+.c5 { color: #e83e8c; font-weight: bold; }
+.c6 { color: #fd7e14; font-weight: bold; }
+.c7 { color: #ff0000; font-weight: bold; }
+.c8 { color: #000000; font-weight: bold; }
+
 .c-order { color: #ffd700; font-weight: bold; text-shadow: 0 0 5px #000; }
 
 .unique-relic-text { font-weight: bold; background: linear-gradient(to right, #d4af37, #fff, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 5px rgba(212,175,55,0.5); }
@@ -144,7 +152,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 </head>
 <body>
 <div id="policy-modal"><div class="policy-content"><div class="policy-title">プライバシーポリシー</div><div class="policy-text">RELICORE（以下「本サービス」）は、ユーザーのプライバシーを尊重し、適切な取り扱いと保護に努めます。<br><hr class="policy-divider"><strong>1. 取得する情報について</strong><br>本サービスでは、以下の情報を取得する場合があります。<ul><li>ブラウザのローカルストレージに保存されるゲームデータ</li><li>アクセス解析ツールにより収集される匿名のアクセス情報</li><li>サーバーの標準ログ情報（IPアドレス、閲覧日時など）</li></ul><strong>2. 情報の利用目的</strong><br>取得した情報は以下の目的で利用します。<ul><li>ゲームの進行状況保存</li><li>不具合調査および改善</li></ul><hr class="policy-divider"><strong>6. 免責事項</strong><br>本サービスの利用により生じた損害について、開発者は一切の責任を負いません。<br><div class="policy-footer">制定日：2026年3月1日<br>RELICORE 開発者　げぇいむ＆AI</div></div><button class="btn-attack" style="padding:10px; font-size:1em;" onclick="closePolicy()">閉じる</button></div></div>
-<div id="rank-up-modal"><div class="rank-up-content"><div class="rank-up-title">覚醒</div><div class="rank-up-msg" id="rank-up-msg-text">魂の核が激しく鼓動する……！</div><button class="story-btn" onclick="closeRankUpModal()">高みへ</button><div class="rank-up-sub">※すべての再起スキルが強化されました。</div></div></div>
+<div id="rank-up-modal" onpointerdown="closeRankUpModal()"><div class="rank-up-content"><div class="rank-up-title">覚醒</div><div class="rank-up-msg" id="rank-up-msg-text">魂の核が激しく鼓動する……！</div><button class="story-btn" onclick="closeRankUpModal()">高みへ</button><div class="rank-up-sub">※すべての再起スキルが強化されました。</div></div></div>
 <div id="rare-drop-modal" onclick="closeRareModal()"><div id="rare-card-content" class="rare-card"><span id="rare-star-label" class="rare-star"></span><span id="rare-name-label" class="rare-name"></span><div id="rare-desc-label" class="rare-desc"></div><div style="margin-top:20px; font-size:0.7em; color:#888;">画面タップで閉じる</div></div></div>
 <div id="hado-awaken-modal"><div class="hado-content"><div class="hado-title" id="hado-modal-title">隠しスキル覚醒</div><div class="hado-msg" id="hado-modal-msg"></div><button class="story-btn" onclick="closeHadoModal()">その力を受け入れる</button></div></div>
 
@@ -210,7 +218,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.17</div>
+<div class="ver-footer">RELICORE v1.18</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -274,11 +282,13 @@ return base.toString() + "." + remainder + units[unitIdx];
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
 let leveled = false;
+let oldLv = player.totalLevel;
 while (player.deathCount >= getExpThreshold(player.totalLevel)) {
 player.deathCount -= getExpThreshold(player.totalLevel);
 player.totalLevel++;
 leveled = true;
 }
+if (leveled && player.totalLevel % 10 === 0) openRankUpModal(player.totalLevel);
 return leveled;
 }
 function getCurrentRankIndex() { return Math.min(RANK_NAMES.length - 1, Math.floor((player.totalLevel - 1) / 99)); }
@@ -659,7 +669,7 @@ totalUpHP += up;
 player.baseHP += totalUpHP; player.deathCount += gainedExp;
 logHtml += `<div><span style="color:#dc3545;">敵の攻撃！${formatV(finalMitigated)} ダメージ。</span><span style="color:#007bff; font-weight:bold;">再起の誓いによって新たなる力を得た </span>${repeatCount > 1 ? '<span style="color:gold; font-weight:bold;">【双重再起】</span>' : ''}<span style="color:var(--growth); font-weight:bold;">(基礎HP+${formatV(totalUpHP)})</span></div>`;
 }
-if(checkLevelUp()) openRankUpModal(player.totalLevel);
+if(checkLevelUp()) {}
 }
 addLog(logHtml); saveGame(); triggerUIUpdate();
 }
@@ -698,9 +708,7 @@ function getDropLog(count) {
             sel = cands[Math.floor(Math.random() * cands.length)];
         }
 
-        // ★7および★8の所持上限を1に設定
         if (sel.star >= 7 && (player.inventory[sel.id] || 0) >= 1) {
-            // 加算しない
         } else {
             player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
         }
@@ -906,8 +914,8 @@ function resetData() { if(confirm("全リセットしますか？")) { localStor
 
 const btn = document.getElementById("attackBtn");
 btn.addEventListener("pointerdown", (e) => { e.preventDefault(); if(!attackInterval && !isModalOpen) { attack(); attackInterval = setInterval(attack, 120); } });
-window.addEventListener("pointerup", () => { stopAttack(); });
-window.addEventListener("pointercancel", () => { stopAttack(); });
+window.addEventListener("pointerup", stopAttack);
+window.addEventListener("pointercancel", stopAttack);
 
 loadGame(); triggerUIUpdate();
 </script>
