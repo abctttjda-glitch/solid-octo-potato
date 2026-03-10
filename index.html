@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.19
-</title>
+<title>RELICORE - v1.20</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -178,16 +177,16 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="modal-content" id="serial-modal-content">
 <h3 style="color:var(--gold); letter-spacing:2px;">シリアルコード入力</h3>
 <div id="serial-input-area">
-   <p style="font-size:0.85em; color:#aaa; margin-bottom:15px;">有効なコードを入力してください</p>
-   <input type="text" id="serial-input-box" placeholder="CODE HERE" ontouchstart="event.stopPropagation()">
-   <div style="display:flex; gap:10px;">
-       <button class="story-btn" style="flex:1;" onclick="applySerialCode()">適用</button>
-       <button class="story-btn" style="flex:1; border-color:#666; color:#666;" onclick="closeSerialModal()">戻る</button>
-   </div>
+<p style="font-size:0.85em; color:#aaa; margin-bottom:15px;">有効なコードを入力してください</p>
+<input type="text" id="serial-input-box" placeholder="CODE HERE" ontouchstart="event.stopPropagation()">
+<div style="display:flex; gap:10px;">
+   <button class="story-btn" style="flex:1;" onclick="applySerialCode()">適用</button>
+   <button class="story-btn" style="flex:1; border-color:#666; color:#666;" onclick="closeSerialModal()">戻る</button>
+</div>
 </div>
 <div id="serial-result-area" style="display:none;">
-   <p id="serial-result-msg" class="clear-main-msg" style="text-align:center;"></p>
-   <button class="story-btn" onclick="closeSerialModal()">閉じる</button>
+<p id="serial-result-msg" class="clear-main-msg" style="text-align:center;"></p>
+<button class="story-btn" onclick="closeSerialModal()">閉じる</button>
 </div>
 </div>
 </div>
@@ -219,35 +218,35 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.19</div>
+<div class="ver-footer">RELICORE v1.20</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
 let enemyDisasterStarUsed = false;
 
 const RANK_NAMES = ["初心者", "修練者", "熟練者", "探求者", "到達者", "解放者", "支配者", "超越者", "救世主", "極致：唯一神"];
-const BASE_DROP_DATA = { 1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,cond:0n}, 4:{p:0.001,cond:100000n}, 5:{p:0.0001,cond:1000000n}, 6:{p:0.00001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
-const HADO_DROP_DATA = {1:{p:88.9888989,cond:0n}, 2:{p:10.0,cond:0n},3:{p:1.0,cond:0n},4:{p:0.01,cond:100000n},5:{p:0.001,cond:1000000n},6:{p:0.0001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
+const BASE_DROP_DATA = {　1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,cond:0n}, 4:{p:0.001,cond:100000n}, 5:{p:0.0001,cond:1000000n}, 6:{p:0.00001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
+const HADO_DROP_DATA = {1:{p:88.9888989,cond:0n},　2:{p:10.0,cond:0n},3:{p:1.0,cond:0n},4:{p:0.01,cond:100000n},5:{p:0.001,cond:1000000n},6:{p:0.0001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
 const GREAT_HADO_DROP_DATA = {1:{p:78.9888989,cond:0n},2:{p:18.0,cond:0n},3:{p:3.0,cond:0n},4:{p:0.01,cond:100000n},5:{p:0.001,cond:1000000n},6:{p:0.0001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
 const DIVINE_GUIDE_DROP_DATA = {1:{p:59.9888989,cond:0n},2:{p:30.0,cond:0n},3:{p:10.0,cond:0n},4:{p:0.01,cond:100000n},5:{p:0.001,cond:1000000n},6:{p:0.0001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
-
 let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
 let currentBossHP = BigInt(player.bossMaxHP);
-let attackInterval = null;
 let isModalOpen = false;
 let needsUIUpdate = false;
 let kushiaCounter = 0;
+
+// 自動連打削除に伴い、長押し検知用フラグを追加
+let isPressing = false;
 
 function formatV(val) {
 let n = BigInt(val);
 if (n < 100000000000000n) return n.toLocaleString();
 const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
 let unitIdx = -1;
-let divisor = 100000000000000n;
 let base = n;
 while (base >= 100000000000000n && unitIdx < units.length - 1) {
- base /= 100000000000000n;
- unitIdx++;
+base /= 100000000000000n;
+unitIdx++;
 }
 if (unitIdx === -1) return n.toLocaleString();
 let remainder = (n % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
@@ -260,8 +259,8 @@ const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak",
 let unitIdx = -1;
 let base = v;
 while (base >= 100000000000000n && unitIdx < units.length - 1) {
- base /= 100000000000000n;
- unitIdx++;
+base /= 100000000000000n;
+unitIdx++;
 }
 let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
 return base.toString() + "." + remainder + units[unitIdx];
@@ -273,8 +272,8 @@ const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak",
 let unitIdx = -1;
 let base = v;
 while (base >= 100000000000000n && unitIdx < units.length - 1) {
- base /= 100000000000000n;
- unitIdx++;
+base /= 100000000000000n;
+unitIdx++;
 }
 let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
 return base.toString() + "." + remainder + units[unitIdx];
@@ -361,12 +360,12 @@ document.getElementById("clear-modal-msg").innerHTML = `終末神を討ちし者
 document.getElementById("clear-modal").style.display = "flex";
 }
 
-function openRankUpModal(newLv) { stopAttack(); isModalOpen = true; const titleStr = RANK_NAMES[getCurrentRankIndex()]; document.getElementById("rank-up-msg-text").innerHTML = `魂の核が激しく鼓動する……！<br><br><span style="font-size:1.4em; color:var(--growth); font-weight:bold;">再起Lv.${newLv} 到達</span><br>称号が【${titleStr}】に昇格した。`; document.getElementById("rank-up-modal").style.display = "flex"; }
+function openRankUpModal(newLv) { isPressing = false; isModalOpen = true; const titleStr = RANK_NAMES[getCurrentRankIndex()]; document.getElementById("rank-up-msg-text").innerHTML = `魂の核が激しく鼓動する……！<br><br><span style="font-size:1.4em; color:var(--growth); font-weight:bold;">再起Lv.${newLv} 到達</span><br>称号が【${titleStr}】に昇格した。`; document.getElementById("rank-up-modal").style.display = "flex"; }
 function closeRankUpModal() { document.getElementById("rank-up-modal").style.display = "none"; isModalOpen = false; }
 function closeRareModal() { document.getElementById("rare-drop-modal").style.display = "none"; isModalOpen = false; }
 
 function openHadoModal(type) {
-stopAttack(); isModalOpen = true;
+isPressing = false; isModalOpen = true;
 let title = "", msg = "";
 if(type === 'hado') {
 title = "隠しスキル【破軍の号令】覚醒";
@@ -389,7 +388,7 @@ updateLog("再起の誓いによって新たなる力を得た");
 function closeHadoModal() { document.getElementById("hado-awaken-modal").style.display = "none"; isModalOpen = false; saveGame(); triggerUIUpdate(); }
 
 function openCosmicModal(type) {
-stopAttack(); isModalOpen = true;
+isPressing = false; isModalOpen = true;
 let title = "", msg = "";
 if(type === 'world') {
 title = "高位覚醒【ワールドオーダー】";
@@ -411,12 +410,11 @@ updateLog("再起の誓いによって新たなる力を得た");
 }
 function closeCosmicModal() { document.getElementById("cosmic-awaken-modal").style.display = "none"; isModalOpen = false; saveGame(); triggerUIUpdate(); }
 
-function openPolicy() { stopAttack(); isModalOpen = true; document.getElementById("policy-modal").style.display = "flex"; }
+function openPolicy() { isPressing = false; isModalOpen = true; document.getElementById("policy-modal").style.display = "flex"; }
 function closePolicy() { document.getElementById("policy-modal").style.display = "none"; isModalOpen = false; }
-function stopAttack() { if (attackInterval) { clearInterval(attackInterval); attackInterval = null; } }
 
 function openRareModal(relic) {
-stopAttack(); isModalOpen = true;
+isPressing = false; isModalOpen = true;
 const modal = document.getElementById("rare-drop-modal");
 const card = document.getElementById("rare-card-content");
 card.className = "rare-card glow-" + relic.star;
@@ -428,7 +426,7 @@ document.getElementById("rare-desc-label").innerHTML = detail + (relic.desc ? `<
 modal.style.display = "flex";
 }
 
-function openSerialModal() { stopAttack(); isModalOpen = true; document.getElementById("serial-input-area").style.display = "block"; document.getElementById("serial-result-area").style.display = "none"; document.getElementById("serial-input-box").value = ""; document.getElementById("serial-modal").style.display = "flex"; }
+function openSerialModal() { isPressing = false; isModalOpen = true; document.getElementById("serial-input-area").style.display = "block"; document.getElementById("serial-result-area").style.display = "none"; document.getElementById("serial-input-box").value = ""; document.getElementById("serial-modal").style.display = "flex"; }
 function closeSerialModal() { document.getElementById("serial-modal").style.display = "none"; isModalOpen = false; }
 
 function applySerialCode() {
@@ -445,33 +443,33 @@ player.totalLevel = 300;
 player.deathCount = 1000000;
 player.hadoExpAccum = 1000000;
 for (let i = 0; i < RELIC_MASTER.length; i++) {
-   let rId = RELIC_MASTER[i].id;
-   if (rId === 0 || rId === 999) continue;
-   if (rId === 116 || rId === 117) {
-       player.inventory[rId] = 300000;
-   } else if (rId === 311) {
-       player.inventory[rId] = 30000;
-   } else if (rId === 803) {
-       player.inventory[rId] = 1;
-   } else {
-       player.inventory[rId] = 1;
-   }
+let rId = RELIC_MASTER[i].id;
+if (rId === 0 || rId === 999) continue;
+if (rId === 116 || rId === 117) {
+   player.inventory[rId] = 300000;
+} else if (rId === 311) {
+   player.inventory[rId] = 30000;
+} else if (rId === 803) {
+   player.inventory[rId] = 1;
+} else {
+   player.inventory[rId] = 1;
+}
 }
 success = true;
 message = "再起の誓いによって新たなる力を得た";
 updateLog("再起の誓いによって新たなる力を得た");
 } else if (code === "REBALANCE2026") {
 if (player.isCleared) {
-   if (!player.inventory[999]) {
-       player.inventory[999] = 1;
-       player.rebalanceSeen = true;
-       success = true;
-       message = `シリアルコード承認。<br><br><span style="color:var(--gold); font-weight:bold;">【特別遺物付与】</span><br><span class="unique-relic-text">秩序のリバランス</span> を獲得しました。<br>理の崩壊を止める力としてお使いください。`;
-   } else {
-       message = "このコードはすでに適用されています。";
-   }
+if (!player.inventory[999]) {
+   player.inventory[999] = 1;
+   player.rebalanceSeen = true;
+   success = true;
+   message = `シリアルコード承認。<br><br><span style="color:var(--gold); font-weight:bold;">【特別遺物付与】</span><br><span class="unique-relic-text">秩序のリバランス</span> を獲得しました。<br>理の崩壊を止める力としてお使いください。`;
 } else {
-   message = `<span style="color:#ff4444;">「まだその時ではない……」</span><br><br>このコードは神（アポカリス＝ティア）を討ちし者のみが使用可能です。`;
+   message = "このコードはすでに適用されています。";
+}
+} else {
+message = `<span style="color:#ff4444;">「まだその時ではない……」</span><br><br>このコードは神（アポカリス＝ティア）を討ちし者のみが使用可能です。`;
 }
 } else if (code === "FIX_GENESIS") {
 player.bossMaxHP = BOSS_MAX_HP_BASE.toString();
@@ -539,21 +537,21 @@ compBonus
 }
 
 function activateDisasterStar(bonus) {
-  const memoryCrystalId = 311;
-  player.inventory[memoryCrystalId] -= 100;
+const memoryCrystalId = 311;
+player.inventory[memoryCrystalId] -= 100;
 
-  const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
-  const damage = BigInt(Math.floor(Number(totalBase.atk) * bonus.mult * 15));
+const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+const damage = BigInt(Math.floor(Number(totalBase.atk) * bonus.mult * 15));
 
-  currentBossHP -= damage;
-  const enemyMaxHP = BigInt(player.bossMaxHP);
-  const growth = BigInt(Math.floor(Number(totalBase.atk) * Math.log10(Number(enemyMaxHP) / Number(totalBase.atk)) * 0.05));
+currentBossHP -= damage;
+const enemyMaxHP = BigInt(player.bossMaxHP);
+const growth = BigInt(Math.floor(Number(totalBase.atk) * Math.log10(Number(enemyMaxHP) / Number(totalBase.atk)) * 0.05));
 
-  player.baseAtk += growth;
-  player.baseHP += growth;
-  enemyDisasterStarUsed = true;
+player.baseAtk += growth;
+player.baseHP += growth;
+enemyDisasterStarUsed = true;
 
-  addLog(`<div><span style="color:#d4af37; font-weight:bold;">★災禍殲星発動！記憶の力が解き放たれる！ATKとHPが成長した！</span></div>`);
+addLog(`<div><span style="color:#d4af37; font-weight:bold;">★災禍殲星発動！記憶の力が解き放たれる！ATKとHPが成長した！</span></div>`);
 }
 
 function attack() {
@@ -563,14 +561,19 @@ const bonus = getRelicBonus();
 const skillMult = calcFinalDmgMult();
 
 if (!enemyDisasterStarUsed && (player.inventory[803] || 0) > 0 && (player.inventory[311] || 0) >= 100 && currentBossHP > (player.baseAtk + bonus.atk) && Math.random() < 0.0001) {
-  activateDisasterStar(bonus);
+activateDisasterStar(bonus);
 }
+
+// 覚醒条件チェック
+if (!player.hasHado && (player.inventory[116] || 0) >= 100000 && player.hadoExpAccum >= 1000000) openHadoModal('hado');
+if (!player.hasGreatHado && (player.inventory[116] || 0) >= 200000 && player.hadoExpAccum >= 2000000) openHadoModal('great');
+if (!player.hasDivineGuide && (player.inventory[116] || 0) >= 300000 && player.hadoExpAccum >= 3000000) openHadoModal('divine');
 
 const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
 let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult;
 
 if ((player.inventory[804] || 0) > 0) {
-  totalAtkVal *= (1 + Math.log10(player.killCount + 1) * 0.06);
+totalAtkVal *= (1 + Math.log10(player.killCount + 1) * 0.06);
 }
 
 let rawDmg = BigInt(Math.floor(totalAtkVal * (0.8 + Math.random() * 0.4)));
@@ -595,9 +598,9 @@ if (player.soujinCounter >= 150) { finalDmg *= 2n; specialTags += `<span style="
 }
 if ((player.inventory[702] || 0) > 0 && currentBossHP * 2n <= bossMaxHP) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.4)); specialTags += `<span style="color:#ffcc00; font-weight:bold;">【福音】</span>`; }
 if((player.inventory[601] || 0) > 0) {
-   if (currentBossHP >= BigInt(Math.floor(totalAtkVal)) * 100n) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.08)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率】</span>`; }
-   const hpBonus = Math.log10(Number(totalBase.hp) + 1) * 1000;
-   finalDmg += BigInt(Math.floor(hpBonus)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率・改】</span>`;
+if (currentBossHP >= BigInt(Math.floor(totalAtkVal)) * 100n) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.08)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率】</span>`; }
+const hpBonus = Math.log10(Number(totalBase.hp) + 1) * 1000;
+finalDmg += BigInt(Math.floor(hpBonus)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率・改】</span>`;
 }
 if((player.inventory[602] || 0) > 0) { kushiaCounter++; if(kushiaCounter >= 100) { finalDmg *= 3n; specialTags += `<span style="color:var(--gold); font-weight:bold;">【魂律】</span>`; kushiaCounter = 0; } }
 if((player.inventory[604] || 0) > 0 && Math.random() < 0.001) { finalDmg *= 6n; specialTags += `<span style="color:#fd7e14; font-weight:bold;">【虚無】</span>`; }
@@ -615,19 +618,19 @@ let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;"
 if(finalDmg >= currentBossHP) {
 if(!player.isCleared) {
 if((player.inventory[701] || 0) > 0) {
-  currentBossHP = 0n;
-  player.killCount++;
-  player.isCleared = true;
-  enemyDisasterStarUsed = false;
-  stopAttack();
-  isModalOpen = true;
-  document.getElementById("clear-modal-title").innerText = "神話の終焉";
-  document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
-  document.getElementById("clear-modal").style.display = "flex";
+currentBossHP = 0n;
+player.killCount++;
+player.isCleared = true;
+enemyDisasterStarUsed = false;
+isPressing = false; // モーダル表示前にフラグを落とす
+isModalOpen = true;
+document.getElementById("clear-modal-title").innerText = "神話の終焉";
+document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
+document.getElementById("clear-modal").style.display = "flex";
 } else {
-  currentBossHP = BigInt(player.bossMaxHP);
-  enemyDisasterStarUsed = false;
-  logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+currentBossHP = BigInt(player.bossMaxHP);
+enemyDisasterStarUsed = false;
+logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
 }
 } else {
 currentBossHP = 0n;
@@ -690,9 +693,15 @@ return `<div style="font-size:0.82em;">【狼煙】獲得：${entries.join("、 
 }
 
 function getDropLog(count) {
+  const rawRates = getCurrentDropRates();
+  const totalP = Object.values(rawRates).reduce((sum, item) => sum + item.p, 0);
+  const rates = {};
+  for (let s in rawRates) {
+      rates[s] = { p: (rawRates[s].p / totalP) * 100, cond: rawRates[s].cond };
+  }
+
   let starCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
   let starGroups = { 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {}, 8: {} };
-  const rates = getCurrentDropRates();
   let showRare = null;
 
   for(let i=0; i < count; i++) {
@@ -750,14 +759,6 @@ const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
 const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
 document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
 document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
-
-// 覚醒条件チェック
-if(!player.hasHado && (player.inventory[101]||0) >= 1000) openHadoModal('hado');
-else if(!player.hasGreatHado && (player.inventory[201]||0) >= 1000) openHadoModal('great');
-else if(!player.hasDivineGuide && (player.inventory[301]||0) >= 1000) openHadoModal('divine');
-else if(!player.hasWorldOrder && (player.inventory[401]||0) >= 1000) openCosmicModal('world');
-else if(!player.hasCrown && (player.inventory[501]||0) >= 1000) openCosmicModal('crown');
-else if(!player.hasMeta && (player.inventory[601]||0) >= 1000) openCosmicModal('meta');
 
 const hpDisp = document.getElementById("bosshp-cur");
 if (!player.isCleared) {
@@ -878,14 +879,25 @@ if(hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
 if(hasZansai && m.star !== 6) { baseA *= 1000; baseH *= 1000; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
-let countInfo = (m.star < 6) ? `×${c.toLocaleString()}` : "";
-let cdInfo = "";
-if (id == 116 || id == 117) {
-    let remain = 100 - (c % 100);
-    cdInfo = `<div class="relic-countdown">覚醒まで残り：${remain}個</div>`;
+let countdown = "";
+if (id == 116 && !player.hasHado) {
+   let needed = 100000 - c;
+   if(needed > 0) countdown = `<div class="relic-countdown">発動まであと ${needed.toLocaleString()} 個</div>`;
+} else if (id == 116 && !player.hasGreatHado && player.hasHado) {
+   let needed = 200000 - c;
+   if(needed > 0) countdown = `<div class="relic-countdown">大号令まであと ${needed.toLocaleString()} 個</div>`;
+} else if (id == 116 && !player.hasDivineGuide && player.hasGreatHado) {
+   let needed = 300000 - c;
+   if(needed > 0) countdown = `<div class="relic-countdown">天帝まであと ${needed.toLocaleString()} 個</div>`;
+} else if (id == 117 && !player.hasGreatHado) {
+   let needed = 200000 - c;
+   if(needed > 0) countdown = `<div class="relic-countdown">大号令まであと ${needed.toLocaleString()} 個</div>`;
+} else if (id == 117 && !player.hasDivineGuide && player.hasGreatHado) {
+   let needed = 300000 - c;
+   if(needed > 0) countdown = `<div class="relic-countdown">天帝まであと ${needed.toLocaleString()} 個</div>`;
 }
 
-return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name} ${countInfo}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}</div>${cdInfo}</div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdown}</div></div>`;
 }).join("");
 }
 
@@ -933,14 +945,35 @@ saveGame(); triggerUIUpdate();
 function resetData() { if(confirm("全リセットしますか？")) { localStorage.clear(); location.reload(); } }
 
 const btn = document.getElementById("attackBtn");
-btn.addEventListener("pointerdown", (e) => {
-   e.preventDefault();
-   if (isModalOpen || attackInterval) return;
-   attack();
-   attackInterval = setInterval(attack, 120);
+
+// 長押し検知：ボタンを押した瞬間（pointerdown）
+btn.addEventListener("pointerdown", () => {
+    isPressing = true;
 });
-btn.addEventListener("pointerup", stopAttack);
-btn.addEventListener("pointerleave", stopAttack);
+
+// 長押し解除：ボタンから指が離れた、または外に出た時
+const stopPressing = () => {
+    isPressing = false;
+};
+btn.addEventListener("pointerup", stopPressing);
+btn.addEventListener("pointerleave", stopPressing);
+
+// こうげき処理：クリック（タップ）時に実行
+btn.addEventListener("click", (e) => {
+    if (isModalOpen) return;
+    
+    // 長押し状態（isPressing）のまま click イベントが来た場合は、
+    // 長押しによる制限中とみなしてタップを無効化する。
+    // ※純粋なタップの場合は pointerdown -> pointerup -> click の順で発生し、
+    // 瞬時に pointerup が走るため、click 時に isPressing は false になり攻撃が通ります。
+    if (isPressing && e.detail === 0) { 
+        // 疑似的な長押し中（スクリプト経由や特殊なデバイス挙動）のブロック
+        return;
+    }
+    
+    // 通常のタップであれば攻撃実行
+    attack();
+});
 
 loadGame(); triggerUIUpdate();
 </script>
