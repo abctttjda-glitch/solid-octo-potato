@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.20</title>
+<title>RELICORE - v1.19</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -218,7 +218,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.20</div>
+<div class="ver-footer">RELICORE v1.19</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -231,12 +231,10 @@ const GREAT_HADO_DROP_DATA = {1:{p:78.9888989,cond:0n},2:{p:18.0,cond:0n},3:{p:3
 const DIVINE_GUIDE_DROP_DATA = {1:{p:59.9888989,cond:0n},2:{p:30.0,cond:0n},3:{p:10.0,cond:0n},4:{p:0.01,cond:100000n},5:{p:0.001,cond:1000000n},6:{p:0.0001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
 let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
 let currentBossHP = BigInt(player.bossMaxHP);
+let attackInterval = null;
 let isModalOpen = false;
 let needsUIUpdate = false;
 let kushiaCounter = 0;
-
-// 自動連打削除に伴い、長押し検知用フラグを追加
-let isPressing = false;
 
 function formatV(val) {
 let n = BigInt(val);
@@ -360,12 +358,12 @@ document.getElementById("clear-modal-msg").innerHTML = `終末神を討ちし者
 document.getElementById("clear-modal").style.display = "flex";
 }
 
-function openRankUpModal(newLv) { isPressing = false; isModalOpen = true; const titleStr = RANK_NAMES[getCurrentRankIndex()]; document.getElementById("rank-up-msg-text").innerHTML = `魂の核が激しく鼓動する……！<br><br><span style="font-size:1.4em; color:var(--growth); font-weight:bold;">再起Lv.${newLv} 到達</span><br>称号が【${titleStr}】に昇格した。`; document.getElementById("rank-up-modal").style.display = "flex"; }
+function openRankUpModal(newLv) { stopAttack(); isModalOpen = true; const titleStr = RANK_NAMES[getCurrentRankIndex()]; document.getElementById("rank-up-msg-text").innerHTML = `魂の核が激しく鼓動する……！<br><br><span style="font-size:1.4em; color:var(--growth); font-weight:bold;">再起Lv.${newLv} 到達</span><br>称号が【${titleStr}】に昇格した。`; document.getElementById("rank-up-modal").style.display = "flex"; }
 function closeRankUpModal() { document.getElementById("rank-up-modal").style.display = "none"; isModalOpen = false; }
 function closeRareModal() { document.getElementById("rare-drop-modal").style.display = "none"; isModalOpen = false; }
 
 function openHadoModal(type) {
-isPressing = false; isModalOpen = true;
+stopAttack(); isModalOpen = true;
 let title = "", msg = "";
 if(type === 'hado') {
 title = "隠しスキル【破軍の号令】覚醒";
@@ -388,7 +386,7 @@ updateLog("再起の誓いによって新たなる力を得た");
 function closeHadoModal() { document.getElementById("hado-awaken-modal").style.display = "none"; isModalOpen = false; saveGame(); triggerUIUpdate(); }
 
 function openCosmicModal(type) {
-isPressing = false; isModalOpen = true;
+stopAttack(); isModalOpen = true;
 let title = "", msg = "";
 if(type === 'world') {
 title = "高位覚醒【ワールドオーダー】";
@@ -410,11 +408,12 @@ updateLog("再起の誓いによって新たなる力を得た");
 }
 function closeCosmicModal() { document.getElementById("cosmic-awaken-modal").style.display = "none"; isModalOpen = false; saveGame(); triggerUIUpdate(); }
 
-function openPolicy() { isPressing = false; isModalOpen = true; document.getElementById("policy-modal").style.display = "flex"; }
+function openPolicy() { stopAttack(); isModalOpen = true; document.getElementById("policy-modal").style.display = "flex"; }
 function closePolicy() { document.getElementById("policy-modal").style.display = "none"; isModalOpen = false; }
+function stopAttack() { if (attackInterval) { clearInterval(attackInterval); attackInterval = null; } }
 
 function openRareModal(relic) {
-isPressing = false; isModalOpen = true;
+stopAttack(); isModalOpen = true;
 const modal = document.getElementById("rare-drop-modal");
 const card = document.getElementById("rare-card-content");
 card.className = "rare-card glow-" + relic.star;
@@ -426,7 +425,7 @@ document.getElementById("rare-desc-label").innerHTML = detail + (relic.desc ? `<
 modal.style.display = "flex";
 }
 
-function openSerialModal() { isPressing = false; isModalOpen = true; document.getElementById("serial-input-area").style.display = "block"; document.getElementById("serial-result-area").style.display = "none"; document.getElementById("serial-input-box").value = ""; document.getElementById("serial-modal").style.display = "flex"; }
+function openSerialModal() { stopAttack(); isModalOpen = true; document.getElementById("serial-input-area").style.display = "block"; document.getElementById("serial-result-area").style.display = "none"; document.getElementById("serial-input-box").value = ""; document.getElementById("serial-modal").style.display = "flex"; }
 function closeSerialModal() { document.getElementById("serial-modal").style.display = "none"; isModalOpen = false; }
 
 function applySerialCode() {
@@ -622,7 +621,7 @@ currentBossHP = 0n;
 player.killCount++;
 player.isCleared = true;
 enemyDisasterStarUsed = false;
-isPressing = false; // モーダル表示前にフラグを落とす
+stopAttack();
 isModalOpen = true;
 document.getElementById("clear-modal-title").innerText = "神話の終焉";
 document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
@@ -879,6 +878,7 @@ if(hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
 if(hasZansai && m.star !== 6) { baseA *= 1000; baseH *= 1000; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
+// 追加：カウントダウン表示ロジック
 let countdown = "";
 if (id == 116 && !player.hasHado) {
   let needed = 100000 - c;
@@ -945,34 +945,15 @@ saveGame(); triggerUIUpdate();
 function resetData() { if(confirm("全リセットしますか？")) { localStorage.clear(); location.reload(); } }
 
 const btn = document.getElementById("attackBtn");
+btn.addEventListener("click", () => {
+if (isModalOpen) return;
 
-// 長押し検知：ボタンを押した瞬間（pointerdown）
-btn.addEventListener("pointerdown", () => {
-   isPressing = true;
-});
-
-// 長押し解除：ボタンから指が離れた、または外に出た時
-const stopPressing = () => {
-   isPressing = false;
-};
-btn.addEventListener("pointerup", stopPressing);
-btn.addEventListener("pointerleave", stopPressing);
-
-// こうげき処理：クリック（タップ）時に実行
-btn.addEventListener("click", (e) => {
-   if (isModalOpen) return;
-
-   // 長押し状態（isPressing）のまま click イベントが来た場合は、
-   // 長押しによる制限中とみなしてタップを無効化する。
-   // ※純粋なタップの場合は pointerdown -> pointerup -> click の順で発生し、
-   // 瞬時に pointerup が走るため、click 時に isPressing は false になり攻撃が通ります。
-   if (isPressing && e.detail === 0) {
-       // 疑似的な長押し中（スクリプト経由や特殊なデバイス挙動）のブロック
-       return;
-   }
-
-   // 通常のタップであれば攻撃実行
-   attack();
+if (attackInterval) {
+  stopAttack();
+} else {
+  attack();
+  attackInterval = setInterval(attack, 120);
+}
 });
 
 loadGame(); triggerUIUpdate();
