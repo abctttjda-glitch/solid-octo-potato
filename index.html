@@ -978,7 +978,7 @@ let n = BigInt(player.killCount);
 let base = BOSS_MAX_HP_BASE;
 let n_float = Number(n);
 let factor = 1.35 + 0.15 * Math.exp(-n_float / 50);
-let newHP = Number(base) * Math.pow(factor, n_float);
+let newHP = Number(base) * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
 player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
 currentBossHP = BigInt(player.bossMaxHP);
 }
