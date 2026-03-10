@@ -648,7 +648,7 @@ if ((player.inventory[702] || 0) > 0 && currentBossHP * 2n <= bossMaxHP) { final
 if((player.inventory[601] || 0) > 0) {
     if (currentBossHP >= BigInt(Math.floor(totalAtkVal)) * 100n) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.80)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率】</span>`; }
     const hpBonus = Math.log10(Number(totalBase.hp) + 1) * 1000;
-    finalDmg += BigInt(Math.floor(hpBonus)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率・還元】</span>`;
+    finalDmg += BigInt(Math.floor(hpBonus)); specialTags += `<span style="color:#5f9ea0; font-weight:bold;">【還元】</span>`;
 }
 if((player.inventory[602] || 0) > 0) { kushiaCounter++; if(kushiaCounter >= 100) { finalDmg *= 3n; specialTags += `<span style="color:var(--gold); font-weight:bold;">【魂律】</span>`; kushiaCounter = 0; } }
 if((player.inventory[604] || 0) > 0 && Math.random() < 0.001) { finalDmg *= 6n; specialTags += `<span style="color:#fd7e14; font-weight:bold;">【虚無】</span>`; }
