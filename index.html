@@ -512,7 +512,7 @@ function calcFinalDmgMult() {
 const lv = Math.min(10, player.totalLevel);
 const kamaFixed = (player.inventory[406] || 0) * 0.00004;
 let mult = (1.0 + (lv * 0.00004)) + kamaFixed;
-if ((player.inventory[703] || 0) > 0) mult += 4;
+if ((player.inventory[703] || 0) > 0) mult += 0.4;
 return mult;
 }
 
