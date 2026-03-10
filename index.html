@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.21</title>
+<title>RELICORE - v1.20</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -88,7 +88,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 .stat-label { font-size: 0.65em; color: #aaa; text-transform: uppercase; margin-bottom: 1px; }
 .stat-val { font-size: 0.95em; font-weight: bold; font-family: monospace; color: #fff; overflow-x: auto; white-space: nowrap; }
 .nav { display: flex; background: var(--panel); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-.nav button { flex: 1; padding: 12px 0; border: none; background: none; color: #66757d; font-weight: bold; font-size: 0.8em; }
+.nav button { flex: 1; padding: 12px 0; border: none; background: none; color: #6c757d; font-weight: bold; font-size: 0.8em; }
 .nav button.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #fff; }
 #content-area { flex-grow: 1; overflow: hidden; background: #fff; }
 .tab { display: none; padding: 10px 10px 150px 10px; height: 100%; width: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
@@ -218,7 +218,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.21</div>
+<div class="ver-footer">RELICORE v1.20</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -440,7 +440,7 @@ let message = "";
 if (code === "DEBUG_READY_2026") {
 player.totalLevel = 300;
 player.deathCount = 1000000;
-player.hadoExpAccum = 1000000;
+player.hadoExpAccum = 10000000;
 for (let i = 0; i < RELIC_MASTER.length; i++) {
 let rId = RELIC_MASTER[i].id;
 if (rId === 0 || rId === 999) continue;
@@ -563,10 +563,15 @@ if (!enemyDisasterStarUsed && (player.inventory[803] || 0) > 0 && (player.invent
 activateDisasterStar(bonus);
 }
 
-// 覚醒条件チェック
+// 覚醒条件チェック：破軍シリーズ
 if (!player.hasHado && (player.inventory[116] || 0) >= 100000 && player.hadoExpAccum >= 1000000) openHadoModal('hado');
 if (!player.hasGreatHado && (player.inventory[116] || 0) >= 200000 && player.hadoExpAccum >= 2000000) openHadoModal('great');
 if (!player.hasDivineGuide && (player.inventory[116] || 0) >= 300000 && player.hadoExpAccum >= 3000000) openHadoModal('divine');
+
+// 覚醒条件チェック：ワールドオーダーシリーズ
+if (!player.hasWorldOrder && (player.inventory[117] || 0) >= 100000 && player.hadoExpAccum >= 10000000) openCosmicModal('world');
+if (!player.hasCrown && player.hasWorldOrder && (player.inventory[117] || 0) >= 200000 && player.hadoExpAccum >= 20000000) openCosmicModal('crown');
+if (!player.hasMeta && player.hasCrown && (player.inventory[117] || 0) >= 300000 && player.hadoExpAccum >= 30000000) openCosmicModal('meta');
 
 const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
 let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult;
@@ -878,18 +883,7 @@ if(hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
 if(hasZansai && m.star !== 6) { baseA *= 1000; baseH *= 1000; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
-let countdown = "";
-if (id == 116 && (!player.hasHado || !player.hasGreatHado || !player.hasDivineGuide)) {
-  let target = !player.hasHado ? 100000 : (!player.hasGreatHado ? 200000 : 300000);
-  let needed = Math.max(0, target - c);
-  if(needed > 0) countdown = `<div class="relic-countdown">${needed.toLocaleString()}</div>`;
-} else if (id == 117 && (!player.hasGreatHado || !player.hasDivineGuide)) {
-  let target = !player.hasGreatHado ? 200000 : 300000;
-  let needed = Math.max(0, target - c);
-  if(needed > 0) countdown = `<div class="relic-countdown">${needed.toLocaleString()}</div>`;
-}
-
-return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdown}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}</div></div>`;
 }).join("");
 }
 
