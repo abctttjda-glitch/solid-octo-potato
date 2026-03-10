@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.22</title>
+<title>RELICORE - v1.23</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -218,7 +218,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.22</div>
+<div class="ver-footer">RELICORE v1.23</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -299,8 +299,8 @@ const RELIC_MASTER = [
 {id:311, star:3, name:"メモリークリスタル", atk:111111, hp:1111111, desc:"記憶の力が限界まで詰まった結晶"},
 {id:201, star:2, name:"聖騎士の欠片", atk:41.2, hp:682.4}, {id:202, star:2, name:"龍騎士の欠片", atk:86.7, hp:423.1}, {id:203, star:2, name:"暗黒騎士の欠片", atk:134.2, hp:0}, {id:204, star:2, name:"賢者の欠片", atk:52.1, hp:711.2}, {id:205, star:2, name:"大魔道士の欠片", atk:118.9, hp:24.3}, {id:206, star:2, name:"暗殺王の欠片", atk:156.3, hp:12.7}, {id:207, star:2, name:"重装騎士の欠片", atk:0, hp:1248.6}, {id:208, star:2, name:"拳聖の欠片", atk:99.2, hp:315.4}, {id:209, star:2, name:"守護騎士の欠片", atk:45.8, hp:980.5}, {id:210, star:2, name:"冒険王の欠片", atk:73.3, hp:594.1},
 {id:301, star:3, name:"聖龍騎士の欠片", atk:874.3, hp:6924.1}, {id:302, star:3, name:"深淵魔導の欠片", atk:1324.1, hp:214.7}, {id:303, star:3, name:"金剛武神の欠片", atk:412.8, hp:14863.2}, {id:304, star:3, name:"暗黒皇帝の欠片", atk:1568.4, hp:0}, {id:305, star:3, name:"大聖者の欠片", atk:52.7, hp:15241.4}, {id:306, star:3, name:"影の支配者の欠片", atk:1410.9, hp:128.4}, {id:307, star:3, name:"竜血闘士の欠片", atk:1024.2, hp:4210.9}, {id:308, star:3, name:"天界騎士の欠片", atk:612.7, hp:9845.1}, {id:309, star:3, name:"虚空の暗殺者の欠片", atk:1624.8, hp:42.1}, {id:310, star:3, name:"極大賢者の欠片", atk:542.1, hp:11840.7},
-{id:401, star:4, name:"【不退転】武神の魂", atk:65000, hp:180000, desc:"獲得遺物ボーナス増加。(上限40個分)"}, {id:402, star:4, name:"【刹那】聖者の遺志", atk:50000, hp:250000, desc:"HP増加時の増加幅を+5（上限5万個分）。"}, {id:403, star:4, name:"【因果】魔導王の記憶", atk:75000, hp:150000, desc:"攻撃無効化率の下限を底上げ。(上限10%)"}, {id:404, star:4, name:"【反撃】勇者の残光", atk:90000, hp:120000, desc:"反撃の狼煙で★3遺物も獲得。"}, {id:405, star:4, name:"【魂研】賢者の叡智", atk:55000, hp:220000, desc:"獲得戦闘経験値が向上。(上限1000個分)"}, {id:406, star:4, name:"【死刻】死神の鎌", atk:110000, hp:80000, desc:"最終ダメージ倍率を固定で+0.004%加算する。"},
-{id:501, star:5, name:"断絶の権能", atk:382660, hp:916330, desc:"1つにつき、受けるダメージを50万軽減。"}, {id:502, star:5, name:"強欲の権能", atk:649800, hp:812400, desc:"1つにつき、獲得遺物数を+5増加。(上限10個分)"}, {id:503, star:5, name:"超越の権能", atk:524180, hp:689450, desc:"0.1%の確率で、その一撃のダメージを1.5倍にする。"}, {id:504, star:5, name:"破壊の権能", atk:999999, hp:0, desc:"0.1%の確率で、総ATK分のダメージを最終ダメージに直接加算する。"},
+{id:401, star:4, name:"【不退転】武神の魂", atk:65000, hp:180000, desc:"獲得遺物ボーナス増加。(上限50個分)"}, {id:402, star:4, name:"【刹那】聖者の遺志", atk:50000, hp:250000, desc:"HP増加時の増加幅を+5（上限5万個分）。"}, {id:403, star:4, name:"【因果】魔導王の記憶", atk:75000, hp:150000, desc:"攻撃無効化率の下限を底上げ。(上限10%)"}, {id:404, star:4, name:"【反撃】勇者の残光", atk:90000, hp:120000, desc:"反撃の狼煙で★3遺物も獲得。"}, {id:405, star:4, name:"【魂研】賢者の叡智", atk:55000, hp:220000, desc:"獲得戦闘経験値が向上。(上限1000個分)"}, {id:406, star:4, name:"【死刻】死神の鎌", atk:110000, hp:80000, desc:"最終ダメージ倍率を固定で+0.004%加算する。"},
+{id:501, star:5, name:"断絶の権能", atk:382660, hp:916330, desc:"1つにつき、受けるダメージを50万軽減。"}, {id:502, star:5, name:"強欲の権能", atk:649800, hp:812400, desc:"【無効化】"}, {id:503, star:5, name:"超越の権能", atk:524180, hp:689450, desc:"0.1%の確率で、その一撃のダメージを1.5倍にする。"}, {id:504, star:5, name:"破壊の権能", atk:999999, hp:0, desc:"0.1%の確率で、総ATK分のダメージを最終ダメージに直接加算する。"},
 {id:505, star:5, name:"再生の権能", atk:222222, hp:1528931, desc:"被弾時10%の確率でHP増加(再起)が2回発生。(重複不可)"}, {id:506, star:5, name:"双刃の権能", atk:454649, hp:519700, desc:"150回攻撃ごとに次の一撃のダメージ+100%。(重複不可)"},
 {id:601, star:6, name:"絶対統率レリック・オーバーロード", atk:1500000, hp:4500000, desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+8%。現在のHPに応じてATKが微増。"}, {id:602, star:6, name:"魂律解放レリ・クシア", atk:2500000, hp:3500000, desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"}, {id:603, star:6, name:"原初核冠レリコア・レガリア", atk:2000000, hp:4000000, desc:"★1〜6遺物のステータス上昇効果を20%増加させる。"}, {id:604, star:6, name:"虚無終焉レリ・ノヴァ", atk:5555555, hp:0, desc:"攻撃時0.1%の確率で与ダメージ+500%。"},
 {id:605, star:6, name:"戦碑累功レリ・エンス", atk:3000000, hp:3000000, desc:"獲得基礎経験値を1.5倍にする。(上限1個)"},
@@ -617,9 +617,11 @@ if ((player.inventory[503] || 0) > 0 && Math.random() < 0.001) { finalDmg = BigI
 if(finalDmg < 1n) finalDmg = 1n;
 if(finalDmg > player.maxDmg) player.maxDmg = finalDmg;
 
-const skillLv = Math.min(10, player.totalLevel);
-const bushinCount = Math.min(40, player.inventory[401] || 0); const gouyokuCount = Math.min(10, player.inventory[502] || 0);
-let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(skillLv + bushinCount + (gouyokuCount * 5));
+// ドロップ計算
+const futaitenBase = Math.min(50, Math.floor(player.totalLevel / 10) * 5);
+const bushinCount = Math.min(50, player.inventory[401] || 0);
+const totalDropCount = Math.min(100, futaitenBase + bushinCount);
+let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(totalDropCount);
 
 if(finalDmg >= currentBossHP) {
 if(!player.isCleared) {
@@ -655,7 +657,7 @@ logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰�
 
 if(currentBossHP > 0n) {
 const currentTotalHP = totalBase.hp * BigInt(Math.floor(bonus.mult));
-let baseCut = Math.min(20, Math.floor(skillLv/5) * 5);
+let baseCut = Math.min(20, Math.floor(player.totalLevel/5) * 5);
 let ingaVal = Math.min(10, player.inventory[403] || 0);
 let minCut = baseCut + (ingaVal * 2);
 
@@ -677,7 +679,7 @@ let repeatCount = 1;
 if ((player.inventory[505] || 0) > 0 && Math.random() < 0.1) { repeatCount = 2; specialTags += `【再起】`; }
 let totalUpHP = 0n;
 for (let i = 0; i < repeatCount; i++) {
-let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + skillLv + Math.min(50000, player.inventory[402] || 0) * 5);
+let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + Math.min(10, player.totalLevel) + Math.min(50000, player.inventory[402] || 0) * 5);
 totalUpHP += up;
 }
 player.baseHP += totalUpHP; player.deathCount += gainedExp;
@@ -692,7 +694,7 @@ function getGuaranteedDrop() {
 const lv = Math.min(10, player.totalLevel); const hasZanko = (player.inventory[404] || 0) > 0; let localGains = {};
 const cands2 = RELIC_MASTER.filter(m => m.star === 2 && m.id !== 117);
 const cands3 = RELIC_MASTER.filter(m => m.star === 3);
-const dropCount = lv;
+const dropCount = Math.min(100, lv);
 for (let i = 0; i < dropCount; i++) { let sel; if (hasZanko && Math.random() < 0.5) { sel = cands3[Math.floor(Math.random() * cands3.length)]; } else { sel = cands2[Math.floor(Math.random() * cands2.length)]; } player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1; localGains[sel.id] = (localGains[sel.id] || 0) + 1; }
 player.totalRelics += dropCount; let entries = []; Object.entries(localGains).forEach(([id, count]) => { const m = RELIC_MASTER.find(x => x.id == id); entries.push(`<span class="c${m.star}">★${m.star} ${m.name}${count > 1 ? '×' + count : ''}</span>`); });
 return `<div style="font-size:0.82em;">【狼煙】獲得：${entries.join("、 ")}</div>`;
@@ -808,41 +810,38 @@ if(tid === 'vow') renderVow(); else if(tid === 'relic') renderRelics(); else if(
 function renderVow() {
 const rawLv = player.totalLevel;
 const lv = Math.min(10, rawLv);
-const bushinCount = Math.min(40, player.inventory[401] || 0);
-const gouyokuCount = Math.min(10, player.inventory[502] || 0);
-const skills = [{ id: "futaiten", nameJp: "不退転の力", desc: "戦闘を経験するたびにランダムな遺物を (1+所持数) つ獲得する。攻撃するたびに深淵に漂う遺物を魂に刻む。" },{ id: "setsuna", nameJp: "刹那の堆積", desc: "再起するたびにHP増加幅+1。勝利への渇望が核に宿る。" },{ id: "inga", nameJp: "因果の拒絶", desc: "稀に攻撃を無効化する。経験値が深まるごとに下限が向上。" },{ id: "hangeki", nameJp: "反撃の狼煙", desc: "生存時★2〜3の遺物を確定で入手する。不屈の闘志を燃やし、新たな力を手に入れる。" },{ id: "konken", nameJp: "魂の研磨", desc: "経験値ボーナスが向上。蓄積した戦闘経験に応じて機能強化。" },{ id: "shikoku", nameJp: "死を刻む", desc: "経験を積むたびに最終ダメージを増加させる。" }];
+const futaitenBase = Math.min(50, Math.floor(rawLv / 10) * 5);
+const bushinCount = Math.min(50, player.inventory[401] || 0);
+const skills = [{ id: "futaiten", nameJp: "不退転の力", desc: "戦闘を経験するたびにランダムな遺物を獲得する。攻撃するたびに深淵に漂う遺物を魂に刻む。" },{ id: "setsuna", nameJp: "刹那の堆積", desc: "再起するたびにHP増加幅+1。勝利への渇望が核に宿る。" },{ id: "inga", nameJp: "因果の拒絶", desc: "稀に攻撃を無効化する。経験値が深まるごとに下限が向上。" },{ id: "hangeki", nameJp: "反撃の狼煙", desc: "生存時★2〜3の遺物を確定で入手する。不屈の闘志を燃やし、新たな力を手に入れる。" },{ id: "konken", nameJp: "魂の研磨", desc: "経験値ボーナスが向上。蓄積した戦闘経験に応じて機能強化。" },{ id: "shikoku", nameJp: "死を刻む", desc: "経験を積むたびに最終ダメージを増加させる。" }];
 let html = "";
 skills.forEach(s => {
 let hlContent = "";
 if(s.id === "futaiten") {
-hlContent = `<span class="vow-tag">ボーナス：+${lv + bushinCount + (gouyokuCount * 5)}</span><span class="vow-tag">【不退転：+${bushinCount}】</span><span class="vow-tag">【強欲：+${gouyokuCount * 5}】</span>`;
+hlContent = `<span class="vow-tag">ボーナス：+${futaitenBase + bushinCount}</span><span class="vow-tag">【不退転：+${bushinCount}】</span>`;
 }
 else if(s.id === "setsuna") {
 const setsunaVal = Math.min(50000, player.inventory[402] || 0) * 5;
-hlContent = `<span class="vow-tag">HP増加：+${lv + setsunaVal}</span><span class="vow-tag">/ 上限1〜${formatV(player.deathCount || 100)}</span><span class="vow-tag">【刹那：+${setsunaVal}】</span>`;
+hlContent = `<span class="vow-tag">HP増加：+${lv + setsunaVal}</span><span class="vow-tag">【刹那：+${setsunaVal}】</span>`;
 }
 else if(s.id === "inga") {
 let baseCut = Math.min(20, Math.floor(lv/5) * 5);
 let ingaVal = Math.min(10, player.inventory[403] || 0);
-hlContent = `<span class="vow-tag">無効化：${Math.min(95, baseCut + (ingaVal * 2))}% ～ 100%</span><span class="vow-tag">【因果：+${ingaVal * 2}%】</span>`;
+hlContent = `<span class="vow-tag">無効化：${Math.min(95, baseCut + (ingaVal * 2))}%</span><span class="vow-tag">【因果：+${ingaVal * 2}%】</span>`;
 }
 else if(s.id === "hangeki") {
 const zanko = (player.inventory[404] || 0) > 0;
-hlContent = `<span class="vow-tag">確定：1 ～ ${lv}個</span><span class="vow-tag">(★2${zanko ? '/★3' : ''})</span><span class="vow-tag">【勇者の残光】</span>`;
+hlContent = `<span class="vow-tag">確定：1 ～ ${lv}個</span><span class="vow-tag">(★2${zanko ? '/★3' : ''})</span>`;
 }
 else if(s.id === "konken") {
-const ensCount = (player.inventory[605] || 0) * 5;
-hlContent = `<span class="vow-tag">経験値：+${lv + Math.min(1000, player.inventory[405] || 0)}</span><span class="vow-tag">【賢者：+${Math.min(1000, player.inventory[405] || 0)}】</span>`;
+hlContent = `<span class="vow-tag">経験値：+${lv + Math.min(1000, player.inventory[405] || 0)}</span>`;
 }
 else if(s.id === "shikoku") {
 const kamaFixed = (player.inventory[406] || 0) * 0.00004;
 const totalBonus = (lv * 0.00004) + kamaFixed;
-hlContent = `<span class="vow-tag">最終ダメ：+${(totalBonus * 100).toFixed(4)}%</span><span class="vow-tag">【死神：+${(kamaFixed * 100).toFixed(4)}%】</span>`;
+hlContent = `<span class="vow-tag">最終ダメ：+${(totalBonus * 100).toFixed(4)}%</span>`;
 }
 
-let lvClass = lv >= 10 ? "max" : "";
-let lvText = lv >= 10 ? "Lv.10 (MAX)" : `Lv.${lv}`;
-html += `<div class="vow-item"><div class="vow-header"><span class="vow-name">${s.nameJp}</span><span class="vow-lv ${lvClass}">${lvText}</span></div><div><div class="vow-highlight">${hlContent}</div><span class="vow-sub">${s.desc}</span></div></div>`;
+html += `<div class="vow-item"><div class="vow-header"><span class="vow-name">${s.nameJp}</span></div><div><div class="vow-highlight">${hlContent}</div><span class="vow-sub">${s.desc}</span></div></div>`;
 });
 document.getElementById('vow-list').innerHTML = html;
 }
@@ -885,18 +884,7 @@ if(hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
 if(hasZansai && m.star !== 6) { baseA *= 1000; baseH *= 1000; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
-let countdownHtml = "";
-if (id == 116) {
- if (!player.hasHado) countdownHtml = `<span class="relic-countdown">${Math.max(0, 100000 - c)}</span>`;
- else if (!player.hasGreatHado) countdownHtml = `<span class="relic-countdown">${Math.max(0, 200000 - c)}</span>`;
- else if (!player.hasDivineGuide) countdownHtml = `<span class="relic-countdown">${Math.max(0, 300000 - c)}</span>`;
-} else if (id == 117) {
- if (!player.hasWorldOrder) countdownHtml = `<span class="relic-countdown">${Math.max(0, 100000 - c)}</span>`;
- else if (!player.hasCrown) countdownHtml = `<span class="relic-countdown">${Math.max(0, 200000 - c)}</span>`;
- else if (!player.hasMeta) countdownHtml = `<span class="relic-countdown">${Math.max(0, 300000 - c)}</span>`;
-}
-
-return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}</div></div>`;
 }).join("");
 }
 
