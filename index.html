@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.21</title>
+<title>RELICORE - v1.26</title>
 <style>
-:root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
+:root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; touch-action: manipulation; }
 body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
@@ -95,7 +95,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 .tab { display: none; padding: 10px 10px 150px 10px; height: 100%; width: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .tab.active { display: block; }
 .btn-attack { width: 100%; padding: 16px; background: var(--primary); color: #fff; font-size: 1.3em; font-weight: bold; border: none; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 0 #0056b3; flex-shrink: 0; transition: background 0.2s; }
-.btn-attack.auto { background: #28a745; box-shadow: 0 4px 0 #1e7e34; }
 #log { height: 400px; font-size: 0.82em; background: #fafafa; border: 1px solid var(--border); padding: 10px; overflow-y: auto; border-radius: 8px; line-height: 1.4; }
 .log-set { border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 8px; }
 
@@ -196,7 +195,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div id="header"><div class="boss-area"><div class="boss-name" id="boss-display-name">終末神アポカリス＝ティア</div><div class="hp-bar-container"><div id="hp-bar-fill"></div></div><div class="hp-val-display" id="bosshp-cur">0</div></div><div class="status-box"><div class="stat-card"><span class="stat-label">ATK</span><div class="stat-val" id="p-atk">0</div></div><div class="stat-card hp-card"><span class="stat-label">HP</span><div class="stat-val" id="p-hp">0</div></div></div></div>
 <div class="nav"><button onclick="showTab('battle')" id="nav-battle" class="active">討伐</button><button onclick="showTab('vow')" id="nav-vow">再起</button><button onclick="showTab('relic')" id="nav-relic">遺物</button><button onclick="showTab('status')" id="nav-status">詳細</button></div>
 <div id="content-area">
-<div id="battle" class="tab active"><button class="btn-attack" id="attackBtn" onclick="toggleAutoAttack()">こうげき</button><div id="log"></div></div>
+<div id="battle" class="tab active"><button class="btn-attack" id="attackBtn" onclick="attack()">こうげき</button><div id="log"></div></div>
 <div id="vow" class="tab"><div id="vow-list" class="vow-list-container"></div></div>
 <div id="relic" class="tab"><div class="relic-list-container" id="relic-list"></div></div>
 <div id="status" class="tab">
@@ -220,12 +219,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.21</div>
+<div class="ver-footer">RELICORE v1.26</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
 let enemyDisasterStarUsed = false;
-let autoAttackInterval = null;
 let comboHit = 0;
 let isGeminiBattle = false;
 
@@ -239,20 +237,6 @@ let currentBossHP = BigInt(player.bossMaxHP);
 let isModalOpen = false;
 let needsUIUpdate = false;
 let kushiaCounter = 0;
-
-function toggleAutoAttack() {
-    const btn = document.getElementById("attackBtn");
-    if (autoAttackInterval) {
-        clearInterval(autoAttackInterval);
-        autoAttackInterval = null;
-        btn.classList.remove("auto");
-        btn.textContent = "こうげき";
-    } else {
-        autoAttackInterval = setInterval(attack, 100);
-        btn.classList.add("auto");
-        btn.textContent = "自動攻撃中...";
-    }
-}
 
 function formatV(val) {
 let n = BigInt(val);
@@ -985,10 +969,9 @@ function closeStory() { player.storySeen = true; document.getElementById("story-
 
 function handleBossDefeat() {
     comboHit = 0;
-    // 5% 確率でGemini出現抽選
     if (!isGeminiBattle && Math.random() < 0.05) {
         isGeminiBattle = true;
-        currentBossHP = BigInt("1000000000000000000000000"); // 適宜調整
+        currentBossHP = BigInt("1000000000000000000000000");
         addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。</span></div>`);
     } else {
         player.isCleared = true;
