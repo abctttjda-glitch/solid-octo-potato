@@ -336,8 +336,7 @@ player.hadoExpAccum = p.hadoExpAccum || 0;
 player.evolutionStack = p.evolutionStack || 0;
 enemyDisasterStarUsed = p.enemyDisasterStarUsed || false;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
-player.hasGreatHado = false;
-player.hasDivineGuide = false;
+
 } else { currentBossHP = BigInt(player.bossMaxHP); }
 
 Object.keys(player.inventory).forEach(id => {
