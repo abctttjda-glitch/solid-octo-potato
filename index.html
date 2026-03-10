@@ -6,8 +6,11 @@
 <title>RELICORE - v1.21</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
-* { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; touch-action: none; }
+* { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
 body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+
+/* 個別UI制御 */
+.btn-attack, .clickable-stat, .story-btn, .cosmic-btn, .btn-serial, .btn-reset { touch-action: manipulation; }
 
 .rank-display { text-align: center; padding: 10px 15px; border-radius: 12px; margin-bottom: 10px; border: 2px solid #333; transition: all 0.5s ease; background: #000; color: #fff; }
 .rank-lv { font-size: 0.75em; margin-bottom: 4px; font-weight: bold; }
@@ -153,7 +156,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 </head>
 <body>
 <div id="policy-modal"><div class="policy-content"><div class="policy-title">プライバシーポリシー</div><div class="policy-text">RELICORE（以下「本サービス」）は、ユーザーのプライバシーを尊重し、適切な取り扱いと保護に努めます。<br><hr class="policy-divider"><strong>1. 取得する情報について</strong><br>本サービスでは、以下の情報を取得する場合があります。<ul><li>ブラウザのローカルストレージに保存されるゲームデータ</li><li>アクセス解析ツールにより収集される匿名のアクセス情報</li><li>サーバーの標準ログ情報（IPアドレス、閲覧日時など）</li></ul><strong>2. 情報の利用目的</strong><br>取得した情報は以下の目的で利用します。<ul><li>ゲームの進行状況保存</li><li>不具合調査および改善</li></ul><hr class="policy-divider"><strong>6. 免責事項</strong><br>本サービスの利用により生じた損害について、開発者は一切の責任を負いません。<br><div class="policy-footer">制定日：2026年3月1日<br>RELICORE 開発者　げぇいむ＆AI</div></div><button class="btn-attack" style="padding:10px; font-size:1em;" onclick="closePolicy()">閉じる</button></div></div>
-<div id="rank-up-modal" onpointerdown="closeRankUpModal()"><div class="rank-up-content"><div class="rank-up-title">覚醒</div><div class="rank-up-msg" id="rank-up-msg-text">魂の核が激しく鼓動する……！</div><button class="story-btn" onclick="closeRankUpModal()">高みへ</button><div class="rank-up-sub">※すべての再起スキルが強化されました。</div></div></div>
+<div id="rank-up-modal"><div class="rank-up-content"><div class="rank-up-title">覚醒</div><div class="rank-up-msg" id="rank-up-msg-text">魂の核が激しく鼓動する……！</div><button class="story-btn" onclick="closeRankUpModal()">高みへ</button><div class="rank-up-sub">※すべての再起スキルが強化されました。</div></div></div>
 <div id="rare-drop-modal" onclick="closeRareModal()"><div id="rare-card-content" class="rare-card"><span id="rare-star-label" class="rare-star"></span><span id="rare-name-label" class="rare-name"></span><div id="rare-desc-label" class="rare-desc"></div><div style="margin-top:20px; font-size:0.7em; color:#888;">画面タップで閉じる</div></div></div>
 <div id="hado-awaken-modal"><div class="hado-content"><div class="hado-title" id="hado-modal-title">隠しスキル覚醒</div><div class="hado-msg" id="hado-modal-msg"></div><button class="story-btn" onclick="closeHadoModal()">その力を受け入れる</button></div></div>
 
@@ -179,7 +182,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <h3 style="color:var(--gold); letter-spacing:2px;">シリアルコード入力</h3>
 <div id="serial-input-area">
 <p style="font-size:0.85em; color:#aaa; margin-bottom:15px;">有効なコードを入力してください</p>
-<input type="text" id="serial-input-box" placeholder="CODE HERE" ontouchstart="event.stopPropagation()">
+<input type="text" id="serial-input-box" placeholder="CODE HERE">
 <div style="display:flex; gap:10px;">
  <button class="story-btn" style="flex:1;" onclick="applySerialCode()">適用</button>
  <button class="story-btn" style="flex:1; border-color:#666; color:#666;" onclick="closeSerialModal()">戻る</button>
