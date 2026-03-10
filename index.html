@@ -620,7 +620,7 @@ if(finalDmg > player.maxDmg) player.maxDmg = finalDmg;
 const skillLv = Math.min(10, player.totalLevel);
 // 不退転の力: 核Lv10毎に5個ずつ増加 (最大50)、武神の魂: 最大50個 (上限100)
 const bushinCount = Math.min(50, player.inventory[401] || 0);
-const futaitenBonus = Math.min(50, Math.floor(skillLv / 10) * 5);
+const futaitenBonus = Math.min(50, Math.floor(skillLv10) * 5);
 const totalDropCount = Math.min(100, (skillLv + futaitenBonus + bushinCount));
 
 let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(totalDropCount);
