@@ -321,7 +321,7 @@ const RELIC_MASTER = [
 {id:505, star:5, name:"再生の権能", atk:222222, hp:1528931, desc:"被弾時10%の確率でHP増加(再起)が2回発生。(重複不可)"}, {id:506, star:5, name:"双刃の権能", atk:454649, hp:519700, desc:"150回攻撃ごとに次の一撃のダメージ+100%。(重複不可)"},
 {id:601, star:6, name:"絶対統率レリック・オーバーロード", atk:1500000, hp:4500000, desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+80%。【還元】現在のHPに応じてATKが微増。"}, {id:602, star:6, name:"魂律解放レリ・クシア", atk:2500000, hp:3500000, desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"}, {id:603, star:6, name:"原初核冠レリコア・レガリア", atk:2000000, hp:4000000, desc:"★1〜6遺物のステータス上昇効果を50%増加させる。"}, {id:604, star:6, name:"虚無終焉レリ・ノヴァ", atk:5555555, hp:0, desc:"攻撃時0.1%の確率で与ダメージ+500%。"},
 {id:605, star:6, name:"戦碑累功レリ・エンス", atk:3000000, hp:3000000, desc:"獲得基礎経験値を1.5倍にする。(上限1個)"},
-{id:701, star:7, name:"パンドラの箱", atk:0, hp:0, desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"}, {id:702, star:7, name:"終焉の福音", atk:0, hp:0, desc:"敵HPが50%以下のとき、与ダメージ+40%。(重複不可)"}, {id:703, star:7, name:"神滅のアカシックレコード", atk:0, hp:0, desc:"与ダメージの最終倍率にさらに+40%。(重複不可)"},
+{id:701, star:7, name:"パンドラの箱", atk:0, hp:0, desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"}, {id:702, star:7, name:"終焉の福音", atk:0, hp:0, desc:"敵HPが50%以下のとき、与ダメージ+400%。(重複不可)"}, {id:703, star:7, name:"神滅のアカシックレコード", atk:0, hp:0, desc:"与ダメージの最終倍率にさらに+400%。(重複不可)"},
 {id:804, star:8, name:"災厄の残滓", atk:0, hp:0, desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},
 {id:801, star:8, name:"天律崩壊オメガ・コア", atk:0, hp:0, desc:"統合・乗算コア：計算ロジックを最適化。一度のこうげきで獲得遺物が100個ある時発動。ステータスを乗算強化蓄積する。"},
 {id:802, star:8, name:"特異演算機関：ジェネシスコード", atk:0, hp:0, desc:"敵が強すぎる場合、演算機関が自己進化する。"},
@@ -512,7 +512,7 @@ function calcFinalDmgMult() {
 const lv = Math.min(10, player.totalLevel);
 const kamaFixed = (player.inventory[406] || 0) * 0.00004;
 let mult = (1.0 + (lv * 0.00004)) + kamaFixed;
-if ((player.inventory[703] || 0) > 0) mult += 0.4;
+if ((player.inventory[703] || 0) > 0) mult += 4;
 return mult;
 }
 
@@ -644,7 +644,7 @@ if (!specialTags.includes("【救済】") && activeAuth) {
     if (activeAuth === 504 && Math.random() < 0.001) { finalDmg += BigInt(Math.floor(totalAtkVal)); specialTags += `<span style="color:#ff0000; font-weight:bold;">【破壊】</span>`; }
 }
 
-if ((player.inventory[702] || 0) > 0 && currentBossHP * 2n <= bossMaxHP) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.4)); specialTags += `<span style="color:#ffcc00; font-weight:bold;">【福音】</span>`; }
+if ((player.inventory[702] || 0) > 0 && currentBossHP * 2n <= bossMaxHP) { finalDmg = BigInt(Math.floor(Number(finalDmg) * ⒋)); specialTags += `<span style="color:#ffcc00; font-weight:bold;">【福音】</span>`; }
 if((player.inventory[601] || 0) > 0) {
     if (currentBossHP >= BigInt(Math.floor(totalAtkVal)) * 100n) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.80)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率】</span>`; }
     const hpBonus = Math.log10(Number(totalBase.hp) + 1) * 1000;
