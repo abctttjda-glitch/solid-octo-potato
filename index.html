@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.20</title>
+<title>RELICORE - v1.21</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-rainbow: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); --relic-deep-dark: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -218,7 +218,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.20</div>
+<div class="ver-footer">RELICORE v1.21</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -235,7 +235,6 @@ let isModalOpen = false;
 let needsUIUpdate = false;
 let kushiaCounter = 0;
 
-// 自動連打削除に伴い、長押し検知用フラグを追加
 let isPressing = false;
 
 function formatV(val) {
@@ -622,7 +621,7 @@ currentBossHP = 0n;
 player.killCount++;
 player.isCleared = true;
 enemyDisasterStarUsed = false;
-isPressing = false; // モーダル表示前にフラグを落とす
+isPressing = false;
 isModalOpen = true;
 document.getElementById("clear-modal-title").innerText = "神話の終焉";
 document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
@@ -880,21 +879,25 @@ if(hasZansai && m.star !== 6) { baseA *= 1000; baseH *= 1000; }
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
 
 let countdown = "";
-if (id == 116 && !player.hasHado) {
-   let needed = 100000 - c;
-   if(needed > 0) countdown = `<div class="relic-countdown">発動まであと ${needed.toLocaleString()} 個</div>`;
-} else if (id == 116 && !player.hasGreatHado && player.hasHado) {
-   let needed = 200000 - c;
-   if(needed > 0) countdown = `<div class="relic-countdown">大号令まであと ${needed.toLocaleString()} 個</div>`;
-} else if (id == 116 && !player.hasDivineGuide && player.hasGreatHado) {
-   let needed = 300000 - c;
-   if(needed > 0) countdown = `<div class="relic-countdown">天帝まであと ${needed.toLocaleString()} 個</div>`;
-} else if (id == 117 && !player.hasGreatHado) {
-   let needed = 200000 - c;
-   if(needed > 0) countdown = `<div class="relic-countdown">大号令まであと ${needed.toLocaleString()} 個</div>`;
-} else if (id == 117 && !player.hasDivineGuide && player.hasGreatHado) {
-   let needed = 300000 - c;
-   if(needed > 0) countdown = `<div class="relic-countdown">天帝まであと ${needed.toLocaleString()} 個</div>`;
+if (id == 116) {
+   if (!player.hasHado) {
+       let needed = 100000 - c;
+       if(needed > 0) countdown = `<div class="relic-countdown">発動まであと ${needed.toLocaleString()} 個</div>`;
+   } else if (!player.hasGreatHado) {
+       let needed = 200000 - c;
+       if(needed > 0) countdown = `<div class="relic-countdown">大号令まであと ${needed.toLocaleString()} 個</div>`;
+   } else if (!player.hasDivineGuide) {
+       let needed = 300000 - c;
+       if(needed > 0) countdown = `<div class="relic-countdown">天帝まであと ${needed.toLocaleString()} 個</div>`;
+   }
+} else if (id == 117) {
+   if (!player.hasGreatHado) {
+       let needed = 200000 - c;
+       if(needed > 0) countdown = `<div class="relic-countdown">大号令まであと ${needed.toLocaleString()} 個</div>`;
+   } else if (!player.hasDivineGuide) {
+       let needed = 300000 - c;
+       if(needed > 0) countdown = `<div class="relic-countdown">天帝まであと ${needed.toLocaleString()} 個</div>`;
+   }
 }
 
 return `<div class="relic-card ${cardCls}"><div class="relic-name c${m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdown}</div></div>`;
@@ -946,32 +949,23 @@ function resetData() { if(confirm("全リセットしますか？")) { localStor
 
 const btn = document.getElementById("attackBtn");
 
-// 長押し検知：ボタンを押した瞬間（pointerdown）
 btn.addEventListener("pointerdown", () => {
     isPressing = true;
 });
 
-// 長押し解除：ボタンから指が離れた、または外に出た時
 const stopPressing = () => {
     isPressing = false;
 };
 btn.addEventListener("pointerup", stopPressing);
 btn.addEventListener("pointerleave", stopPressing);
 
-// こうげき処理：クリック（タップ）時に実行
 btn.addEventListener("click", (e) => {
     if (isModalOpen) return;
     
-    // 長押し状態（isPressing）のまま click イベントが来た場合は、
-    // 長押しによる制限中とみなしてタップを無効化する。
-    // ※純粋なタップの場合は pointerdown -> pointerup -> click の順で発生し、
-    // 瞬時に pointerup が走るため、click 時に isPressing は false になり攻撃が通ります。
     if (isPressing && e.detail === 0) { 
-        // 疑似的な長押し中（スクリプト経由や特殊なデバイス挙動）のブロック
         return;
     }
     
-    // 通常のタップであれば攻撃実行
     attack();
 });
 
