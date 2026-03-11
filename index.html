@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.23</title>
+<title>RELICORE - v1.24</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -230,7 +230,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.23</div>
+<div class="ver-footer">RELICORE v1.24</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -599,7 +599,13 @@ function activateDisasterStar(bonus) {
 const memoryCrystalId = 311;
 player.inventory[memoryCrystalId] -= 100;
 
-const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+const coreLevel = player.totalLevel || 0;
+const relicMultiplier = 1 + Math.log10(coreLevel + 1) * 0.25;
+
+const totalBase = applyOmegaCore(
+    BigInt(Math.floor(Number(player.baseAtk + bonus.atk) * relicMultiplier)),
+    BigInt(Math.floor(Number(player.baseHP + bonus.hp) * relicMultiplier))
+);
 const damage = BigInt(Math.floor(Number(totalBase.atk) * bonus.mult * 15));
 
 currentBossHP -= damage;
@@ -637,7 +643,6 @@ const bonus = getRelicBonus();
 const rawBaseAtk = player.baseAtk + bonus.atk;
 const rawBaseHp = player.baseHP + bonus.hp;
 
-// 核Lv強化：遺物効果計算後、ステータス確定前に適用
 const totalBase = applyOmegaCore(
     BigInt(Math.floor(Number(rawBaseAtk) * relicMultiplier)),
     BigInt(Math.floor(Number(rawBaseHp) * relicMultiplier))
@@ -669,7 +674,6 @@ if ((player.inventory[804] || 0) > 0) {
 totalAtkVal *= (1 + Math.log10(player.killCount + 1) * 0.06);
 }
 
-// 核Lv強化：最終ダメージ倍率適用
 let bonusDamage = coreLevel * 0.02;
 const damageMultiplier = 1 + bonusDamage / (1 + bonusDamage);
 totalAtkVal *= damageMultiplier;
@@ -773,7 +777,6 @@ let kenmaBonus = Math.min(1000, player.inventory[405] || 0) + player.totalLevel;
 let ensBonus = (player.inventory[605] || 0) >= 1 ? 1.5 : 1.0;
 let gainedExp = Math.floor((baseExp + kenmaBonus) * ensBonus);
 
-// 核Lv強化：経験値取得適用
 const expMultiplier = 1 + Math.sqrt(coreLevel) * 0.08;
 gainedExp = Math.floor(gainedExp * expMultiplier);
 
