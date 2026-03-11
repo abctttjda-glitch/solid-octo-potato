@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.22</title>
+<title>RELICORE - v1.24</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -49,7 +49,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 .hado-title { color: var(--gold); font-size: 1.8em; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 15px var(--gold); }
 .hado-msg { font-size: 1.0em; line-height: 2.0; margin-bottom: 35px; color: #eee; text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; }
 
-#cosmic-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a33 0%, #000 100%); z-index: 35000; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
+#cosmic-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a33 0%, #000 100%); z-index: 35000; justify-content: center; align-items: center; padding: 20px; }
 .cosmic-content { position: relative; background: rgba(0,0,0,0.8); border: 2px solid var(--cosmic-blue); border-radius: 30px; padding: 40px 20px; text-align: center; color: #fff; max-width: 480px; width: 95%; box-shadow: 0 0 50px rgba(0, 212, 255, 0.6); animation: cosmic-pulse 4s infinite; }
 @keyframes cosmic-pulse { 0% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); border-color: #0077ff; } 50% { box-shadow: 0 0 80px rgba(255, 255, 255, 0.8); border-color: #fff; } 100% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); border-color: #0077ff; } }
 .cosmic-title { color: var(--cosmic-white); font-size: 2.0em; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 20px var(--cosmic-blue); letter-spacing: 6px; }
@@ -70,7 +70,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 .c5 { color: #e83e8c; font-weight: bold; }
 .c6 { color: #fd7e14; font-weight: bold; }
 .c7 { color: #ff0000; font-weight: bold; }
-.c8 { color: #ffd700; font-weight: bold; }
+.c8 { color: #ffffff; font-weight: bold; }
 
 .c-order { color: #ffd700; font-weight: bold; text-shadow: 0 0 5px #000; }
 .c-gemini { color: var(--gemini); font-weight: bold; text-shadow: 0 0 5px var(--gemini); }
@@ -230,7 +230,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.22</div>
+<div class="ver-footer">RELICORE v1.24</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -630,8 +630,14 @@ if(isModalOpen) return;
 player.totalClicks++;
 comboHit++;
 
+const coreLevel = player.totalLevel || 0;
+const relicMultiplier = 1 + Math.log10(coreLevel + 1) * 0.25;
+
 const bonus = getRelicBonus();
-const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+// 核Lvによる基礎ステータス補正
+let totalBaseAtk = (player.baseAtk + bonus.atk) * BigInt(Math.floor(relicMultiplier * 100)) / 100n;
+let totalBaseHp = (player.baseHP + bonus.hp) * BigInt(Math.floor(relicMultiplier * 100)) / 100n;
+const totalBase = applyOmegaCore(totalBaseAtk, totalBaseHp);
 
 if(isGeminiBattle) {
 player.baseAtk = BigInt(Math.floor(Number(player.baseAtk) * 1.005));
@@ -641,7 +647,7 @@ addLog(`<div><span class="c-gemini">ERROR: 構文破壊機工がコードを書�
 
 const skillMult = calcFinalDmgMult();
 
-if (!enemyDisasterStarUsed && (player.inventory[803] || 0) > 0 && (player.inventory[311] || 0) >= 100 && currentBossHP > (player.baseAtk + bonus.atk) && Math.random() < 0.0001) {
+if (!enemyDisasterStarUsed && (player.inventory[803] || 0) > 0 && (player.inventory[311] || 0) >= 100 && currentBossHP > totalBase.atk && Math.random() < 0.0001) {
 activateDisasterStar(bonus);
 }
 
@@ -654,6 +660,11 @@ if (!player.hasCrown && player.hasWorldOrder && (player.inventory[117] || 0) >= 
 if (!player.hasMeta && player.hasCrown && (player.inventory[117] || 0) >= 300000 && player.hadoExpAccum >= 30000000) openCosmicModal('meta');
 
 let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult;
+
+// 核Lvによる最終ダメージ倍率補正
+let b = coreLevel * 0.02;
+const damageMultiplier = 1 + b / (1 + b);
+totalAtkVal *= damageMultiplier;
 
 if ((player.inventory[804] || 0) > 0) {
 totalAtkVal *= (1 + Math.log10(player.killCount + 1) * 0.06);
@@ -744,7 +755,7 @@ if(currentBossHP < 1n && !player.isCleared) {
 }
 
 if(currentBossHP > 0n) {
-const currentTotalHP = totalBase.hp * BigInt(Math.floor(bonus.mult));
+const currentTotalHP = totalBase.hp;
 let baseCut = Math.min(20, Math.floor(skillLv/5) * 5);
 let ingaVal = Math.min(10, player.inventory[403] || 0);
 let minCut = baseCut + (ingaVal * 2);
@@ -753,10 +764,12 @@ let rawEnemyAtk = currentTotalHP * 3n;
 let finalMitigated = BigInt(Math.floor(Number(rawEnemyAtk) * (1 - (Math.floor(Math.random() * (101 - Math.min(95, minCut))) + Math.min(95, minCut)) / 100)));
 if(finalMitigated < 0n) finalMitigated = 0n;
 
+// 核Lvによる経験値強化
+const expMultiplier = 1 + Math.sqrt(coreLevel) * 0.08;
 let baseExp = Number(player.totalClicks);
 let kenmaBonus = Math.min(1000, player.inventory[405] || 0) + player.totalLevel;
 let ensBonus = (player.inventory[605] || 0) >= 1 ? 1.5 : 1.0;
-let gainedExp = Math.floor((baseExp + kenmaBonus) * ensBonus);
+let gainedExp = Math.floor((baseExp + kenmaBonus) * ensBonus * expMultiplier);
 
 player.hadoExpAccum += gainedExp;
 if (currentTotalHP > finalMitigated) {
@@ -857,8 +870,12 @@ function triggerUIUpdate() { if (!needsUIUpdate) { needsUIUpdate = true; request
 function updateUIFrame() { refreshUI(); needsUIUpdate = false; }
 
 function refreshUI() {
-const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
-const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
+const coreLevel = player.totalLevel || 0;
+const relicMultiplier = 1 + Math.log10(coreLevel + 1) * 0.25;
+const b = getRelicBonus(); 
+const skillMult = calcFinalDmgMult();
+const totalBase = applyOmegaCore( (player.baseAtk + b.atk) * BigInt(Math.floor(relicMultiplier * 100)) / 100n, (player.baseHP + b.hp) * BigInt(Math.floor(relicMultiplier * 100)) / 100n );
+
 document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
 document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
 
