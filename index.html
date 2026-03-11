@@ -1034,7 +1034,7 @@ function closeStory() { player.storySeen = true; document.getElementById("story-
 
 function handleBossDefeat() {
 comboHit = 0;
-if (!isGeminiBattle && Math.random() < 0.05) {
+if (!isGeminiBattle && Math.random() < 0.1) {
     isGeminiBattle = true;
     currentBossHP = BigInt("1000000000000000000000000");
     addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。</span></div>`);
