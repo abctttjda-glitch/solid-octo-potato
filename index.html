@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.23</title>
+<title>RELICORE - v1.22</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -49,7 +49,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 .hado-title { color: var(--gold); font-size: 1.8em; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 15px var(--gold); }
 .hado-msg { font-size: 1.0em; line-height: 2.0; margin-bottom: 35px; color: #eee; text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; }
 
-#cosmic-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a33 0%, #000 100%); z-index: 35000; justify-content: center; align-items: center; padding: 20px; }
+#cosmic-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a33 0%, #000 100%); z-index: 35000; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
 .cosmic-content { position: relative; background: rgba(0,0,0,0.8); border: 2px solid var(--cosmic-blue); border-radius: 30px; padding: 40px 20px; text-align: center; color: #fff; max-width: 480px; width: 95%; box-shadow: 0 0 50px rgba(0, 212, 255, 0.6); animation: cosmic-pulse 4s infinite; }
 @keyframes cosmic-pulse { 0% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); border-color: #0077ff; } 50% { box-shadow: 0 0 80px rgba(255, 255, 255, 0.8); border-color: #fff; } 100% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); border-color: #0077ff; } }
 .cosmic-title { color: var(--cosmic-white); font-size: 2.0em; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 20px var(--cosmic-blue); letter-spacing: 6px; }
@@ -215,7 +215,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="rank-title" id="st-rank-title">初心者</div>
 </div>
 <div class="st-box">
-核Lv: <span id="st-corelv" style="font-weight:bold; color:var(--growth);">0</span><br>
 総攻撃数: <span id="st-totalclicks">0</span><br>
 戦闘経験値: <span id="v-death">0</span><br>
 累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold; color:var(--relic-purple);">0</span><br>
@@ -246,7 +245,7 @@ const BASE_DROP_DATA = { 1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,
 const HADO_DROP_DATA = { 1:{p:88.9888989,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const GREAT_HADO_DROP_DATA = { 1:{p:78.9888989,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.9888989,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
-let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, coreLevel:0, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
+let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
 let currentBossHP = BigInt(player.bossMaxHP);
 let isModalOpen = false;
 let needsUIUpdate = false;
@@ -255,22 +254,22 @@ let kushiaCounter = 0;
 const attackBtn = document.getElementById("attackBtn");
 
 function startAttackLoop(e) {
-    if (activePointerId !== null) return;
-    activePointerId = e.pointerId;
-    if (attackInterval) clearInterval(attackInterval);
-    attack();
-    attackInterval = setInterval(attack, 100);
-    e.preventDefault();
+  if (activePointerId !== null) return;
+  activePointerId = e.pointerId;
+  if (attackInterval) clearInterval(attackInterval);
+  attack();
+  attackInterval = setInterval(attack, 100);
+  e.preventDefault();
 }
 
 function stopAttackLoop(e) {
-    if (e.pointerId === activePointerId) {
-        if (attackInterval) {
-            clearInterval(attackInterval);
-            attackInterval = null;
-        }
-        activePointerId = null;
-    }
+  if (e.pointerId === activePointerId) {
+      if (attackInterval) {
+          clearInterval(attackInterval);
+          attackInterval = null;
+      }
+      activePointerId = null;
+  }
 }
 
 attackBtn.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -324,10 +323,10 @@ return base.toString() + "." + remainder + units[unitIdx];
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
 let leveled = false;
+let oldLv = player.totalLevel;
 while (player.deathCount >= getExpThreshold(player.totalLevel)) {
 player.deathCount -= getExpThreshold(player.totalLevel);
 player.totalLevel++;
-player.coreLevel++;
 leveled = true;
 }
 if (leveled && player.totalLevel % 10 === 0) openRankUpModal(player.totalLevel);
@@ -356,15 +355,6 @@ const RELIC_MASTER = [
 {id:803, star:8, name:"記憶の遺産", atk:0, hp:0, desc:"★3メモリークリスタル100個消費で「災禍殲星」発動。敵に1500%ダメージを与え、最大HP割合で能力値を成長させる。(同一の敵には1度のみ発動)"}
 ];
 
-function getCoreMultipliers() {
-    const c = player.coreLevel || 0;
-    const relicMult = 1 + Math.log10(c + 1) * 0.25;
-    const bonus = c * 0.02;
-    const dmgMult = 1 + bonus / (1 + bonus);
-    const expMult = 1 + Math.sqrt(c) * 0.08;
-    return { relicMult, dmgMult, expMult };
-}
-
 function getGreedAuthorityMultiplier() {
 if ((player.inventory[502] || 0) <= 0) return 1.0;
 return 1 + Math.log10(player.totalRelics + 1) * 0.25;
@@ -377,23 +367,23 @@ return { atk: baseAtk * omegaMult, hp: baseHp * omegaMult };
 }
 
 function ensureOrderRelic() {
- if (player.isCleared && (player.inventory[999] || 0) === 0) {
-     showOrderAwakenModal();
- }
+if (player.isCleared && (player.inventory[999] || 0) === 0) {
+   showOrderAwakenModal();
+}
 }
 
 function showOrderAwakenModal() {
-  isModalOpen = true;
-  document.getElementById("order-awaken-modal").style.display = "flex";
+isModalOpen = true;
+document.getElementById("order-awaken-modal").style.display = "flex";
 }
 
 function closeOrderAwakenModal() {
-  player.inventory[999] = 1;
-  player.rebalanceSeen = true;
-  document.getElementById("order-awaken-modal").style.display = "none";
-  isModalOpen = false;
-  saveGame();
-  triggerUIUpdate();
+player.inventory[999] = 1;
+player.rebalanceSeen = true;
+document.getElementById("order-awaken-modal").style.display = "none";
+isModalOpen = false;
+saveGame();
+triggerUIUpdate();
 }
 
 function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString(), enemyDisasterStarUsed: enemyDisasterStarUsed }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
@@ -403,7 +393,6 @@ let saved = localStorage.getItem(SAVE_KEY);
 if(saved) {
 const p = JSON.parse(saved);
 Object.assign(player, p);
-player.coreLevel = p.coreLevel || 0;
 player.baseAtk = BigInt(p.baseAtk || "10");
 player.baseHP = BigInt(p.baseHP || "100");
 player.maxDmg = BigInt(p.maxDmg || "0");
@@ -514,7 +503,6 @@ let message = "";
 
 if (code === "DEBUG_READY_2026") {
 player.totalLevel = 300;
-player.coreLevel = 300;
 player.deathCount = 1000000;
 player.hadoExpAccum = 10000000;
 for (let i = 0; i < RELIC_MASTER.length; i++) {
@@ -597,11 +585,10 @@ if(hasZansai && r.star !== 6) { bA *= 1000; bH *= 1000; }
 atk += bA; hp += bH; if(r.mult) mult *= Math.pow(r.mult, count);
 });
 
-const coreMult = getCoreMultipliers();
 const greedMult = getGreedAuthorityMultiplier();
 return {
-atk: BigInt(Math.floor(atk * compBonus * greedMult * coreMult.relicMult)),
-hp: BigInt(Math.floor(hp * compBonus * greedMult * coreMult.relicMult)),
+atk: BigInt(Math.floor(atk * compBonus * greedMult)),
+hp: BigInt(Math.floor(hp * compBonus * greedMult)),
 mult,
 compCount,
 compBonus
@@ -630,10 +617,10 @@ function applyAuthoritySkill() {
 const authIds = [501, 502, 503, 504, 505, 506];
 let activeId = null;
 for (let id of authIds) {
-    if ((player.inventory[id] || 0) > 0) {
-        activeId = id;
-        break;
-    }
+  if ((player.inventory[id] || 0) > 0) {
+      activeId = id;
+      break;
+  }
 }
 return activeId;
 }
@@ -653,7 +640,6 @@ addLog(`<div><span class="c-gemini">ERROR: 構文破壊機工がコードを書�
 }
 
 const skillMult = calcFinalDmgMult();
-const coreMult = getCoreMultipliers();
 
 if (!enemyDisasterStarUsed && (player.inventory[803] || 0) > 0 && (player.inventory[311] || 0) >= 100 && currentBossHP > (player.baseAtk + bonus.atk) && Math.random() < 0.0001) {
 activateDisasterStar(bonus);
@@ -667,7 +653,7 @@ if (!player.hasWorldOrder && (player.inventory[117] || 0) >= 100000 && player.ha
 if (!player.hasCrown && player.hasWorldOrder && (player.inventory[117] || 0) >= 200000 && player.hadoExpAccum >= 20000000) openCosmicModal('crown');
 if (!player.hasMeta && player.hasCrown && (player.inventory[117] || 0) >= 300000 && player.hadoExpAccum >= 30000000) openCosmicModal('meta');
 
-let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult * coreMult.dmgMult;
+let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult;
 
 if ((player.inventory[804] || 0) > 0) {
 totalAtkVal *= (1 + Math.log10(player.killCount + 1) * 0.06);
@@ -691,13 +677,13 @@ specialTags += `<span class="c-order">【救済】</span>`;
 
 if (!specialTags.includes("【救済】") && activeAuth) {
 if (activeAuth === 501) {
-    let comboMult = 1 + Math.min(comboHit * 0.0005, 0.30);
-    finalDmg = BigInt(Math.floor(Number(finalDmg) * comboMult));
-    specialTags += `<span style="color:#d4af37; font-weight:bold;">【連撃】</span>`;
+  let comboMult = 1 + Math.min(comboHit * 0.0005, 0.30);
+  finalDmg = BigInt(Math.floor(Number(finalDmg) * comboMult));
+  specialTags += `<span style="color:#d4af37; font-weight:bold;">【連撃】</span>`;
 }
 if (activeAuth === 506) {
-    player.soujinCounter++;
-    if (player.soujinCounter >= 150) { finalDmg *= 2n; specialTags += `<span style="color:#00ff00; font-weight:bold;">【双刃】</span>`; player.soujinCounter = 0; }
+  player.soujinCounter++;
+  if (player.soujinCounter >= 150) { finalDmg *= 2n; specialTags += `<span style="color:#00ff00; font-weight:bold;">【双刃】</span>`; player.soujinCounter = 0; }
 }
 if (activeAuth === 503 && Math.random() < 0.001) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.5)); specialTags += `<span style="color:var(--growth); font-weight:bold;">【超越】</span>`; }
 if (activeAuth === 504 && Math.random() < 0.001) { finalDmg += BigInt(Math.floor(totalAtkVal)); specialTags += `<span style="color:#ff0000; font-weight:bold;">【破壊】</span>`; }
@@ -723,37 +709,37 @@ let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;"
 if(finalDmg >= currentBossHP) {
 comboHit = 0;
 if(!player.isCleared) {
-    if((player.inventory[701] || 0) > 0 && finalDmg >= bossMaxHP) {
-        currentBossHP = 0n;
-        player.killCount++;
-        player.isCleared = true;
-        enemyDisasterStarUsed = false;
-        isModalOpen = true;
-        document.getElementById("clear-modal-title").innerText = "神話の終焉";
-        document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
-        document.getElementById("clear-modal").style.display = "flex";
-    } else {
-        currentBossHP = bossMaxHP;
-        enemyDisasterStarUsed = false;
-        logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
-    }
+  if((player.inventory[701] || 0) > 0 && finalDmg >= bossMaxHP) {
+      currentBossHP = 0n;
+      player.killCount++;
+      player.isCleared = true;
+      enemyDisasterStarUsed = false;
+      isModalOpen = true;
+      document.getElementById("clear-modal-title").innerText = "神話の終焉";
+      document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
+      document.getElementById("clear-modal").style.display = "flex";
+  } else {
+      currentBossHP = bossMaxHP;
+      enemyDisasterStarUsed = false;
+      logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+  }
 } else {
-    currentBossHP = 0n;
-    player.killCount++;
-    enemyDisasterStarUsed = false;
-    if(isGeminiBattle) {
-        isGeminiBattle = false;
-        logHtml += `<div><span class="c-gemini">ERROR: 構文破壊機工を撃破しました。Geminiとの接続を強制切断します。</span></div>`;
-    }
-    handleBossDefeat();
+  currentBossHP = 0n;
+  player.killCount++;
+  enemyDisasterStarUsed = false;
+  if(isGeminiBattle) {
+      isGeminiBattle = false;
+      logHtml += `<div><span class="c-gemini">ERROR: 構文破壊機工を撃破しました。Geminiとの接続を強制切断します。</span></div>`;
+  }
+  handleBossDefeat();
 }
 } else {
 currentBossHP -= finalDmg;
 if(currentBossHP < 1n && !player.isCleared) {
-    comboHit = 0;
-    currentBossHP = bossMaxHP;
-    enemyDisasterStarUsed = false;
-    logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+  comboHit = 0;
+  currentBossHP = bossMaxHP;
+  enemyDisasterStarUsed = false;
+  logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
 }
 }
 
@@ -770,22 +756,22 @@ if(finalMitigated < 0n) finalMitigated = 0n;
 let baseExp = Number(player.totalClicks);
 let kenmaBonus = Math.min(1000, player.inventory[405] || 0) + player.totalLevel;
 let ensBonus = (player.inventory[605] || 0) >= 1 ? 1.5 : 1.0;
-let gainedExp = Math.floor((baseExp + kenmaBonus) * ensBonus * coreMult.expMult);
+let gainedExp = Math.floor((baseExp + kenmaBonus) * ensBonus);
 
 player.hadoExpAccum += gainedExp;
 if (currentTotalHP > finalMitigated) {
-    player.deathCount += gainedExp;
-    logHtml += `<div><span style="color:#28a745; font-weight:bold;">敵の攻撃！${formatV(finalMitigated)} ダメージ。障壁展開！</span></div>` + getGuaranteedDrop();
+  player.deathCount += gainedExp;
+  logHtml += `<div><span style="color:#28a745; font-weight:bold;">敵の攻撃！${formatV(finalMitigated)} ダメージ。障壁展開！</span></div>` + getGuaranteedDrop();
 } else {
-    let repeatCount = 1;
-    if (activeAuth === 505 && Math.random() < 0.1) { repeatCount = 2; specialTags += `【再起】`; }
-    let totalUpHP = 0n;
-    for (let i = 0; i < repeatCount; i++) {
-        let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + skillLv + Math.min(50000, player.inventory[402] || 0) * 5);
-        totalUpHP += up;
-    }
-    player.baseHP += totalUpHP; player.deathCount += gainedExp;
-    logHtml += `<div><span style="color:#dc3545;">敵の攻撃！${formatV(finalMitigated)} ダメージ。</span><span style="color:#007bff; font-weight:bold;">再起の誓いによって新たなる力を得た </span>${repeatCount > 1 ? '<span style="color:gold; font-weight:bold;">【双重再起】</span>' : ''}<span style="color:var(--growth); font-weight:bold;">(基礎HP+${formatV(totalUpHP)})</span></div>`;
+  let repeatCount = 1;
+  if (activeAuth === 505 && Math.random() < 0.1) { repeatCount = 2; specialTags += `【再起】`; }
+  let totalUpHP = 0n;
+  for (let i = 0; i < repeatCount; i++) {
+      let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + skillLv + Math.min(50000, player.inventory[402] || 0) * 5);
+      totalUpHP += up;
+  }
+  player.baseHP += totalUpHP; player.deathCount += gainedExp;
+  logHtml += `<div><span style="color:#dc3545;">敵の攻撃！${formatV(finalMitigated)} ダメージ。</span><span style="color:#007bff; font-weight:bold;">再起の誓いによって新たなる力を得た </span>${repeatCount > 1 ? '<span style="color:gold; font-weight:bold;">【双重再起】</span>' : ''}<span style="color:var(--growth); font-weight:bold;">(基礎HP+${formatV(totalUpHP)})</span></div>`;
 }
 if(checkLevelUp()) {}
 }
@@ -817,37 +803,37 @@ let showRare = null;
 for(let i=0; i < count; i++) {
 let rv = Math.random()*100, star=1, curP=0;
 for(let s in rates) {
-    curP += rates[s].p;
-    if(rv <= curP) { star=parseInt(s); break; }
+  curP += rates[s].p;
+  if(rv <= curP) { star=parseInt(s); break; }
 }
 if (player.maxDmg < rates[star].cond) star=1;
 
 let sel;
 if (star === 2 && player.hasDivineGuide && Math.random() < 0.1) {
-    sel = RELIC_MASTER.find(m => m.id === 117);
+  sel = RELIC_MASTER.find(m => m.id === 117);
 } else {
-    let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 999 && m.star < 9 && m.id !== 117 && m.id !== 311 && m.id !== 803);
-    if (star === 3) cands.push(RELIC_MASTER.find(m => m.id === 311));
-    if(cands.length === 0) cands = RELIC_MASTER.filter(m => m.star === 1);
-    sel = cands[Math.floor(Math.random() * cands.length)];
+  let cands = RELIC_MASTER.filter(m => m.star === star && m.id !== 0 && m.id !== 999 && m.star < 9 && m.id !== 117 && m.id !== 311 && m.id !== 803);
+  if (star === 3) cands.push(RELIC_MASTER.find(m => m.id === 311));
+  if(cands.length === 0) cands = RELIC_MASTER.filter(m => m.star === 1);
+  sel = cands[Math.floor(Math.random() * cands.length)];
 }
 
 if (sel.star >= 6) {
-    if ((player.inventory[sel.id] || 0) === 0) {
-        player.inventory[sel.id] = 1;
-        player.totalRelics++;
-        starCounts[sel.star]++;
-        starGroups[sel.star][sel.id] = 1;
-        showRare = sel;
-    }
+  if ((player.inventory[sel.id] || 0) === 0) {
+      player.inventory[sel.id] = 1;
+      player.totalRelics++;
+      starCounts[sel.star]++;
+      starGroups[sel.star][sel.id] = 1;
+      showRare = sel;
+  }
 } else {
-    player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
-    player.totalRelics++;
-    starCounts[star]++;
-    starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
-    if (sel.star >= 4 && player.inventory[sel.id] === 1) {
-        if (!showRare || sel.star > showRare.star) showRare = sel;
-    }
+  player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
+  player.totalRelics++;
+  starCounts[star]++;
+  starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
+  if (sel.star >= 4 && player.inventory[sel.id] === 1) {
+      if (!showRare || sel.star > showRare.star) showRare = sel;
+  }
 }
 }
 
@@ -856,12 +842,12 @@ let finalEntries = [];
 for (let s = 1; s <= 8; s++) {
 if (starCounts[s] === 0) continue;
 if (starCounts[s] > 20) {
-    finalEntries.push(`<span class="c${s}">★${s}遺物 合計${starCounts[s]}個</span>`);
+  finalEntries.push(`<span class="c${s}">★${s}遺物 合計${starCounts[s]}個</span>`);
 } else {
-    Object.entries(starGroups[s]).forEach(([id, c]) => {
-        const m = RELIC_MASTER.find(x => x.id == id);
-        finalEntries.push(`<span class="c${m.star}">★${m.star} ${m.name}${c > 1 ? '×' + c : ''}</span>`);
-    });
+  Object.entries(starGroups[s]).forEach(([id, c]) => {
+      const m = RELIC_MASTER.find(x => x.id == id);
+      finalEntries.push(`<span class="c${m.star}">★${m.star} ${m.name}${c > 1 ? '×' + c : ''}</span>`);
+  });
 }
 }
 return finalEntries.length > 0 ? `<div style="font-size:0.82em;">獲得：${finalEntries.join("、 ")}</div>` : "";
@@ -872,9 +858,8 @@ function updateUIFrame() { refreshUI(); needsUIUpdate = false; }
 
 function refreshUI() {
 const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
-const coreMult = getCoreMultipliers();
 const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
-document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult * coreMult.dmgMult)));
+document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
 document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
 
 const hpDisp = document.getElementById("bosshp-cur");
@@ -887,7 +872,6 @@ document.getElementById("boss-display-name").textContent = isGeminiBattle ? "構
 }
 
 document.getElementById("hp-bar-fill").style.width = `${Number(currentBossHP * 100n / BigInt(player.bossMaxHP))}%`;
-document.getElementById("st-corelv").textContent = player.coreLevel;
 const area = document.getElementById("st-rank-area"); const title = document.getElementById("st-rank-title");
 const rankIdx = getCurrentRankIndex();
 document.getElementById("st-rank-lv").textContent = `${RANK_NAMES[rankIdx]} Lv.${player.totalLevel}`;
@@ -1020,7 +1004,7 @@ document.getElementById("st-totalclicks").textContent = formatV(player.totalClic
 document.getElementById("v-death").textContent = `${formatV(player.deathCount)} / ${formatV(nextExp)}`;
 document.getElementById("st-totalrelics").textContent = formatV(player.totalRelics || 0);
 document.getElementById("st-maxdmg").textContent = formatMaxDmg(player.maxDmg);
-document.getElementById("st-dmgmult").textContent = "x" + (calcFinalDmgMult() * b.mult * getCoreMultipliers().dmgMult).toFixed(4);
+document.getElementById("st-dmgmult").textContent = "x" + (calcFinalDmgMult() * b.mult).toFixed(4);
 const rates = getCurrentDropRates(); let maxStar = 1; for(let s in rates) { if(player.maxDmg >= rates[s].cond) maxStar = Math.max(maxStar, parseInt(s)); }
 document.getElementById("st-rank").textContent = `★${maxStar}まで`;
 document.getElementById("st-collection").textContent = `${Object.keys(player.inventory).length}/64`;
@@ -1039,21 +1023,20 @@ function closeStory() { player.storySeen = true; document.getElementById("story-
 function handleBossDefeat() {
 comboHit = 0;
 if (!isGeminiBattle && Math.random() < 0.1) {
-    isGeminiBattle = true;
-    const bonus = getRelicBonus();
-    const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
-    const coreMult = getCoreMultipliers();
-    const playerAtk = Number(totalBase.atk) * coreMult.relicMult;
-    const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
-    currentBossHP = geminiHp;
-    addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(geminiHp)}</span></div>`);
+  isGeminiBattle = true;
+  const bonus = getRelicBonus();
+  const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+  const playerAtk = Number(totalBase.atk);
+  const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
+  currentBossHP = geminiHp;
+  addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(geminiHp)}</span></div>`);
 } else {
-    player.isCleared = true;
-    let n_float = Number(player.killCount);
-    let base = Number(BOSS_MAX_HP_BASE);
-    let newHP = base * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
-    player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
-    currentBossHP = BigInt(player.bossMaxHP);
+  player.isCleared = true;
+  let n_float = Number(player.killCount);
+  let base = Number(BOSS_MAX_HP_BASE);
+  let newHP = base * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
+  player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
+  currentBossHP = BigInt(player.bossMaxHP);
 }
 player.killCount++;
 }
