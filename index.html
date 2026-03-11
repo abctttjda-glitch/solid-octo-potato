@@ -49,7 +49,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 .hado-title { color: var(--gold); font-size: 1.8em; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 15px var(--gold); }
 .hado-msg { font-size: 1.0em; line-height: 2.0; margin-bottom: 35px; color: #eee; text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; }
 
-#cosmic-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a33 0%, #000 100%); z-index: 35000; justify-content: center; align-items: center; padding: 20px; }
+#cosmic-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a33 0%, #000 100%); z-index: 35000; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
 .cosmic-content { position: relative; background: rgba(0,0,0,0.8); border: 2px solid var(--cosmic-blue); border-radius: 30px; padding: 40px 20px; text-align: center; color: #fff; max-width: 480px; width: 95%; box-shadow: 0 0 50px rgba(0, 212, 255, 0.6); animation: cosmic-pulse 4s infinite; }
 @keyframes cosmic-pulse { 0% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); border-color: #0077ff; } 50% { box-shadow: 0 0 80px rgba(255, 255, 255, 0.8); border-color: #fff; } 100% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); border-color: #0077ff; } }
 .cosmic-title { color: var(--cosmic-white); font-size: 2.0em; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 20px var(--cosmic-blue); letter-spacing: 6px; }
@@ -154,7 +154,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 
 #serial-input-box { background: #1a1a1a; border: 1px solid var(--gold); color: #fff; padding: 10px; width: 100%; text-align: center; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; border-radius: 5px; }
 
-/* 秩序覚醒用モーダル */
 #order-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #222 0%, #000 100%); z-index: 55000; justify-content: center; align-items: center; padding: 20px; }
 .order-content { background: #000; border: 2px solid #fff; border-radius: 20px; padding: 40px 20px; text-align: center; color: #fff; max-width: 450px; width: 95%; box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
 </style>
@@ -220,7 +219,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold; color:var(--relic-purple);">0</span><br>
 最高ダメージ: <span id="st-maxdmg">0</span><br>
 最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold; color:var(--primary);">x1.00</span><br>
-核Lv: <span id="st-corelv" style="font-weight:bold; color:var(--gold);">0</span><br>
 獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>
 コンプリート数: <span id="st-comp-count" style="font-weight:bold; color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold; color:var(--growth);">x1.00</span>)
 </div>
@@ -246,7 +244,7 @@ const BASE_DROP_DATA = { 1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,
 const HADO_DROP_DATA = { 1:{p:88.9888989,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const GREAT_HADO_DROP_DATA = { 1:{p:78.9888989,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.9888989,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
-let player = { inventory: { 0:1 }, deathCount:0, coreLevel:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
+let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
 let currentBossHP = BigInt(player.bossMaxHP);
 let isModalOpen = false;
 let needsUIUpdate = false;
@@ -324,10 +322,10 @@ return base.toString() + "." + remainder + units[unitIdx];
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
 let leveled = false;
+let oldLv = player.totalLevel;
 while (player.deathCount >= getExpThreshold(player.totalLevel)) {
 player.deathCount -= getExpThreshold(player.totalLevel);
 player.totalLevel++;
-player.coreLevel++;
 leveled = true;
 }
 if (leveled && player.totalLevel % 10 === 0) openRankUpModal(player.totalLevel);
@@ -394,7 +392,6 @@ let saved = localStorage.getItem(SAVE_KEY);
 if(saved) {
 const p = JSON.parse(saved);
 Object.assign(player, p);
-player.coreLevel = p.coreLevel || 0;
 player.baseAtk = BigInt(p.baseAtk || "10");
 player.baseHP = BigInt(p.baseHP || "100");
 player.maxDmg = BigInt(p.maxDmg || "0");
@@ -505,7 +502,6 @@ let message = "";
 
 if (code === "DEBUG_READY_2026") {
 player.totalLevel = 300;
-player.coreLevel = 300;
 player.deathCount = 1000000;
 player.hadoExpAccum = 10000000;
 for (let i = 0; i < RELIC_MASTER.length; i++) {
@@ -633,14 +629,14 @@ if(isModalOpen) return;
 player.totalClicks++;
 comboHit++;
 
-const coreLevel = player.coreLevel || 0;
+const coreLevel = player.totalLevel || 0;
 const relicMultiplier = 1 + Math.log10(coreLevel + 1) * 0.25;
 
 const bonus = getRelicBonus();
-let baseAtk = (player.baseAtk + bonus.atk) * BigInt(Math.floor(relicMultiplier * 1000)) / 1000n;
-let baseHP = (player.baseHP + bonus.hp) * BigInt(Math.floor(relicMultiplier * 1000)) / 1000n;
-
-const totalBase = applyOmegaCore(baseAtk, baseHP);
+const totalBase = applyOmegaCore(
+    BigInt(Math.floor(Number(player.baseAtk + bonus.atk) * relicMultiplier)),
+    BigInt(Math.floor(Number(player.baseHP + bonus.hp) * relicMultiplier))
+);
 
 if(isGeminiBattle) {
 player.baseAtk = BigInt(Math.floor(Number(player.baseAtk) * 1.005));
@@ -662,9 +658,8 @@ if (!player.hasWorldOrder && (player.inventory[117] || 0) >= 100000 && player.ha
 if (!player.hasCrown && player.hasWorldOrder && (player.inventory[117] || 0) >= 200000 && player.hadoExpAccum >= 20000000) openCosmicModal('crown');
 if (!player.hasMeta && player.hasCrown && (player.inventory[117] || 0) >= 300000 && player.hadoExpAccum >= 30000000) openCosmicModal('meta');
 
-let coreDmgBonus = coreLevel * 0.02;
-let damageMultiplier = 1 + coreDmgBonus / (1 + coreDmgBonus);
-
+let coreDamageBonus = coreLevel * 0.02;
+let damageMultiplier = 1 + coreDamageBonus / (1 + coreDamageBonus);
 let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult * damageMultiplier;
 
 if ((player.inventory[804] || 0) > 0) {
@@ -756,7 +751,7 @@ if(currentBossHP < 1n && !player.isCleared) {
 }
 
 if(currentBossHP > 0n) {
-const currentTotalHP = baseHP * BigInt(Math.floor(bonus.mult));
+const currentTotalHP = totalBase.hp * BigInt(Math.floor(bonus.mult));
 let baseCut = Math.min(20, Math.floor(skillLv/5) * 5);
 let ingaVal = Math.min(10, player.inventory[403] || 0);
 let minCut = baseCut + (ingaVal * 2);
@@ -871,9 +866,7 @@ function updateUIFrame() { refreshUI(); needsUIUpdate = false; }
 
 function refreshUI() {
 const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
-const coreLevel = player.coreLevel || 0;
-const relicMultiplier = 1 + Math.log10(coreLevel + 1) * 0.25;
-const totalBase = applyOmegaCore((player.baseAtk + b.atk) * BigInt(Math.floor(relicMultiplier * 1000)) / 1000n, (player.baseHP + b.hp) * BigInt(Math.floor(relicMultiplier * 1000)) / 1000n);
+const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
 document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
 document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
 
@@ -895,8 +888,6 @@ area.className = "rank-display"; title.style.color = "#fff";
 if (rankIdx >= 3 && rankIdx <= 5) { area.classList.add("rank-glow-mid"); title.style.color = "var(--relic-purple)"; }
 else if (rankIdx >= 6 && rankIdx <= 8) { area.classList.add("rank-glow-high"); title.style.color = "var(--gold)"; }
 else if (rankIdx >= 9) { area.classList.add("rank-glow-max"); title.style.color = "gold"; title.style.textShadow = "0 0 10px #fff, 0 0 20px gold"; }
-
-document.getElementById("st-corelv").textContent = coreLevel;
 
 let hadoText = "";
 if(player.hasMeta) hadoText = "メタ・アクシオム：全理の定義者";
