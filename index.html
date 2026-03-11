@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.21</title>
+<title>RELICORE - v1.22</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -223,7 +223,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.21</div>
+<div class="ver-footer">RELICORE v1.22</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -373,7 +373,7 @@ player.hadoExpAccum = p.hadoExpAccum || 0;
 player.evolutionStack = p.evolutionStack || 0;
 enemyDisasterStarUsed = p.enemyDisasterStarUsed || false;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
-ensureOrderRelic();
+if(player.isCleared && !player.rebalanceSeen) ensureOrderRelic();
 } else { currentBossHP = BigInt(player.bossMaxHP); }
 
 Object.keys(player.inventory).forEach(id => {
@@ -688,9 +688,9 @@ if(finalDmg >= currentBossHP) {
            document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
            document.getElementById("clear-modal").style.display = "flex";
        } else {
-           currentBossHP = BigInt(player.bossMaxHP);
-           enemyDisasterStarUsed = false;
-           logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+           currentBossHP = 1n;
+           logHtml += `<div><span style="color:#ff0000; font-weight:bold;">神はまだ倒れない…… (HP1で停止)</span></div>`;
+           setTimeout(() => { currentBossHP = BigInt(player.bossMaxHP); updateLog("<div><span style='color:#ff0000;'>神が全てを回復した！</span></div>"); triggerUIUpdate(); }, 500);
        }
    } else {
        currentBossHP = 0n;
@@ -704,12 +704,6 @@ if(finalDmg >= currentBossHP) {
    }
 } else {
    currentBossHP -= finalDmg;
-   if(currentBossHP < 1n && !player.isCleared) {
-       comboHit = 0;
-       currentBossHP = BigInt(player.bossMaxHP);
-       enemyDisasterStarUsed = false;
-       logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
-   }
 }
 
 if(currentBossHP > 0n) {
