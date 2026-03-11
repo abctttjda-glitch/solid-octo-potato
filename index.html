@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.20</title>
+<title>RELICORE - v1.21</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -223,7 +223,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.20</div>
+<div class="ver-footer">RELICORE v1.21</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -348,6 +348,13 @@ let omegaMult = BigInt(player.inventory[801]) * 2n;
 return { atk: baseAtk * omegaMult, hp: baseHp * omegaMult };
 }
 
+function ensureOrderRelic() {
+    if (player.isCleared && (player.inventory[999] || 0) === 0) {
+        player.inventory[999] = 1;
+        player.rebalanceSeen = true;
+    }
+}
+
 function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString(), enemyDisasterStarUsed: enemyDisasterStarUsed }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
 
 function loadGame() {
@@ -366,6 +373,7 @@ player.hadoExpAccum = p.hadoExpAccum || 0;
 player.evolutionStack = p.evolutionStack || 0;
 enemyDisasterStarUsed = p.enemyDisasterStarUsed || false;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
+ensureOrderRelic();
 } else { currentBossHP = BigInt(player.bossMaxHP); }
 
 Object.keys(player.inventory).forEach(id => {
@@ -373,12 +381,7 @@ let r = RELIC_MASTER.find(m => m.id == id);
 if (r && (r.star >= 6) && player.inventory[id] > 1) player.inventory[id] = 1;
 });
 
-if(player.isCleared && (player.rebalanceSeen === false || player.rebalanceSeen === undefined)) {
-if (player.inventory[999] > 0) {
-showClearStartMsg();
-}
-}
-
+if(player.isCleared && !player.rebalanceSeen) showClearStartMsg();
 if(!player.storySeen) document.getElementById("story-modal").style.display = "flex";
 }
 
@@ -489,14 +492,9 @@ message = "再起の誓いによって新たなる力を得た";
 updateLog("再起の誓いによって新たなる力を得た");
 } else if (code === "REBALANCE2026") {
 if (player.isCleared) {
-if (!player.inventory[999]) {
-player.inventory[999] = 1;
-player.rebalanceSeen = true;
+ensureOrderRelic();
 success = true;
 message = `シリアルコード承認。<br><br><span style="color:var(--gold); font-weight:bold;">【特別遺物付与】</span><br><span class="unique-relic-text">秩序のリバランス</span> を獲得しました。<br>理の崩壊を止める力としてお使いください。`;
-} else {
-message = "このコードはすでに適用されています。";
-}
 } else {
 message = `<span style="color:#ff4444;">「まだその時ではない……」</span><br><br>このコードは神（アポカリス＝ティア）を討ちし者のみが使用可能です。`;
 }
@@ -683,6 +681,7 @@ if(finalDmg >= currentBossHP) {
            currentBossHP = 0n;
            player.killCount++;
            player.isCleared = true;
+           ensureOrderRelic();
            enemyDisasterStarUsed = false;
            isModalOpen = true;
            document.getElementById("clear-modal-title").innerText = "神話の終焉";
@@ -998,6 +997,7 @@ function handleBossDefeat() {
        addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。</span></div>`);
    } else {
        player.isCleared = true;
+       ensureOrderRelic();
        let n_float = Number(player.killCount);
        let base = Number(BOSS_MAX_HP_BASE);
        let newHP = base * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
