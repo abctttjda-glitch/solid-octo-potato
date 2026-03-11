@@ -154,6 +154,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 
 #serial-input-box { background: #1a1a1a; border: 1px solid var(--gold); color: #fff; padding: 10px; width: 100%; text-align: center; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; border-radius: 5px; }
 
+/* 秩序覚醒用モーダル */
 #order-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #222 0%, #000 100%); z-index: 55000; justify-content: center; align-items: center; padding: 20px; }
 .order-content { background: #000; border: 2px solid #fff; border-radius: 20px; padding: 40px 20px; text-align: center; color: #fff; max-width: 450px; width: 95%; box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
 </style>
@@ -633,9 +634,13 @@ const coreLevel = player.totalLevel || 0;
 const relicMultiplier = 1 + Math.log10(coreLevel + 1) * 0.25;
 
 const bonus = getRelicBonus();
+const rawBaseAtk = player.baseAtk + bonus.atk;
+const rawBaseHp = player.baseHP + bonus.hp;
+
+// 核Lv強化：遺物効果計算後、ステータス確定前に適用
 const totalBase = applyOmegaCore(
-    BigInt(Math.floor(Number(player.baseAtk + bonus.atk) * relicMultiplier)),
-    BigInt(Math.floor(Number(player.baseHP + bonus.hp) * relicMultiplier))
+    BigInt(Math.floor(Number(rawBaseAtk) * relicMultiplier)),
+    BigInt(Math.floor(Number(rawBaseHp) * relicMultiplier))
 );
 
 if(isGeminiBattle) {
@@ -658,13 +663,16 @@ if (!player.hasWorldOrder && (player.inventory[117] || 0) >= 100000 && player.ha
 if (!player.hasCrown && player.hasWorldOrder && (player.inventory[117] || 0) >= 200000 && player.hadoExpAccum >= 20000000) openCosmicModal('crown');
 if (!player.hasMeta && player.hasCrown && (player.inventory[117] || 0) >= 300000 && player.hadoExpAccum >= 30000000) openCosmicModal('meta');
 
-let coreDamageBonus = coreLevel * 0.02;
-let damageMultiplier = 1 + coreDamageBonus / (1 + coreDamageBonus);
-let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult * damageMultiplier;
+let totalAtkVal = Number(totalBase.atk) * bonus.mult * skillMult;
 
 if ((player.inventory[804] || 0) > 0) {
 totalAtkVal *= (1 + Math.log10(player.killCount + 1) * 0.06);
 }
+
+// 核Lv強化：最終ダメージ倍率適用
+let bonusDamage = coreLevel * 0.02;
+const damageMultiplier = 1 + bonusDamage / (1 + bonusDamage);
+totalAtkVal *= damageMultiplier;
 
 let rawDmg = BigInt(Math.floor(totalAtkVal * (0.8 + Math.random() * 0.4)));
 let finalDmg = rawDmg;
@@ -751,7 +759,7 @@ if(currentBossHP < 1n && !player.isCleared) {
 }
 
 if(currentBossHP > 0n) {
-const currentTotalHP = totalBase.hp * BigInt(Math.floor(bonus.mult));
+const currentTotalHP = totalBase.hp;
 let baseCut = Math.min(20, Math.floor(skillLv/5) * 5);
 let ingaVal = Math.min(10, player.inventory[403] || 0);
 let minCut = baseCut + (ingaVal * 2);
@@ -763,8 +771,11 @@ if(finalMitigated < 0n) finalMitigated = 0n;
 let baseExp = Number(player.totalClicks);
 let kenmaBonus = Math.min(1000, player.inventory[405] || 0) + player.totalLevel;
 let ensBonus = (player.inventory[605] || 0) >= 1 ? 1.5 : 1.0;
-let expMultiplier = 1 + Math.sqrt(coreLevel) * 0.08;
-let gainedExp = Math.floor((baseExp + kenmaBonus) * ensBonus * expMultiplier);
+let gainedExp = Math.floor((baseExp + kenmaBonus) * ensBonus);
+
+// 核Lv強化：経験値取得適用
+const expMultiplier = 1 + Math.sqrt(coreLevel) * 0.08;
+gainedExp = Math.floor(gainedExp * expMultiplier);
 
 player.hadoExpAccum += gainedExp;
 if (currentTotalHP > finalMitigated) {
@@ -865,8 +876,14 @@ function triggerUIUpdate() { if (!needsUIUpdate) { needsUIUpdate = true; request
 function updateUIFrame() { refreshUI(); needsUIUpdate = false; }
 
 function refreshUI() {
+const coreLevel = player.totalLevel || 0;
+const relicMultiplier = 1 + Math.log10(coreLevel + 1) * 0.25;
+
 const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
-const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
+const totalBase = applyOmegaCore(
+    BigInt(Math.floor(Number(player.baseAtk + b.atk) * relicMultiplier)),
+    BigInt(Math.floor(Number(player.baseHP + b.hp) * relicMultiplier))
+);
 document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
 document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
 
@@ -1032,8 +1049,13 @@ function handleBossDefeat() {
 comboHit = 0;
 if (!isGeminiBattle && Math.random() < 0.1) {
   isGeminiBattle = true;
+  const coreLevel = player.totalLevel || 0;
+  const relicMultiplier = 1 + Math.log10(coreLevel + 1) * 0.25;
   const bonus = getRelicBonus();
-  const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+  const totalBase = applyOmegaCore(
+      BigInt(Math.floor(Number(player.baseAtk + bonus.atk) * relicMultiplier)),
+      BigInt(Math.floor(Number(player.baseHP + bonus.hp) * relicMultiplier))
+  );
   const playerAtk = Number(totalBase.atk);
   const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
   currentBossHP = geminiHp;
