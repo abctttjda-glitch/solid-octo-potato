@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.23</title>
+<title>RELICORE - v1.24</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -154,7 +154,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 
 #serial-input-box { background: #1a1a1a; border: 1px solid var(--gold); color: #fff; padding: 10px; width: 100%; text-align: center; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; border-radius: 5px; }
 
-/* 秩序覚醒用モーダル */
 #order-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #222 0%, #000 100%); z-index: 55000; justify-content: center; align-items: center; padding: 20px; }
 .order-content { background: #000; border: 2px solid #fff; border-radius: 20px; padding: 40px 20px; text-align: center; color: #fff; max-width: 450px; width: 95%; box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
 </style>
@@ -230,7 +229,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.23</div>
+<div class="ver-footer">RELICORE v1.24</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -252,7 +251,6 @@ let needsUIUpdate = false;
 let kushiaCounter = 0;
 
 const attackBtn = document.getElementById("attackBtn");
-const UNIT_NAMES = ["", "k", "m", "b", "t", "aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
 
 function startAttackLoop(e) {
   if (activePointerId !== null) return;
@@ -280,25 +278,20 @@ attackBtn.addEventListener("pointerleave", stopAttackLoop);
 attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
-function formatNumber(n) {
-    if (n < 1000n) return n.toString();
+function formatV(n) {
+    const val = BigInt(n);
+    if (val < 100000000000000n) {
+        return val.toLocaleString();
+    }
+    const units = ["", "兆", "京", "垓", "𥝱"];
     let i = 0;
-    let val = n;
-    while (val >= 1000n && i < UNIT_NAMES.length - 1) {
-        val /= 1000n;
+    let v = val;
+    while (v >= 1000000000000n && i < units.length - 1) {
+        v /= 1000000000000n;
         i++;
     }
-    // 戻して小数点計算
-    let divisor = 1n;
-    for(let j=0; j<i; j++) divisor *= 1000n;
-    let integerPart = n / divisor;
-    let fractionPart = (n % divisor) * 100n / divisor;
-    return integerPart.toString() + "." + fractionPart.toString().padStart(2, '0') + UNIT_NAMES[i];
+    return v.toString() + units[i];
 }
-
-function formatV(val) { return formatNumber(BigInt(val)); }
-function formatFix(val) { return formatNumber(BigInt(Math.floor(Number(val)))); }
-function formatMaxDmg(val) { return formatNumber(BigInt(val)); }
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
@@ -464,7 +457,7 @@ card.className = "rare-card glow-" + relic.star;
 document.getElementById("rare-star-label").innerText = "★" + relic.star;
 document.getElementById("rare-star-label").className = "rare-star c" + relic.star;
 document.getElementById("rare-name-label").innerText = relic.name;
-let detail = (relic.atk ? `ATK +${formatFix(relic.atk)} ` : "") + (relic.hp ? `HP +${formatFix(relic.hp)} ` : "") + (relic.mult ? `(x${relic.mult})` : "");
+let detail = (relic.atk ? `ATK +${formatV(BigInt(Math.floor(Number(relic.atk))))} ` : "") + (relic.hp ? `HP +${formatV(BigInt(Math.floor(Number(relic.hp))))} ` : "") + (relic.mult ? `(x${relic.mult})` : "");
 document.getElementById("rare-desc-label").innerHTML = detail + (relic.desc ? `<br><br>${relic.desc}` : "");
 modal.style.display = "flex";
 }
@@ -973,7 +966,7 @@ else if (!player.hasCrown) countdownHtml = `<span class="relic-countdown">${Math
 else if (!player.hasMeta) countdownHtml = `<span class="relic-countdown">${Math.max(0, 300000 - c)}</span>`;
 }
 
-return `<div class="relic-card ${cardCls}"><div class="relic-name"><span class="${m.star >= 8 ? 'unique-relic-text' : 'c'+m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</span></div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name"><span class="${m.star >= 8 ? 'unique-relic-text' : 'c'+m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</span></div><div class="relic-effect-box">${(baseA>0?`ATK+${formatV(BigInt(Math.floor(baseA)))} `:'')}${(baseH>0?`HP+${formatV(BigInt(Math.floor(baseH)))}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
 }).join("");
 }
 
@@ -983,7 +976,7 @@ const nextExp = getExpThreshold(player.totalLevel);
 document.getElementById("st-totalclicks").textContent = formatV(player.totalClicks);
 document.getElementById("v-death").textContent = `${formatV(player.deathCount)} / ${formatV(nextExp)}`;
 document.getElementById("st-totalrelics").textContent = formatV(player.totalRelics || 0);
-document.getElementById("st-maxdmg").textContent = formatMaxDmg(player.maxDmg);
+document.getElementById("st-maxdmg").textContent = formatV(player.maxDmg);
 document.getElementById("st-dmgmult").textContent = "x" + (calcFinalDmgMult() * b.mult).toFixed(4);
 const rates = getCurrentDropRates(); let maxStar = 1; for(let s in rates) { if(player.maxDmg >= rates[s].cond) maxStar = Math.max(maxStar, parseInt(s)); }
 document.getElementById("st-rank").textContent = `★${maxStar}まで`;
