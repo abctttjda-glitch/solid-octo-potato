@@ -9,6 +9,7 @@
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
 body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
+/* 個別UI制御 */
 .btn-attack, .clickable-stat, .story-btn, .cosmic-btn, .btn-serial, .btn-reset { touch-action: manipulation; }
 
 .rank-display { text-align: center; padding: 10px 15px; border-radius: 12px; margin-bottom: 10px; border: 2px solid #333; transition: all 0.5s ease; background: #000; color: #fff; }
@@ -250,16 +251,8 @@ let isModalOpen = false;
 let needsUIUpdate = false;
 let kushiaCounter = 0;
 
-// ステータス表示ラッパー
-function displayStat(elementId, value, isTerminus = false) {
-    if (isTerminus) {
-        document.getElementById(elementId).textContent = value.toLocaleString();
-        return;
-    }
-    document.getElementById(elementId).textContent = formatV(value);
-}
-
 const attackBtn = document.getElementById("attackBtn");
+const UNIT_NAMES = ["", "k", "m", "b", "t", "aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
 
 function startAttackLoop(e) {
   if (activePointerId !== null) return;
@@ -287,46 +280,25 @@ attackBtn.addEventListener("pointerleave", stopAttackLoop);
 attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
-function formatV(val) {
-let n = BigInt(val);
-if (n < 100000000000000n) return n.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = n;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
+function formatNumber(n) {
+    if (n < 1000n) return n.toString();
+    let i = 0;
+    let val = n;
+    while (val >= 1000n && i < UNIT_NAMES.length - 1) {
+        val /= 1000n;
+        i++;
+    }
+    // 戻して小数点計算
+    let divisor = 1n;
+    for(let j=0; j<i; j++) divisor *= 1000n;
+    let integerPart = n / divisor;
+    let fractionPart = (n % divisor) * 100n / divisor;
+    return integerPart.toString() + "." + fractionPart.toString().padStart(2, '0') + UNIT_NAMES[i];
 }
-if (unitIdx === -1) return n.toLocaleString();
-let remainder = (n % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
-return base.toString() + "." + remainder + units[unitIdx];
-}
-function formatFix(val) {
-let v = BigInt(Math.floor(Number(val)));
-if (v < 100000000000000n) return v.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = v;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
-}
-let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
-return base.toString() + "." + remainder + units[unitIdx];
-}
-function formatMaxDmg(val) {
-let v = BigInt(val);
-if (v < 100000000000000n) return v.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = v;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
-}
-let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
-return base.toString() + "." + remainder + units[unitIdx];
-}
+
+function formatV(val) { return formatNumber(BigInt(val)); }
+function formatFix(val) { return formatNumber(BigInt(Math.floor(Number(val)))); }
+function formatMaxDmg(val) { return formatNumber(BigInt(val)); }
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
@@ -867,11 +839,8 @@ function updateUIFrame() { refreshUI(); needsUIUpdate = false; }
 function refreshUI() {
 const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
 const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
-const totalAtk = BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult));
-const totalHp = BigInt(Math.floor(Number(totalBase.hp) * b.mult));
-
-displayStat("p-atk", totalAtk);
-displayStat("p-hp", totalHp);
+document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
+document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
 
 const hpDisp = document.getElementById("bosshp-cur");
 if (!player.isCleared) {
