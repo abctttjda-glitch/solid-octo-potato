@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.25</title>
+<title>RELICORE - v1.26</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
 body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
-/* 個別UI制御 */
 .btn-attack, .clickable-stat, .story-btn, .cosmic-btn, .btn-serial, .btn-reset { touch-action: manipulation; }
 
 .rank-display { text-align: center; padding: 10px 15px; border-radius: 12px; margin-bottom: 10px; border: 2px solid #333; transition: all 0.5s ease; background: #000; color: #fff; }
@@ -229,7 +228,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.25</div>
+<div class="ver-footer">RELICORE v1.26</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -246,12 +245,10 @@ function formatLarge(n) {
     return val.toString() + UNITS[unitIdx];
 }
 
-// 既存関数の置き換え
 const formatV = formatLarge;
 const formatFix = formatLarge;
 const formatMaxDmg = formatLarge;
 
-// 以下のロジックは上記の共通関数を使用するよう更新済み
 let enemyDisasterStarUsed = false;
 let comboHit = 0;
 let isGeminiBattle = false;
@@ -300,7 +297,6 @@ window.addEventListener("pointerup", stopAttackLoop);
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
 let leveled = false;
-let oldLv = player.totalLevel;
 while (player.deathCount >= getExpThreshold(player.totalLevel)) {
 player.deathCount -= getExpThreshold(player.totalLevel);
 player.totalLevel++;
