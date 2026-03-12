@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.24</title>
+<title>RELICORE - v1.23</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -154,6 +154,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 
 #serial-input-box { background: #1a1a1a; border: 1px solid var(--gold); color: #fff; padding: 10px; width: 100%; text-align: center; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; border-radius: 5px; }
 
+/* 秩序覚醒用モーダル */
 #order-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #222 0%, #000 100%); z-index: 55000; justify-content: center; align-items: center; padding: 20px; }
 .order-content { background: #000; border: 2px solid #fff; border-radius: 20px; padding: 40px 20px; text-align: center; color: #fff; max-width: 450px; width: 95%; box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
 </style>
@@ -229,7 +230,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.24</div>
+<div class="ver-footer">RELICORE v1.23</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -244,7 +245,7 @@ const BASE_DROP_DATA = { 1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,
 const HADO_DROP_DATA = { 1:{p:88.9888989,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const GREAT_HADO_DROP_DATA = { 1:{p:78.9888989,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.9888989,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
-let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0 };
+let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0, omegaCharge: 0n };
 let currentBossHP = BigInt(player.bossMaxHP);
 let isModalOpen = false;
 let needsUIUpdate = false;
@@ -278,19 +279,45 @@ attackBtn.addEventListener("pointerleave", stopAttackLoop);
 attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
-function formatV(n) {
-    const val = BigInt(n);
-    if (val < 100000000000000n) {
-        return val.toLocaleString();
-    }
-    const units = ["", "兆", "京", "垓", "𥝱"];
-    let i = 0;
-    let v = val;
-    while (v >= 1000000000000n && i < units.length - 1) {
-        v /= 1000000000000n;
-        i++;
-    }
-    return v.toString() + units[i];
+function formatV(val) {
+let n = BigInt(val);
+if (n < 100000000000000n) return n.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = n;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+base /= 100000000000000n;
+unitIdx++;
+}
+if (unitIdx === -1) return n.toLocaleString();
+let remainder = (n % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+return base.toString() + "." + remainder + units[unitIdx];
+}
+function formatFix(val) {
+let v = BigInt(Math.floor(Number(val)));
+if (v < 100000000000000n) return v.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = v;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+base /= 100000000000000n;
+unitIdx++;
+}
+let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+return base.toString() + "." + remainder + units[unitIdx];
+}
+function formatMaxDmg(val) {
+let v = BigInt(val);
+if (v < 100000000000000n) return v.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = v;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+base /= 100000000000000n;
+unitIdx++;
+}
+let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
+return base.toString() + "." + remainder + units[unitIdx];
 }
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
@@ -323,7 +350,7 @@ const RELIC_MASTER = [
 {id:605, star:6, name:"戦碑累功レリ・エンス", atk:3000000, hp:3000000, desc:"獲得基礎経験値を1.5倍にする。(上限1個)"},
 {id:701, star:7, name:"パンドラの箱", atk:0, hp:0, desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"}, {id:702, star:7, name:"終焉の福音", atk:0, hp:0, desc:"敵HPが50%以下のとき、与ダメージ+400%。(重複不可)"}, {id:703, star:7, name:"神滅のアカシックレコード", atk:0, hp:0, desc:"与ダメージの最終倍率にさらに+400%。(重複不可)"},
 {id:804, star:8, name:"災厄の残滓", atk:0, hp:0, desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},
-{id:801, star:8, name:"天律崩壊オメガ・コア", atk:0, hp:0, desc:"統合・乗算コア：計算ロジックを最適化。一度のこうげきで獲得遺物が100個ある時発動。ステータスを乗算強化蓄積する。"},
+{id:801, star:8, name:"天律崩壊オメガ・コア", atk:0, hp:0, desc:"【蓄積】一度の攻撃で獲得遺物100個以上の時、発動。ステータスを乗算蓄積し、永続強化する。"},
 {id:802, star:8, name:"特異演算機関：ジェネシスコード", atk:0, hp:0, desc:"敵が強すぎる場合、演算機関が自己進化する。"},
 {id:803, star:8, name:"記憶の遺産", atk:0, hp:0, desc:"★3メモリークリスタル100個消費で「災禍殲星」発動。敵に1500%ダメージを与え、最大HP割合で能力値を成長させる。(同一の敵には1度のみ発動)"}
 ];
@@ -335,8 +362,8 @@ return 1 + Math.log10(player.totalRelics + 1) * 0.25;
 
 function applyOmegaCore(baseAtk, baseHp) {
 if ((player.inventory[801] || 0) <= 0) return { atk: baseAtk, hp: baseHp };
-let omegaMult = BigInt(player.inventory[801]) * 2n;
-return { atk: baseAtk * omegaMult, hp: baseHp * omegaMult };
+let multiplier = 1n + player.omegaCharge;
+return { atk: baseAtk * multiplier, hp: baseHp * multiplier };
 }
 
 function ensureOrderRelic() {
@@ -359,7 +386,7 @@ saveGame();
 triggerUIUpdate();
 }
 
-function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString(), enemyDisasterStarUsed: enemyDisasterStarUsed }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
+function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString(), enemyDisasterStarUsed: enemyDisasterStarUsed, omegaCharge: player.omegaCharge.toString() }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
 
 function loadGame() {
 let saved = localStorage.getItem(SAVE_KEY);
@@ -375,6 +402,7 @@ player.soujinCounter = p.soujinCounter || 0;
 player.totalLevel = p.totalLevel || 1;
 player.hadoExpAccum = p.hadoExpAccum || 0;
 player.evolutionStack = p.evolutionStack || 0;
+player.omegaCharge = BigInt(p.omegaCharge || "0");
 enemyDisasterStarUsed = p.enemyDisasterStarUsed || false;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
 ensureOrderRelic();
@@ -457,7 +485,7 @@ card.className = "rare-card glow-" + relic.star;
 document.getElementById("rare-star-label").innerText = "★" + relic.star;
 document.getElementById("rare-star-label").className = "rare-star c" + relic.star;
 document.getElementById("rare-name-label").innerText = relic.name;
-let detail = (relic.atk ? `ATK +${formatV(BigInt(Math.floor(Number(relic.atk))))} ` : "") + (relic.hp ? `HP +${formatV(BigInt(Math.floor(Number(relic.hp))))} ` : "") + (relic.mult ? `(x${relic.mult})` : "");
+let detail = (relic.atk ? `ATK +${formatFix(relic.atk)} ` : "") + (relic.hp ? `HP +${formatFix(relic.hp)} ` : "") + (relic.mult ? `(x${relic.mult})` : "");
 document.getElementById("rare-desc-label").innerHTML = detail + (relic.desc ? `<br><br>${relic.desc}` : "");
 modal.style.display = "flex";
 }
@@ -668,7 +696,7 @@ if (currentBossHP >= BigInt(Math.floor(totalAtkVal)) * 100n) { finalDmg = BigInt
 const hpBonus = Math.log10(Number(totalBase.hp) + 1) * 1000;
 finalDmg += BigInt(Math.floor(hpBonus)); specialTags += `<span style="color:#5f9ea0; font-weight:bold;">【還元】</span>`;
 }
-if((player.inventory[602] || 0) > 0) { kushiaCounter++; if(kushiaCounter >= 100) { finalDmg *= 3n; specialTags += `<span style="color:var(--gold); font-weight:bold;">【魂律】</span>`; kushiaCounter = 0; } }
+if((player.inventory[602] || 0) > 0) { kushiaCounter++; if(kushiaCounter >= 100) { finalDmg *= 3n; specialTags += `<span style="color:#gold; font-weight:bold;">【魂律】</span>`; kushiaCounter = 0; } }
 if((player.inventory[604] || 0) > 0 && Math.random() < 0.001) { finalDmg *= 6n; specialTags += `<span style="color:#fd7e14; font-weight:bold;">【虚無】</span>`; }
 
 if(finalDmg < 1n) finalDmg = 1n;
@@ -678,6 +706,12 @@ const skillLv = Math.min(10, player.totalLevel);
 const bushinCount = Math.min(50, player.inventory[401] || 0);
 const dropBase = Math.min(100, skillLv + Math.floor(player.totalLevel/10)*5 + bushinCount);
 let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(dropBase);
+
+// オメガコア発動判定
+if (player.inventory[801] > 0 && dropBase >= 100) {
+   player.omegaCharge += 1n;
+   logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
+}
 
 if(finalDmg >= currentBossHP) {
 comboHit = 0;
@@ -966,7 +1000,7 @@ else if (!player.hasCrown) countdownHtml = `<span class="relic-countdown">${Math
 else if (!player.hasMeta) countdownHtml = `<span class="relic-countdown">${Math.max(0, 300000 - c)}</span>`;
 }
 
-return `<div class="relic-card ${cardCls}"><div class="relic-name"><span class="${m.star >= 8 ? 'unique-relic-text' : 'c'+m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</span></div><div class="relic-effect-box">${(baseA>0?`ATK+${formatV(BigInt(Math.floor(baseA)))} `:'')}${(baseH>0?`HP+${formatV(BigInt(Math.floor(baseH)))}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name"><span class="${m.star >= 8 ? 'unique-relic-text' : 'c'+m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</span></div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
 }).join("");
 }
 
@@ -976,7 +1010,7 @@ const nextExp = getExpThreshold(player.totalLevel);
 document.getElementById("st-totalclicks").textContent = formatV(player.totalClicks);
 document.getElementById("v-death").textContent = `${formatV(player.deathCount)} / ${formatV(nextExp)}`;
 document.getElementById("st-totalrelics").textContent = formatV(player.totalRelics || 0);
-document.getElementById("st-maxdmg").textContent = formatV(player.maxDmg);
+document.getElementById("st-maxdmg").textContent = formatMaxDmg(player.maxDmg);
 document.getElementById("st-dmgmult").textContent = "x" + (calcFinalDmgMult() * b.mult).toFixed(4);
 const rates = getCurrentDropRates(); let maxStar = 1; for(let s in rates) { if(player.maxDmg >= rates[s].cond) maxStar = Math.max(maxStar, parseInt(s)); }
 document.getElementById("st-rank").textContent = `★${maxStar}まで`;
