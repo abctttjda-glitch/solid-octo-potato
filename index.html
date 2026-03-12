@@ -154,6 +154,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 
 #serial-input-box { background: #1a1a1a; border: 1px solid var(--gold); color: #fff; padding: 10px; width: 100%; text-align: center; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; border-radius: 5px; }
 
+/* 秩序覚醒用モーダル */
 #order-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #222 0%, #000 100%); z-index: 55000; justify-content: center; align-items: center; padding: 20px; }
 .order-content { background: #000; border: 2px solid #fff; border-radius: 20px; padding: 40px 20px; text-align: center; color: #fff; max-width: 450px; width: 95%; box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
 </style>
@@ -163,13 +164,17 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div id="rank-up-modal"><div class="rank-up-content"><div class="rank-up-title">覚醒</div><div class="rank-up-msg" id="rank-up-msg-text">魂の核が激しく鼓動する……！</div><button class="story-btn" onclick="closeRankUpModal()">高みへ</button><div class="rank-up-sub">※すべての再起スキルが強化されました。</div></div></div>
 <div id="rare-drop-modal" onclick="closeRareModal()"><div id="rare-card-content" class="rare-card"><span id="rare-star-label" class="rare-star"></span><span id="rare-name-label" class="rare-name"></span><div id="rare-desc-label" class="rare-desc"></div><div style="margin-top:20px; font-size:0.7em; color:#888;">画面タップで閉じる</div></div></div>
 <div id="hado-awaken-modal"><div class="hado-content"><div class="hado-title" id="hado-modal-title">隠しスキル覚醒</div><div class="hado-msg" id="hado-modal-msg"></div><button class="story-btn" onclick="closeHadoModal()">その力を受け入れる</button></div></div>
+
 <div id="cosmic-awaken-modal"><div class="cosmic-content"><div class="cosmic-title" id="cosmic-modal-title">覚醒</div><div class="cosmic-msg" id="cosmic-modal-msg"></div><button class="cosmic-btn" onclick="closeCosmicModal()">宇宙の理を識る</button></div></div>
+
 <div id="story-modal"><div class="story-content"><div class="story-text"><span class="story-line" style="color:#888;">わたしはすべてをうばわれた</span><span class="story-line" style="color:#4b0082;">奴によって世界は終わりを告げ、すべては虚無に飲まれたはずだった</span><span class="story-line" style="color:#fff;">しかし、それでもまだ諦めることを知らない光がある</span><span class="story-line"><span class="story-vow">『再起の誓い』</span><span style="color:#d4af37;">が魂を激しく鼓動させる</span></span><span class="story-line" style="color:#ff0000; font-weight:bold;">奴を一撃で葬るその日まで、わたしは止まらない</span></div><button class="story-btn" onclick="closeStory()">魂に刻印する</button></div></div>
+
 <div id="clear-modal"><div class="modal-content">
 <h3 id="clear-modal-title" style="color:var(--gold); font-size:1.6em; letter-spacing:3px;">神話の終焉</h3>
 <div id="clear-modal-msg" class="clear-main-msg"></div>
 <button id="clear-modal-btn" class="story-btn" onclick="closeClearModal()">災厄に立ち向かう</button>
 </div></div>
+
 <div id="order-awaken-modal"><div class="order-content">
 <div class="rank-up-title" style="color:#fff;">秩序の覚醒</div>
 <div class="clear-main-msg" style="text-align:center;">
@@ -179,6 +184,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 </div>
 <button class="story-btn" style="border-color:#fff; color:#fff;" onclick="closeOrderAwakenModal()">理を受け入れる</button>
 </div></div>
+
 <div id="serial-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:70000; justify-content:center; align-items:center; padding:20px;">
 <div class="modal-content" id="serial-modal-content">
 <h3 style="color:var(--gold); letter-spacing:2px;">シリアルコード入力</h3>
@@ -701,6 +707,7 @@ const bushinCount = Math.min(50, player.inventory[401] || 0);
 const dropBase = Math.min(100, skillLv + Math.floor(player.totalLevel/10)*5 + bushinCount);
 let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(dropBase);
 
+// オメガコア発動判定
 if (player.inventory[801] > 0 && dropBase >= 100) {
    player.omegaCharge += 1n;
    logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
@@ -859,13 +866,17 @@ function updateUIFrame() { refreshUI(); needsUIUpdate = false; }
 function refreshUI() {
 const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
 const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
-
 document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
 document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
 
 const hpDisp = document.getElementById("bosshp-cur");
+if (!player.isCleared) {
+hpDisp.textContent = currentBossHP.toString();
+document.getElementById("boss-display-name").textContent = isGeminiBattle ? "構文破壊機工:Gemini" : "終末神アポカリス＝ティア";
+} else {
 hpDisp.textContent = formatV(currentBossHP);
-document.getElementById("boss-display-name").textContent = isGeminiBattle ? "構文破壊機工:Gemini" : (player.isCleared ? "溢れし災厄" : "終末神アポカリス＝ティア");
+document.getElementById("boss-display-name").textContent = isGeminiBattle ? "構文破壊機工:Gemini" : "溢れし災厄";
+}
 
 document.getElementById("hp-bar-fill").style.width = `${Number(currentBossHP * 100n / BigInt(player.bossMaxHP))}%`;
 const area = document.getElementById("st-rank-area"); const title = document.getElementById("st-rank-title");
