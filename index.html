@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.23</title>
+<title>RELICORE - v1.24</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -154,7 +154,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 
 #serial-input-box { background: #1a1a1a; border: 1px solid var(--gold); color: #fff; padding: 10px; width: 100%; text-align: center; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; border-radius: 5px; }
 
-/* 秩序覚醒用モーダル */
 #order-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #222 0%, #000 100%); z-index: 55000; justify-content: center; align-items: center; padding: 20px; }
 .order-content { background: #000; border: 2px solid #fff; border-radius: 20px; padding: 40px 20px; text-align: center; color: #fff; max-width: 450px; width: 95%; box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
 </style>
@@ -230,7 +229,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.23</div>
+<div class="ver-footer">RELICORE v1.24</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -707,7 +706,6 @@ const bushinCount = Math.min(50, player.inventory[401] || 0);
 const dropBase = Math.min(100, skillLv + Math.floor(player.totalLevel/10)*5 + bushinCount);
 let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(dropBase);
 
-// オメガコア発動判定
 if (player.inventory[801] > 0 && dropBase >= 100) {
     player.omegaCharge += 1n;
     logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
