@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.23</title>
+<title>RELICORE - v1.24</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -230,7 +230,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.23</div>
+<div class="ver-footer">RELICORE v1.24</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -241,6 +241,8 @@ let attackInterval = null;
 let activePointerId = null;
 
 const RANK_NAMES = ["初心者", "修練者", "熟練者", "探求者", "到達者", "解放者", "支配者", "超越者", "救世主", "極致：唯一神"];
+const UNITS = ["", "aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+
 const BASE_DROP_DATA = { 1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,cond:0n}, 4:{p:0.001,cond:100000n}, 5:{p:0.0001,cond:1000000n}, 6:{p:0.00001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const HADO_DROP_DATA = { 1:{p:88.9888989,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const GREAT_HADO_DROP_DATA = { 1:{p:78.9888989,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
@@ -280,44 +282,33 @@ attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
 function formatV(val) {
-let n = BigInt(val);
-if (n < 100000000000000n) return n.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = n;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
+    let n = BigInt(val);
+    if (n < 100000000000000n) return n.toLocaleString();
+    let unitIdx = 0;
+    let divisor = 100000000000000n;
+    while (n >= 100000000000000n && unitIdx < UNITS.length - 1) {
+        if (n < 100000000000000n) break;
+        n /= 100000000000000n;
+        unitIdx++;
+    }
+    return n.toString() + UNITS[unitIdx];
 }
-if (unitIdx === -1) return n.toLocaleString();
-let remainder = (n % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
-return base.toString() + "." + remainder + units[unitIdx];
-}
+
 function formatFix(val) {
-let v = BigInt(Math.floor(Number(val)));
-if (v < 100000000000000n) return v.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = v;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
+    let v = BigInt(Math.floor(Number(val)));
+    return formatV(v);
 }
-let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
-return base.toString() + "." + remainder + units[unitIdx];
-}
+
 function formatMaxDmg(val) {
-let v = BigInt(val);
-if (v < 100000000000000n) return v.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = v;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
-}
-let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
-return base.toString() + "." + remainder + units[unitIdx];
+    let v = BigInt(val);
+    if (v < 100000000000000n) return v.toLocaleString();
+    let unitIdx = 0;
+    let n = v;
+    while (n >= 100000000000000n && unitIdx < UNITS.length - 1) {
+        n /= 100000000000000n;
+        unitIdx++;
+    }
+    return n.toString() + UNITS[unitIdx];
 }
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
