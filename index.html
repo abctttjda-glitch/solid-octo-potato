@@ -279,45 +279,51 @@ attackBtn.addEventListener("pointerleave", stopAttackLoop);
 attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
-function formatV(val) {
-let n = BigInt(val);
-if (n < 100000000000000n) return n.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = n;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
+function relicoreFormat(val, decimalDigits = 4){
+
+let n = typeof val === "bigint" ? val : BigInt(val);
+
+const START = 1000000000000000n; // 1000兆
+if (n < START) return n.toLocaleString();
+
+const BASE = 10000n;
+
+let unitIndex = 0n;
+let divisor = START;
+
+while (n >= divisor * BASE) {
+divisor *= BASE;
+unitIndex++;
 }
-if (unitIdx === -1) return n.toLocaleString();
-let remainder = (n % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
-return base.toString() + "." + remainder + units[unitIdx];
+
+let main = n / divisor;
+let decimal = (n % divisor) / (divisor / BASE);
+
+function getUnit(i){
+let chars = [];
+while(true){
+chars.unshift(String.fromCharCode(Number(i % 26n) + 97));
+i = i / 26n;
+if(i === 0n) break;
+i -= 1n;
 }
-function formatFix(val) {
-let v = BigInt(Math.floor(Number(val)));
-if (v < 100000000000000n) return v.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = v;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
+return chars.join('');
 }
-let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
-return base.toString() + "." + remainder + units[unitIdx];
+
+return main.toString() + "." + decimal.toString().padStart(4,"0").substring(0,decimalDigits) + getUnit(unitIndex);
+
 }
-function formatMaxDmg(val) {
-let v = BigInt(val);
-if (v < 100000000000000n) return v.toLocaleString();
-const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-let unitIdx = -1;
-let base = v;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
-unitIdx++;
+
+function formatV(val){
+return relicoreFormat(val,2);
 }
-let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
-return base.toString() + "." + remainder + units[unitIdx];
+
+function formatFix(val){
+return relicoreFormat(val,2);
+}
+
+function formatMaxDmg(val){
+return relicoreFormat(val,5);
 }
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
