@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.24</title>
+<title>RELICORE - v1.23</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -230,7 +230,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.24</div>
+<div class="ver-footer">RELICORE v1.23</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -283,12 +283,39 @@ function formatV(val){
 
 let n = typeof val === "bigint" ? val : BigInt(val);
 
-// 1000兆未満
-const START = 1000000000000000n;
-if(n < START) return n.toLocaleString();
+const START = 1000000000000000n; // 1000兆
+if (n < START) return n.toLocaleString();
 
 const BASE = 10000n;
 
+// 単位段階
+let unitIndex = 0n;
+let divisor = START;
+
+while (n >= divisor * BASE) {
+    divisor *= BASE;
+    unitIndex++;
+}
+
+// 表示値
+let scaled = n / divisor;
+let decimal = (n % divisor) / (divisor / BASE);
+
+// 単位生成
+function getUnit(i){
+    let chars = [];
+    while (true) {
+        chars.unshift(String.fromCharCode(Number(i % 26n) + 97));
+        i = i / 26n;
+        if (i === 0n) break;
+        i -= 1n;
+    }
+    return chars.join('');
+}
+
+return scaled.toString() + "." + decimal.toString().padStart(4,"0") + getUnit(unitIndex);
+
+}
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
@@ -455,7 +482,7 @@ card.className = "rare-card glow-" + relic.star;
 document.getElementById("rare-star-label").innerText = "★" + relic.star;
 document.getElementById("rare-star-label").className = "rare-star c" + relic.star;
 document.getElementById("rare-name-label").innerText = relic.name;
-let detail = (relic.atk ? `ATK +${formatV(relic.atk)} ` : "") + (relic.hp ? `HP +${formatV(relic.hp)} ` : "") + (relic.mult ? `(x${relic.mult})` : "");
+let detail = (relic.atk ? `ATK +${formatFix(relic.atk)} ` : "") + (relic.hp ? `HP +${formatFix(relic.hp)} ` : "") + (relic.mult ? `(x${relic.mult})` : "");
 document.getElementById("rare-desc-label").innerHTML = detail + (relic.desc ? `<br><br>${relic.desc}` : "");
 modal.style.display = "flex";
 }
@@ -677,6 +704,7 @@ const bushinCount = Math.min(50, player.inventory[401] || 0);
 const dropBase = Math.min(100, skillLv + Math.floor(player.totalLevel/10)*5 + bushinCount);
 let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(dropBase);
 
+// オメガコア発動判定
 if (player.inventory[801] > 0 && dropBase >= 100) {
    player.omegaCharge += 1n;
    logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
@@ -969,7 +997,7 @@ else if (!player.hasCrown) countdownHtml = `<span class="relic-countdown">${Math
 else if (!player.hasMeta) countdownHtml = `<span class="relic-countdown">${Math.max(0, 300000 - c)}</span>`;
 }
 
-return `<div class="relic-card ${cardCls}"><div class="relic-name"><span class="${m.star >= 8 ? 'unique-relic-text' : 'c'+m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</span></div><div class="relic-effect-box">${(baseA>0?`ATK+${formatV(baseA)} `:'')}${(baseH>0?`HP+${formatV(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name"><span class="${m.star >= 8 ? 'unique-relic-text' : 'c'+m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</span></div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
 }).join("");
 }
 
@@ -979,7 +1007,7 @@ const nextExp = getExpThreshold(player.totalLevel);
 document.getElementById("st-totalclicks").textContent = formatV(player.totalClicks);
 document.getElementById("v-death").textContent = `${formatV(player.deathCount)} / ${formatV(nextExp)}`;
 document.getElementById("st-totalrelics").textContent = formatV(player.totalRelics || 0);
-document.getElementById("st-maxdmg").textContent = formatV(player.maxDmg);
+document.getElementById("st-maxdmg").textContent = formatMaxDmg(player.maxDmg);
 document.getElementById("st-dmgmult").textContent = "x" + (calcFinalDmgMult() * b.mult).toFixed(4);
 const rates = getCurrentDropRates(); let maxStar = 1; for(let s in rates) { if(player.maxDmg >= rates[s].cond) maxStar = Math.max(maxStar, parseInt(s)); }
 document.getElementById("st-rank").textContent = `★${maxStar}まで`;
