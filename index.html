@@ -292,13 +292,13 @@ const BASE = 10000n;
 let unitIndex = 0n;
 let divisor = START;
 
-// 単位段階
+// 単位段階決定
 while(n >= divisor * BASE){
 divisor *= BASE;
 unitIndex++;
 }
 
-// 表示値
+// 表示部分
 let main = n / divisor;
 let decimal = (n % divisor) / (divisor / BASE);
 
