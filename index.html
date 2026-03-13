@@ -292,14 +292,19 @@ const BASE = 10000n;
 // 桁数取得
 let digits = n.toString().length;
 
-// 10000単位の指数
-let exponent = Math.floor((digits - 1) / 4) - 3;
+// 単位指数
+let exponent = Math.floor((digits - 16) / 4);
 if(exponent < 0) exponent = 0;
 
-// 表示用数値
-let divisor = BASE ** BigInt(exponent + 3);
-let main = n / divisor;
-let decimal = (n % divisor) / (divisor / BASE);
+// 割る値
+let divisor = BASE ** BigInt(exponent);
+
+// 表示部分
+let scaled = n / divisor;
+
+// 整数 + 小数
+let main = scaled / BASE;
+let decimal = scaled % BASE;
 
 // 単位生成
 function getUnit(i){
