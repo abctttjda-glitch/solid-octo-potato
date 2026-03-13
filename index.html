@@ -289,36 +289,6 @@ if(n < START) return n.toLocaleString();
 
 const BASE = 10000n;
 
-let unitIndex = 0n;
-let divisor = START;
-
-// 単位段階決定
-while(n >= divisor * BASE){
-divisor *= BASE;
-unitIndex++;
-}
-
-// 表示部分
-let main = n / divisor;
-let decimal = (n % divisor) / (divisor / BASE);
-
-// 単位生成
-function getUnit(i){
-let chars = [];
-i += 26n*26n;
-
-while(i > 0n){
-i--;
-chars.unshift(String.fromCharCode(Number(i % 26n) + 97));
-i /= 26n;
-}
-
-return chars.join('');
-}
-
-return main.toString() + "." + decimal.toString().padStart(4,"0") + getUnit(unitIndex);
-
-}
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
