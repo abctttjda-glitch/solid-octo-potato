@@ -387,6 +387,50 @@ return main.toString() + "." + decimal.toString().padStart(4,"0").substring(0,di
 
 }
 
+function relicoreFormat(val, digits = 2){
+
+if(val === undefined || val === null || val === "" || val === "NaN") return "0";
+
+let n;
+
+try{
+n = typeof val === "bigint" ? val : BigInt(val);
+}catch{
+return "0";
+}
+
+const START = 1000000000000000n;
+
+if(n < START) return n.toLocaleString();
+
+const BASE = 10000n;
+
+let unitIndex = 0n;
+let divisor = START;
+
+while(n >= divisor * BASE){
+divisor *= BASE;
+unitIndex++;
+}
+
+let main = n / divisor;
+let decimal = (n % divisor) / (divisor / BASE);
+
+function getUnit(i){
+let chars = [];
+while(true){
+chars.unshift(String.fromCharCode(Number(i % 26n) + 97));
+i = i / 26n;
+if(i === 0n) break;
+i -= 1n;
+}
+return chars.join('');
+}
+
+return main.toString() + "." + decimal.toString().padStart(4,"0").substring(0,digits) + getUnit(unitIndex);
+
+}
+
 function formatV(val){
 return relicoreFormat(val,2);
 }
