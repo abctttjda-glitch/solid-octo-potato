@@ -315,8 +315,33 @@ function getUnit(i){
 
 return scaled.toString() + "." + decimal.toString().padStart(4,"0") + getUnit(unitIndex);
 
-} base.toString() + "." + remainder + units[
-
+}
+function formatFix(val) {
+let v = BigInt(Math.floor(Number(val)));
+if (v < 100000000000000n) return v.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = v;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+base /= 100000000000000n;
+unitIdx++;
+}
+let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+return base.toString() + "." + remainder + units[unitIdx];
+}
+function formatMaxDmg(val) {
+let v = BigInt(val);
+if (v < 100000000000000n) return v.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = v;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+base /= 100000000000000n;
+unitIdx++;
+}
+let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
+return base.toString() + "." + remainder + units[unitIdx];
+}
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
