@@ -154,6 +154,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 
 #serial-input-box { background: #1a1a1a; border: 1px solid var(--gold); color: #fff; padding: 10px; width: 100%; text-align: center; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; border-radius: 5px; }
 
+/* 秩序覚醒用モーダル */
 #order-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #222 0%, #000 100%); z-index: 55000; justify-content: center; align-items: center; padding: 20px; }
 .order-content { background: #000; border: 2px solid #fff; border-radius: 20px; padding: 40px 20px; text-align: center; color: #fff; max-width: 450px; width: 95%; box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
 </style>
@@ -278,24 +279,46 @@ attackBtn.addEventListener("pointerleave", stopAttackLoop);
 attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
-const UNITS = ["", "aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
-
-function formatLarge(val) {
-    let n = BigInt(val);
-    if (n < 1000000000000000n) return n.toLocaleString();
-    let unitIdx = 0;
-    let base = n;
-    while (base >= 10000n && unitIdx < UNITS.length - 1) {
-        base /= 10000n;
-        unitIdx++;
-    }
-    let remainder = (n / (10000n ** BigInt(unitIdx - 1)) % 10000n).toString().padStart(4, '0');
-    return (n / (10000n ** BigInt(unitIdx))).toString() + "." + remainder.substring(0,2) + UNITS[unitIdx];
+function formatV(val) {
+let n = BigInt(val);
+if (n < 100000000000000n) return n.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = n;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+base /= 100000000000000n;
+unitIdx++;
 }
-
-function formatV(val) { return formatLarge(val); }
-function formatFix(val) { return formatLarge(val); }
-function formatMaxDmg(val) { return formatLarge(val); }
+if (unitIdx === -1) return n.toLocaleString();
+let remainder = (n % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+return base.toString() + "." + remainder + units[unitIdx];
+}
+function formatFix(val) {
+let v = BigInt(Math.floor(Number(val)));
+if (v < 100000000000000n) return v.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = v;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+base /= 100000000000000n;
+unitIdx++;
+}
+let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+return base.toString() + "." + remainder + units[unitIdx];
+}
+function formatMaxDmg(val) {
+let v = BigInt(val);
+if (v < 100000000000000n) return v.toLocaleString();
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = v;
+while (base >= 100000000000000n && unitIdx < units.length - 1) {
+base /= 100000000000000n;
+unitIdx++;
+}
+let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
+return base.toString() + "." + remainder + units[unitIdx];
+}
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
@@ -690,41 +713,48 @@ if (player.inventory[801] > 0 && dropBase >= 100) {
    logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
 }
 
+// 撃破・回復判定
 if(finalDmg >= currentBossHP) {
-comboHit = 0;
-if(!player.isCleared) {
-  if((player.inventory[701] || 0) > 0 && finalDmg >= bossMaxHP) {
-      currentBossHP = 0n;
-      player.killCount++;
-      player.isCleared = true;
-      enemyDisasterStarUsed = false;
-      isModalOpen = true;
-      document.getElementById("clear-modal-title").innerText = "神話の終焉";
-      document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
-      document.getElementById("clear-modal").style.display = "flex";
-  } else {
-      currentBossHP = bossMaxHP;
-      enemyDisasterStarUsed = false;
-      logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
-  }
+    comboHit = 0;
+    if(!player.isCleared) {
+        // 終末神アポカリス＝ティアとの決戦時
+        const hasPandora = (player.inventory[701] || 0) > 0;
+        if(hasPandora && finalDmg >= bossMaxHP) {
+            // 一撃で最大HPを削り、パンドラの箱を所持している場合のみ撃破
+            currentBossHP = 0n;
+            player.killCount++;
+            player.isCleared = true;
+            enemyDisasterStarUsed = false;
+            isModalOpen = true;
+            document.getElementById("clear-modal-title").innerText = "神話の終焉";
+            document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
+            document.getElementById("clear-modal").style.display = "flex";
+        } else {
+            // それ以外はHP1になっても全回復
+            currentBossHP = bossMaxHP;
+            enemyDisasterStarUsed = false;
+            logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+        }
+    } else {
+        // エンドレスモードまたはGemini戦
+        currentBossHP = 0n;
+        player.killCount++;
+        enemyDisasterStarUsed = false;
+        if(isGeminiBattle) {
+            isGeminiBattle = false;
+            logHtml += `<div><span class="c-gemini">ERROR: 構文破壊機工を撃破しました。Geminiとの接続を強制切断します。</span></div>`;
+        }
+        handleBossDefeat();
+    }
 } else {
-  currentBossHP = 0n;
-  player.killCount++;
-  enemyDisasterStarUsed = false;
-  if(isGeminiBattle) {
-      isGeminiBattle = false;
-      logHtml += `<div><span class="c-gemini">ERROR: 構文破壊機工を撃破しました。Geminiとの接続を強制切断します。</span></div>`;
-  }
-  handleBossDefeat();
-}
-} else {
-currentBossHP -= finalDmg;
-if(currentBossHP < 1n && !player.isCleared) {
-  comboHit = 0;
-  currentBossHP = bossMaxHP;
-  enemyDisasterStarUsed = false;
-  logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
-}
+    currentBossHP -= finalDmg;
+    // ダメージ後のHPが1未満になってもクリアフラグがなければ全回復
+    if(currentBossHP < 1n && !player.isCleared) {
+        comboHit = 0;
+        currentBossHP = bossMaxHP;
+        enemyDisasterStarUsed = false;
+        logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+    }
 }
 
 if(currentBossHP > 0n) {
