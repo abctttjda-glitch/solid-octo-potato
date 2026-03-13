@@ -240,9 +240,39 @@ let isGeminiBattle = false;
 let attackInterval = null;
 let activePointerId = null;
 
-const RANK_NAMES = ["初心者", "修練者", "熟練者", "探求者", "到達者", "解放者", "支配者", "超越者", "救世主", "極致：唯一神"];
-const UNITS = ["", "aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+function getUnitArray() {
+    let units = [];
+    const chars = "abcdefghijklmnopqrstuvwxyz";
+    for(let i=0; i<chars.length; i++) {
+        for(let j=0; j<chars.length; j++) {
+            units.push(chars[i] + chars[j]);
+        }
+    }
+    return units;
+}
+const UNITS = getUnitArray();
 
+function formatNumberDynamic(val, precision = 2) {
+    let n = BigInt(val);
+    if (n < 1000000000000000000000000n) return n.toLocaleString();
+    
+    let unitIdx = -1;
+    let base = n;
+    const threshold = 1000000000000000000000000n;
+    while (base >= threshold && unitIdx < UNITS.length - 1) {
+        base /= 1000n;
+        unitIdx++;
+    }
+    
+    let baseStr = base.toString();
+    if (baseStr.length <= 3) return baseStr + UNITS[unitIdx];
+    
+    let integerPart = baseStr.slice(0, baseStr.length - 3);
+    let decimalPart = baseStr.slice(baseStr.length - 3, baseStr.length - 3 + precision);
+    return integerPart + "." + decimalPart + UNITS[unitIdx];
+}
+
+const RANK_NAMES = ["初心者", "修練者", "熟練者", "探求者", "到達者", "解放者", "支配者", "超越者", "救世主", "極致：唯一神"];
 const BASE_DROP_DATA = { 1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,cond:0n}, 4:{p:0.001,cond:100000n}, 5:{p:0.0001,cond:1000000n}, 6:{p:0.00001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const HADO_DROP_DATA = { 1:{p:88.9888989,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const GREAT_HADO_DROP_DATA = { 1:{p:78.9888989,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
@@ -281,40 +311,9 @@ attackBtn.addEventListener("pointerleave", stopAttackLoop);
 attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
-function formatV(val) {
-    let n = BigInt(val);
-    if (n < 100000000000000n) return n.toLocaleString();
-    let unitIdx = 0;
-    let divisor = 100000000000000n;
-    while (n >= 100000000000000n && unitIdx < UNITS.length - 1) {
-        if (n < 100000000000000n) break;
-        n /= 100000000000000n;
-        unitIdx++;
-    }
-    return n.toString() + UNITS[unitIdx];
-}
-
-function formatFix(val) {
-    let v = BigInt(Math.floor(Number(val)));
-    return formatV(v);
-}
-
-function formatMaxDmg(val) {
-    let v = BigInt(val);
-    if (v < 100000000000000n) return v.toLocaleString();
-    let unitIdx = 0;
-    let n = v;
-    while (n >= 100000000000000n && unitIdx < UNITS.length - 1) {
-        n /= 100000000000000n;
-        unitIdx++;
-    }
-    return n.toString() + UNITS[unitIdx];
-}
-
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
 function checkLevelUp() {
 let leveled = false;
-let oldLv = player.totalLevel;
 while (player.deathCount >= getExpThreshold(player.totalLevel)) {
 player.deathCount -= getExpThreshold(player.totalLevel);
 player.totalLevel++;
@@ -476,7 +475,7 @@ card.className = "rare-card glow-" + relic.star;
 document.getElementById("rare-star-label").innerText = "★" + relic.star;
 document.getElementById("rare-star-label").className = "rare-star c" + relic.star;
 document.getElementById("rare-name-label").innerText = relic.name;
-let detail = (relic.atk ? `ATK +${formatFix(relic.atk)} ` : "") + (relic.hp ? `HP +${formatFix(relic.hp)} ` : "") + (relic.mult ? `(x${relic.mult})` : "");
+let detail = (relic.atk ? `ATK +${formatNumberDynamic(relic.atk)} ` : "") + (relic.hp ? `HP +${formatNumberDynamic(relic.hp)} ` : "") + (relic.mult ? `(x${relic.mult})` : "");
 document.getElementById("rare-desc-label").innerHTML = detail + (relic.desc ? `<br><br>${relic.desc}` : "");
 modal.style.display = "flex";
 }
@@ -696,9 +695,8 @@ if(finalDmg > player.maxDmg) player.maxDmg = finalDmg;
 const skillLv = Math.min(10, player.totalLevel);
 const bushinCount = Math.min(50, player.inventory[401] || 0);
 const dropBase = Math.min(100, skillLv + Math.floor(player.totalLevel/10)*5 + bushinCount);
-let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatV(finalDmg)} ダメージ！</span></div>` + getDropLog(dropBase);
+let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;">攻撃！${formatNumberDynamic(finalDmg)} ダメージ！</span></div>` + getDropLog(dropBase);
 
-// オメガコア発動判定
 if (player.inventory[801] > 0 && dropBase >= 100) {
    player.omegaCharge += 1n;
    logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
@@ -759,7 +757,7 @@ let gainedExp = Math.floor((baseExp + kenmaBonus) * ensBonus);
 player.hadoExpAccum += gainedExp;
 if (currentTotalHP > finalMitigated) {
   player.deathCount += gainedExp;
-  logHtml += `<div><span style="color:#28a745; font-weight:bold;">敵の攻撃！${formatV(finalMitigated)} ダメージ。障壁展開！</span></div>` + getGuaranteedDrop();
+  logHtml += `<div><span style="color:#28a745; font-weight:bold;">敵の攻撃！${formatNumberDynamic(finalMitigated)} ダメージ。障壁展開！</span></div>` + getGuaranteedDrop();
 } else {
   let repeatCount = 1;
   if (activeAuth === 505 && Math.random() < 0.1) { repeatCount = 2; specialTags += `【再起】`; }
@@ -769,7 +767,7 @@ if (currentTotalHP > finalMitigated) {
       totalUpHP += up;
   }
   player.baseHP += totalUpHP; player.deathCount += gainedExp;
-  logHtml += `<div><span style="color:#dc3545;">敵の攻撃！${formatV(finalMitigated)} ダメージ。</span><span style="color:#007bff; font-weight:bold;">再起の誓いによって新たなる力を得た </span>${repeatCount > 1 ? '<span style="color:gold; font-weight:bold;">【双重再起】</span>' : ''}<span style="color:var(--growth); font-weight:bold;">(基礎HP+${formatV(totalUpHP)})</span></div>`;
+  logHtml += `<div><span style="color:#dc3545;">敵の攻撃！${formatNumberDynamic(finalMitigated)} ダメージ。</span><span style="color:#007bff; font-weight:bold;">再起の誓いによって新たなる力を得た </span>${repeatCount > 1 ? '<span style="color:gold; font-weight:bold;">【双重再起】</span>' : ''}<span style="color:var(--growth); font-weight:bold;">(基礎HP+${formatNumberDynamic(totalUpHP)})</span></div>`;
 }
 if(checkLevelUp()) {}
 }
@@ -857,17 +855,12 @@ function updateUIFrame() { refreshUI(); needsUIUpdate = false; }
 function refreshUI() {
 const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
 const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
-document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
-document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
+document.getElementById("p-atk").textContent = formatNumberDynamic(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
+document.getElementById("p-hp").textContent = formatNumberDynamic(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
 
 const hpDisp = document.getElementById("bosshp-cur");
-if (!player.isCleared) {
-hpDisp.textContent = currentBossHP.toLocaleString();
-document.getElementById("boss-display-name").textContent = isGeminiBattle ? "構文破壊機工:Gemini" : "終末神アポカリス＝ティア";
-} else {
-hpDisp.textContent = formatV(currentBossHP);
-document.getElementById("boss-display-name").textContent = isGeminiBattle ? "構文破壊機工:Gemini" : "溢れし災厄";
-}
+hpDisp.textContent = currentBossHP.toString();
+document.getElementById("boss-display-name").textContent = isGeminiBattle ? "構文破壊機工:Gemini" : (player.isCleared ? "溢れし災厄" : "終末神アポカリス＝ティア");
 
 document.getElementById("hp-bar-fill").style.width = `${Number(currentBossHP * 100n / BigInt(player.bossMaxHP))}%`;
 const area = document.getElementById("st-rank-area"); const title = document.getElementById("st-rank-title");
@@ -914,7 +907,7 @@ hlContent = `<span class="vow-tag">ボーナス：+${nuclearBonus + bushinCount}
 }
 else if(s.id === "setsuna") {
 const setsunaVal = Math.min(50000, player.inventory[402] || 0) * 5;
-hlContent = `<span class="vow-tag">HP増加：+${lv + setsunaVal}</span><span class="vow-tag">/ 上限1〜${formatV(player.deathCount || 100)}</span><span class="vow-tag">【刹那：+${setsunaVal}】</span>`;
+hlContent = `<span class="vow-tag">HP増加：+${lv + setsunaVal}</span><span class="vow-tag">/ 上限1〜${formatNumberDynamic(player.deathCount || 100)}</span><span class="vow-tag">【刹那：+${setsunaVal}】</span>`;
 }
 else if(s.id === "inga") {
 let baseCut = Math.min(20, Math.floor(lv/5) * 5);
@@ -991,17 +984,17 @@ else if (!player.hasCrown) countdownHtml = `<span class="relic-countdown">${Math
 else if (!player.hasMeta) countdownHtml = `<span class="relic-countdown">${Math.max(0, 300000 - c)}</span>`;
 }
 
-return `<div class="relic-card ${cardCls}"><div class="relic-name"><span class="${m.star >= 8 ? 'unique-relic-text' : 'c'+m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</span></div><div class="relic-effect-box">${(baseA>0?`ATK+${formatFix(baseA)} `:'')}${(baseH>0?`HP+${formatFix(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
+return `<div class="relic-card ${cardCls}"><div class="relic-name"><span class="${m.star >= 8 ? 'unique-relic-text' : 'c'+m.star}">★${m.star} ${m.name}${m.star < 6 ? '×' + c.toLocaleString() : ''}</span></div><div class="relic-effect-box">${(baseA>0?`ATK+${formatNumberDynamic(baseA)} `:'')}${(baseH>0?`HP+${formatNumberDynamic(baseH)}`:'')}${(m.mult?` (x${m.mult})`:'')}${m.desc ? `<span class="relic-desc-line">${m.desc}</span>` : ""}${countdownHtml}</div></div>`;
 }).join("");
 }
 
 function renderStatus() {
 const b = getRelicBonus();
 const nextExp = getExpThreshold(player.totalLevel);
-document.getElementById("st-totalclicks").textContent = formatV(player.totalClicks);
-document.getElementById("v-death").textContent = `${formatV(player.deathCount)} / ${formatV(nextExp)}`;
-document.getElementById("st-totalrelics").textContent = formatV(player.totalRelics || 0);
-document.getElementById("st-maxdmg").textContent = formatMaxDmg(player.maxDmg);
+document.getElementById("st-totalclicks").textContent = formatNumberDynamic(player.totalClicks);
+document.getElementById("v-death").textContent = `${formatNumberDynamic(player.deathCount)} / ${formatNumberDynamic(nextExp)}`;
+document.getElementById("st-totalrelics").textContent = formatNumberDynamic(player.totalRelics || 0);
+document.getElementById("st-maxdmg").textContent = formatNumberDynamic(player.maxDmg);
 document.getElementById("st-dmgmult").textContent = "x" + (calcFinalDmgMult() * b.mult).toFixed(4);
 const rates = getCurrentDropRates(); let maxStar = 1; for(let s in rates) { if(player.maxDmg >= rates[s].cond) maxStar = Math.max(maxStar, parseInt(s)); }
 document.getElementById("st-rank").textContent = `★${maxStar}まで`;
@@ -1012,7 +1005,7 @@ document.getElementById("prob-list").innerHTML = Object.entries(rates).map(([s,d
 }
 
 function getCurrentDropRates() { if(player.hasDivineGuide) return DIVINE_GUIDE_DROP_DATA; if(player.hasGreatHado) return GREAT_HADO_DROP_DATA; if(player.hasHado) return HADO_DROP_DATA; return BASE_DROP_DATA; }
-function checkDropEligibility() { let msg = "【獲得資格詳細】\n"; Object.entries(getCurrentDropRates()).forEach(([s, d]) => { msg += `★${s}: ${player.maxDmg >= d.cond ? '解放済み' : '未解放 (要:' + formatV(d.cond) + ')'}\n`; }); alert(msg); }
+function checkDropEligibility() { let msg = "【獲得資格詳細】\n"; Object.entries(getCurrentDropRates()).forEach(([s, d]) => { msg += `★${s}: ${player.maxDmg >= d.cond ? '解放済み' : '未解放 (要:' + formatNumberDynamic(d.cond) + ')'}\n`; }); alert(msg); }
 function showTab(id) { document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active")); document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active")); document.getElementById(id).classList.add("active"); document.getElementById("nav-"+id).classList.add("active"); triggerUIUpdate(); }
 function addLog(html) { const l = document.getElementById("log"); const d = document.createElement("div"); d.className = "log-set"; d.innerHTML = html; l.insertBefore(d, l.firstChild); while (l.children.length > 20) { l.removeChild(l.lastChild); } }
 function updateLog(message) { addLog(`<div>${message}</div>`); }
@@ -1027,7 +1020,7 @@ if (!isGeminiBattle && Math.random() < 0.1) {
   const playerAtk = Number(totalBase.atk);
   const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
   currentBossHP = geminiHp;
-  addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(geminiHp)}</span></div>`);
+  addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatNumberDynamic(geminiHp)}</span></div>`);
 } else {
   player.isCleared = true;
   let n_float = Number(player.killCount);
