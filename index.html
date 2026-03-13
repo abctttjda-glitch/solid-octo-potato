@@ -795,7 +795,8 @@ function getGuaranteedDrop() {
   const cands3 = RELIC_MASTER.filter(m => m.star === 3);
   const cands4 = RELIC_MASTER.filter(m => m.star === 4);
 
-  const dropCount = Math.min(100, isEvolved ? 100 : skillLv);
+  // 修正箇所: 通常時はskillLv(最大10)、進化時は100個に固定
+  const dropCount = isEvolved ? 100 : skillLv;
 
   for (let i = 0; i < dropCount; i++) {
     let sel;
@@ -829,6 +830,7 @@ function getGuaranteedDrop() {
 
   return `<div style="font-size:0.82em;">【狼煙】獲得：${entries.join("、 ")}</div>`;
 }
+
 
 
 function getDropLog(count) {
