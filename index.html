@@ -279,7 +279,13 @@ attackBtn.addEventListener("pointerleave", stopAttackLoop);
 attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
-function formatV(val) { let n = BigInt(val);const LIMIT = 1000000000000000n; // 1000兆if (n < LIMIT) return n.toLocaleString();const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];let unitIdx = 0;let base = n;
+function formatV(val) {
+   let n = BigInt(val);
+   const LIMIT = 1000000000000000n; // 1000兆
+   if (n < LIMIT) return n.toLocaleString();
+   const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+   let unitIdx = 0;
+   let base = n;
    // 単位を繰り上げる
    while (base >= 1000n * LIMIT && unitIdx < units.length - 1) {
        base /= 1000n;
