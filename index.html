@@ -281,42 +281,43 @@ window.addEventListener("pointerup", stopAttackLoop);
 
 function formatV(val) {
 let n = BigInt(val);
-if (n < 100000000000000n) return n.toLocaleString();
+if (n < 1000000000000000n) return n.toLocaleString();
 const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
 let unitIdx = -1;
 let base = n;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
+while (base >= 1000000000000000n && unitIdx < units.length - 1) {
+base /= 1000000000000000n;
 unitIdx++;
 }
-if (unitIdx === -1) return n.toLocaleString();
-let remainder = (n % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+let remainder = (n % 1000000000000000n).toString().padStart(15, '0').substring(0, 2);
 return base.toString() + "." + remainder + units[unitIdx];
 }
+
 function formatFix(val) {
 let v = BigInt(Math.floor(Number(val)));
-if (v < 100000000000000n) return v.toLocaleString();
+if (v < 1000000000000000n) return v.toLocaleString();
 const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
 let unitIdx = -1;
 let base = v;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
+while (base >= 1000000000000000n && unitIdx < units.length - 1) {
+base /= 1000000000000000n;
 unitIdx++;
 }
-let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 2);
+let remainder = (v % 1000000000000000n).toString().padStart(15, '0').substring(0, 2);
 return base.toString() + "." + remainder + units[unitIdx];
 }
+
 function formatMaxDmg(val) {
 let v = BigInt(val);
-if (v < 100000000000000n) return v.toLocaleString();
+if (v < 1000000000000000n) return v.toLocaleString();
 const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
 let unitIdx = -1;
 let base = v;
-while (base >= 100000000000000n && unitIdx < units.length - 1) {
-base /= 100000000000000n;
+while (base >= 1000000000000000n && unitIdx < units.length - 1) {
+base /= 1000000000000000n;
 unitIdx++;
 }
-let remainder = (v % 100000000000000n).toString().padStart(14, '0').substring(0, 5);
+let remainder = (v % 1000000000000000n).toString().padStart(15, '0').substring(0, 5);
 return base.toString() + "." + remainder + units[unitIdx];
 }
 
@@ -713,48 +714,41 @@ if (player.inventory[801] > 0 && dropBase >= 100) {
    logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
 }
 
-// 撃破・回復判定
 if(finalDmg >= currentBossHP) {
-    comboHit = 0;
-    if(!player.isCleared) {
-        // 終末神アポカリス＝ティアとの決戦時
-        const hasPandora = (player.inventory[701] || 0) > 0;
-        if(hasPandora && finalDmg >= bossMaxHP) {
-            // 一撃で最大HPを削り、パンドラの箱を所持している場合のみ撃破
-            currentBossHP = 0n;
-            player.killCount++;
-            player.isCleared = true;
-            enemyDisasterStarUsed = false;
-            isModalOpen = true;
-            document.getElementById("clear-modal-title").innerText = "神話の終焉";
-            document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
-            document.getElementById("clear-modal").style.display = "flex";
-        } else {
-            // それ以外はHP1になっても全回復
-            currentBossHP = bossMaxHP;
-            enemyDisasterStarUsed = false;
-            logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
-        }
-    } else {
-        // エンドレスモードまたはGemini戦
-        currentBossHP = 0n;
-        player.killCount++;
-        enemyDisasterStarUsed = false;
-        if(isGeminiBattle) {
-            isGeminiBattle = false;
-            logHtml += `<div><span class="c-gemini">ERROR: 構文破壊機工を撃破しました。Geminiとの接続を強制切断します。</span></div>`;
-        }
-        handleBossDefeat();
-    }
+comboHit = 0;
+if(!player.isCleared) {
+  if((player.inventory[701] || 0) > 0 && finalDmg >= bossMaxHP) {
+      currentBossHP = 0n;
+      player.killCount++;
+      player.isCleared = true;
+      enemyDisasterStarUsed = false;
+      isModalOpen = true;
+      document.getElementById("clear-modal-title").innerText = "神話の終焉";
+      document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
+      document.getElementById("clear-modal").style.display = "flex";
+  } else {
+      currentBossHP = bossMaxHP;
+      enemyDisasterStarUsed = false;
+      logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+  }
 } else {
-    currentBossHP -= finalDmg;
-    // ダメージ後のHPが1未満になってもクリアフラグがなければ全回復
-    if(currentBossHP < 1n && !player.isCleared) {
-        comboHit = 0;
-        currentBossHP = bossMaxHP;
-        enemyDisasterStarUsed = false;
-        logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
-    }
+  currentBossHP = 0n;
+  player.killCount++;
+  enemyDisasterStarUsed = false;
+  if(isGeminiBattle) {
+      isGeminiBattle = false;
+      logHtml += `<div><span class="c-gemini">ERROR: 構文破壊機工を撃破しました。Geminiとの接続を強制切断します。</span></div>`;
+  }
+  handleBossDefeat();
+}
+} else {
+currentBossHP -= finalDmg;
+if(currentBossHP < 1n && !player.isCleared) {
+  comboHit = 0;
+  currentBossHP = bossMaxHP;
+  enemyDisasterStarUsed = false;
+  logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+}
 }
 
 if(currentBossHP > 0n) {
@@ -873,8 +867,13 @@ function updateUIFrame() { refreshUI(); needsUIUpdate = false; }
 function refreshUI() {
 const b = getRelicBonus(); const skillMult = calcFinalDmgMult();
 const totalBase = applyOmegaCore(player.baseAtk + b.atk, player.baseHP + b.hp);
-document.getElementById("p-atk").textContent = formatV(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
-document.getElementById("p-hp").textContent = formatV(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
+
+// ATK, HP の小数点2位表示対応
+const dispAtk = BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult * 100)) / 100n;
+const dispHp = BigInt(Math.floor(Number(totalBase.hp) * b.mult * 100)) / 100n;
+
+document.getElementById("p-atk").textContent = formatV_precise(BigInt(Math.floor(Number(totalBase.atk) * b.mult * skillMult)));
+document.getElementById("p-hp").textContent = formatV_precise(BigInt(Math.floor(Number(totalBase.hp) * b.mult)));
 
 const hpDisp = document.getElementById("bosshp-cur");
 if (!player.isCleared) {
@@ -913,6 +912,23 @@ document.getElementById("hado-box").style.display = "none";
 
 const tid = document.querySelector(".tab.active").id;
 if(tid === 'vow') renderVow(); else if(tid === 'relic') renderRelics(); else if(tid === 'status') renderStatus();
+}
+
+// メイン表示用の精密format
+function formatV_precise(val) {
+let n = BigInt(val);
+if (n < 1000000000000000n) {
+  return (Number(n) / 1).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+const units = ["aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az"];
+let unitIdx = -1;
+let base = n;
+while (base >= 1000000000000000n && unitIdx < units.length - 1) {
+base /= 1000000000000000n;
+unitIdx++;
+}
+let remainder = (n % 1000000000000000n).toString().padStart(15, '0').substring(0, 2);
+return base.toString() + "." + remainder + units[unitIdx];
 }
 
 function renderVow() {
