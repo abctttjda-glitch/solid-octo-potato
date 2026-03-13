@@ -283,44 +283,40 @@ function formatV(val){
 
 let n = typeof val === "bigint" ? val : BigInt(val);
 
-// 1000兆未満は通常表示
+// 1000兆未満
 const START = 1000000000000000n;
 if(n < START) return n.toLocaleString();
 
 const BASE = 10000n;
 
-// 桁数取得
-let digits = n.toString().length;
+let unitIndex = 0n;
+let divisor = START;
 
-// 単位指数
-let exponent = Math.floor((digits - 16) / 4);
-if(exponent < 0) exponent = 0;
+// 単位段階
+while(n >= divisor * BASE){
+divisor *= BASE;
+unitIndex++;
+}
 
-// 割る値
-let divisor = BASE ** BigInt(exponent);
-
-// 表示部分
-let scaled = n / divisor;
-
-// 整数 + 小数
-let main = scaled / BASE;
-let decimal = scaled % BASE;
+// 表示値
+let main = n / divisor;
+let decimal = (n % divisor) / (divisor / BASE);
 
 // 単位生成
 function getUnit(i){
 let chars = [];
-i += 26*26;
+i += 26n*26n;
 
-while(i > 0){
+while(i > 0n){
 i--;
-chars.unshift(String.fromCharCode((i % 26) + 97));
-i = Math.floor(i / 26);
+chars.unshift(String.fromCharCode(Number(i % 26n) + 97));
+i /= 26n;
 }
 
 return chars.join('');
 }
 
-return main.toString() + "." + decimal.toString().padStart(4,"0") + getUnit(exponent);
+return main.toString() + "." + decimal.toString().padStart(4,"0") + getUnit(unitIndex);
 
 }
 
