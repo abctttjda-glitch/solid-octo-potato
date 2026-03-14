@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.23</title>
+<title>RELICORE - v1.24</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -230,7 +230,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.23</div>
+<div class="ver-footer">RELICORE v1.24</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = 100000000000000000000n;
@@ -764,10 +764,6 @@ if((player.inventory[701] || 0) > 0 && finalDmg >= bossMaxHP) {
 currentBossHP = 0n;
 player.killCount++;
 enemyDisasterStarUsed = false;
-if(isGeminiBattle) {
-    isGeminiBattle = false;
-    logHtml += `<div><span class="c-gemini">ERROR: 構文破壊機工を撃破しました。Geminiとの接続を強制切断します。</span></div>`;
-}
 handleBossDefeat();
 }
 } else {
@@ -1058,24 +1054,34 @@ function updateLog(message) { addLog(`<div>${message}</div>`); }
 function closeStory() { player.storySeen = true; document.getElementById("story-modal").style.display = "none"; saveGame(); }
 
 function handleBossDefeat() {
-comboHit = 0;
-if (!isGeminiBattle && Math.random() < 0.1) {
-isGeminiBattle = true;
-const bonus = getRelicBonus();
-const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
-const playerAtk = Number(totalBase.atk);
-const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
-currentBossHP = geminiHp;
-addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(geminiHp)}</span></div>`);
-} else {
-player.isCleared = true;
-let n_float = Number(player.killCount);
-let base = Number(BOSS_MAX_HP_BASE);
-let newHP = base * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
-player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
-currentBossHP = BigInt(player.bossMaxHP);
-}
-player.killCount++;
+    comboHit = 0;
+    
+    // Gemini出現フラグを一度リセットする
+    if (isGeminiBattle) {
+        isGeminiBattle = false;
+        player.killCount++;
+    }
+
+    // Geminiの出現判定（10%の確率）
+    // すでにGemini戦中ではないことを確認して判定
+    if (!isGeminiBattle && Math.random() < 0.1) {
+        isGeminiBattle = true;
+        const bonus = getRelicBonus();
+        const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+        const playerAtk = Number(totalBase.atk);
+        const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
+        currentBossHP = geminiHp;
+        addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(geminiHp)}</span></div>`);
+    } else {
+        // 通常の敵のHP更新処理
+        player.isCleared = true;
+        let n_float = Number(player.killCount);
+        let base = Number(BOSS_MAX_HP_BASE);
+        let newHP = base * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
+        player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
+        currentBossHP = BigInt(player.bossMaxHP);
+        player.killCount++;
+    }
 }
 
 function closeClearModal() {
