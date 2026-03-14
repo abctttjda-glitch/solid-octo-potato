@@ -415,7 +415,7 @@ saveGame();
 triggerUIUpdate();
 }
 
-function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString(), enemyDisasterStarUsed: enemyDisasterStarUsed, omegaCharge: player.omegaCharge.toString() }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
+function saveGame() { const data = { ...player, baseAtk: player.baseAtk.toString(), baseHP: player.baseHP.toString(), maxDmg: player.maxDmg.toString(), currentBossHP: currentBossHP.toString(), enemyDisasterStarUsed: enemyDisasterStarUsed, isGeminiBattle: isGeminiBattle, omegaCharge: player.omegaCharge.toString() }; localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
 
 function loadGame() {
 let saved = localStorage.getItem(SAVE_KEY);
@@ -434,6 +434,7 @@ player.evolutionStack = p.evolutionStack || 0;
 player.omegaCharge = BigInt(p.omegaCharge || "0");
 enemyDisasterStarUsed = p.enemyDisasterStarUsed || false;
 currentBossHP = p.currentBossHP ? BigInt(p.currentBossHP) : BigInt(player.bossMaxHP);
+isGeminiBattle = p.isGeminiBattle || false;
 ensureOrderRelic();
 } else { currentBossHP = BigInt(player.bossMaxHP); }
 
