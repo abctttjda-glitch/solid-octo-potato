@@ -49,7 +49,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 .hado-title { color: var(--gold); font-size: 1.8em; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 15px var(--gold); }
 .hado-msg { font-size: 1.0em; line-height: 2.0; margin-bottom: 35px; color: #eee; text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; }
 
-#cosmic-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a33 0%, #000 100%); z-index: 35000; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
+#cosmic-awaken-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #001a33 0%, #000 100%); z-index: 35000; justify-content: center; align-items: center; padding: 20px; }
 .cosmic-content { position: relative; background: rgba(0,0,0,0.8); border: 2px solid var(--cosmic-blue); border-radius: 30px; padding: 40px 20px; text-align: center; color: #fff; max-width: 480px; width: 95%; box-shadow: 0 0 50px rgba(0, 212, 255, 0.6); animation: cosmic-pulse 4s infinite; }
 @keyframes cosmic-pulse { 0% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); border-color: #0077ff; } 50% { box-shadow: 0 0 80px rgba(255, 255, 255, 0.8); border-color: #fff; } 100% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); border-color: #0077ff; } }
 .cosmic-title { color: var(--cosmic-white); font-size: 2.0em; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 20px var(--cosmic-blue); letter-spacing: 6px; }
@@ -245,7 +245,7 @@ const BASE_DROP_DATA = { 1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,
 const HADO_DROP_DATA = { 1:{p:88.9888989,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const GREAT_HADO_DROP_DATA = { 1:{p:78.9888989,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
 const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.9888989,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
-let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk:10n, baseHP:100n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0, omegaCharge: 0n };
+let player = { inventory: { 0:1 }, deathCount:0, hadoExpAccum:0, totalLevel:1, baseAtk: 3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000n, baseHP: 3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000n, maxDmg:0n, storySeen:false, rebalanceSeen:false, hasHado:false, hasGreatHado:false, hasDivineGuide:false, hasWorldOrder:false, hasCrown:false, hasMeta:false, isUra:false, bossMaxHP: BOSS_MAX_HP_BASE.toString(), totalClicks: 0, totalRelics: 0, killCount: 0, isCleared: false, soujinCounter: 0, evolutionStack: 0, omegaCharge: 0n };
 let currentBossHP = BigInt(player.bossMaxHP);
 let isModalOpen = false;
 let needsUIUpdate = false;
@@ -264,11 +264,11 @@ e.preventDefault();
 
 function stopAttackLoop(e) {
 if (e.pointerId === activePointerId) {
-    if (attackInterval) {
-        clearInterval(attackInterval);
-        attackInterval = null;
-    }
-    activePointerId = null;
+   if (attackInterval) {
+       clearInterval(attackInterval);
+       attackInterval = null;
+   }
+   activePointerId = null;
 }
 }
 
@@ -280,73 +280,73 @@ attackBtn.addEventListener("pointercancel", stopAttackLoop);
 window.addEventListener("pointerup", stopAttackLoop);
 
 function getUnit(n){
-   let s="";
-   n+=26;
-   while(n>=0){
-       s=String.fromCharCode(97+(n%26))+s;
-       n=Math.floor(n/26)-1;
-   }
-   return s;
+  let s="";
+  n+=26;
+  while(n>=0){
+      s=String.fromCharCode(97+(n%26))+s;
+      n=Math.floor(n/26)-1;
+  }
+  return s;
 }
 
 function formatV(val){
-   let n=BigInt(val);
-   const LIMIT=1000000000000000n;
+  let n=BigInt(val);
+  const LIMIT=1000000000000000n;
 
-   if(n<LIMIT) return n.toLocaleString();
+  if(n<LIMIT) return n.toLocaleString();
 
-   let unitIdx=0;
-   let base=n;
+  let unitIdx=0;
+  let base=n;
 
-   while(base>=1000n*LIMIT){
-       base/=1000n;
-       unitIdx++;
-   }
+  while(base>=1000n*LIMIT){
+      base/=1000n;
+      unitIdx++;
+  }
 
-   let whole=base/LIMIT;
-   let remainder=(base%LIMIT).toString().padStart(15,"0").substring(0,2);
+  let whole=base/LIMIT;
+  let remainder=(base%LIMIT).toString().padStart(15,"0").substring(0,2);
 
-   return whole.toString()+"."+remainder+getUnit(unitIdx);
+  return whole.toString()+"."+remainder+getUnit(unitIdx);
 }
 
 function formatFix(val){
-   let v=BigInt(Math.floor(Number(val)));
-   const LIMIT=1000000000000000n;
+  let v=BigInt(Math.floor(Number(val)));
+  const LIMIT=1000000000000000n;
 
-   if(v<LIMIT) return v.toLocaleString();
+  if(v<LIMIT) return v.toLocaleString();
 
-   let unitIdx=0;
-   let base=v;
+  let unitIdx=0;
+  let base=v;
 
-   while(base>=1000n*LIMIT){
-       base/=1000n;
-       unitIdx++;
-   }
+  while(base>=1000n*LIMIT){
+      base/=1000n;
+      unitIdx++;
+  }
 
-   let whole=base/LIMIT;
-   let remainder=(base%LIMIT).toString().padStart(15,"0").substring(0,2);
+  let whole=base/LIMIT;
+  let remainder=(base%LIMIT).toString().padStart(15,"0").substring(0,2);
 
-   return whole.toString()+"."+remainder+getUnit(unitIdx);
+  return whole.toString()+"."+remainder+getUnit(unitIdx);
 }
 
 function formatMaxDmg(val){
-   let v=BigInt(val);
-   const LIMIT=1000000000000000n;
+  let v=BigInt(val);
+  const LIMIT=1000000000000000n;
 
-   if(v<LIMIT) return v.toLocaleString();
+  if(v<LIMIT) return v.toLocaleString();
 
-   let unitIdx=0;
-   let base=v;
+  let unitIdx=0;
+  let base=v;
 
-   while(base>=1000n*LIMIT){
-       base/=1000n;
-       unitIdx++;
-   }
+  while(base>=1000n*LIMIT){
+      base/=1000n;
+      unitIdx++;
+  }
 
-   let whole=base/LIMIT;
-   let remainder=(base%LIMIT).toString().padStart(15,"0").substring(0,5);
+  let whole=base/LIMIT;
+  let remainder=(base%LIMIT).toString().padStart(15,"0").substring(0,5);
 
-   return whole.toString()+"."+remainder+getUnit(unitIdx);
+  return whole.toString()+"."+remainder+getUnit(unitIdx);
 }
 
 function getExpThreshold(lv) { return Math.floor(500 * (Math.pow(1.1, lv))); }
@@ -397,7 +397,7 @@ return { atk: baseAtk * multiplier, hp: baseHp * multiplier };
 
 function ensureOrderRelic() {
 if (player.isCleared && (player.inventory[999] || 0) === 0) {
- showOrderAwakenModal();
+showOrderAwakenModal();
 }
 }
 
@@ -422,8 +422,8 @@ let saved = localStorage.getItem(SAVE_KEY);
 if(saved) {
 const p = JSON.parse(saved);
 Object.assign(player, p);
-player.baseAtk = BigInt(p.baseAtk || "10");
-player.baseHP = BigInt(p.baseHP || "100");
+player.baseAtk = BigInt(p.baseAtk || "3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+player.baseHP = BigInt(p.baseHP || "3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
 player.maxDmg = BigInt(p.maxDmg || "0");
 player.totalRelics = p.totalRelics || 0;
 player.killCount = p.killCount || 0;
@@ -649,8 +649,8 @@ const authIds = [501, 502, 503, 504, 505, 506];
 let activeId = null;
 for (let id of authIds) {
 if ((player.inventory[id] || 0) > 0) {
-    activeId = id;
-    break;
+   activeId = id;
+   break;
 }
 }
 return activeId;
@@ -739,26 +739,26 @@ let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;"
 
 // オメガコア発動判定
 if (player.inventory[801] > 0 && dropBase >= 100) {
- player.omegaCharge += 1n;
- logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
+player.omegaCharge += 1n;
+logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
 }
 
 if(finalDmg >= currentBossHP) {
 comboHit = 0;
 if(!player.isCleared) {
 if((player.inventory[701] || 0) > 0 && finalDmg >= bossMaxHP) {
-    currentBossHP = 0n;
-    player.killCount++;
-    player.isCleared = true;
-    enemyDisasterStarUsed = false;
-    isModalOpen = true;
-    document.getElementById("clear-modal-title").innerText = "神話の終焉";
-    document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
-    document.getElementById("clear-modal").style.display = "flex";
+   currentBossHP = 0n;
+   player.killCount++;
+   player.isCleared = true;
+   enemyDisasterStarUsed = false;
+   isModalOpen = true;
+   document.getElementById("clear-modal-title").innerText = "神話の終焉";
+   document.getElementById("clear-modal-msg").innerHTML = `終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold); font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<br><span style="color:#ff4444; font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0; border-top:1px solid #444; margin:15px 0;"><span style="color:var(--growth);">ここからはエンドレスモードです。<br>遊んでくれてありがとうございます！</span>`;
+   document.getElementById("clear-modal").style.display = "flex";
 } else {
-    currentBossHP = bossMaxHP;
-    enemyDisasterStarUsed = false;
-    logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
+   currentBossHP = bossMaxHP;
+   enemyDisasterStarUsed = false;
+   logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰……！時が巻き戻る！！ (終末神アポカリス＝ティアのHP全回復)</span></div>`;
 }
 } else {
 handleBossDefeat();
@@ -797,8 +797,8 @@ let repeatCount = 1;
 if (activeAuth === 505 && Math.random() < 0.1) { repeatCount = 2; specialTags += `【再起】`; }
 let totalUpHP = 0n;
 for (let i = 0; i < repeatCount; i++) {
-    let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + skillLv + Math.min(50000, player.inventory[402] || 0) * 5);
-    totalUpHP += up;
+   let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + skillLv + Math.min(50000, player.inventory[402] || 0) * 5);
+   totalUpHP += up;
 }
 player.baseHP += totalUpHP; player.deathCount += gainedExp;
 logHtml += `<div><span style="color:#dc3545;">敵の攻撃！${formatV(finalMitigated)} ダメージ。</span><span style="color:#007bff; font-weight:bold;">再起の誓いによって新たなる力を得た </span>${repeatCount > 1 ? '<span style="color:gold; font-weight:bold;">【双重再起】</span>' : ''}<span style="color:var(--growth); font-weight:bold;">(基礎HP+${formatV(totalUpHP)})</span></div>`;
@@ -850,11 +850,11 @@ sel = cands[Math.floor(Math.random() * cands.length)];
 
 if (sel.star >= 6) {
 if ((player.inventory[sel.id] || 0) === 0) {
-    player.inventory[sel.id] = 1;
-    player.totalRelics++;
-    starCounts[sel.star]++;
-    starGroups[sel.star][sel.id] = 1;
-    showRare = sel;
+   player.inventory[sel.id] = 1;
+   player.totalRelics++;
+   starCounts[sel.star]++;
+   starGroups[sel.star][sel.id] = 1;
+   showRare = sel;
 }
 } else {
 player.inventory[sel.id] = (player.inventory[sel.id] || 0) + 1;
@@ -862,7 +862,7 @@ player.totalRelics++;
 starCounts[star]++;
 starGroups[star][sel.id] = (starGroups[star][sel.id] || 0) + 1;
 if (sel.star >= 4 && player.inventory[sel.id] === 1) {
-    if (!showRare || sel.star > showRare.star) showRare = sel;
+   if (!showRare || sel.star > showRare.star) showRare = sel;
 }
 }
 }
@@ -875,8 +875,8 @@ if (starCounts[s] > 20) {
 finalEntries.push(`<span class="c${s}">★${s}遺物 合計${starCounts[s]}個</span>`);
 } else {
 Object.entries(starGroups[s]).forEach(([id, c]) => {
-    const m = RELIC_MASTER.find(x => x.id == id);
-    finalEntries.push(`<span class="c${m.star}">★${m.star} ${m.name}${c > 1 ? '×' + c : ''}</span>`);
+   const m = RELIC_MASTER.find(x => x.id == id);
+   finalEntries.push(`<span class="c${m.star}">★${m.star} ${m.name}${c > 1 ? '×' + c : ''}</span>`);
 });
 }
 }
@@ -1051,30 +1051,30 @@ function updateLog(message) { addLog(`<div>${message}</div>`); }
 function closeStory() { player.storySeen = true; document.getElementById("story-modal").style.display = "none"; saveGame(); }
 
 function handleBossDefeat() {
-    comboHit = 0;
-    
-    // Gemini戦終了フラグ
-    isGeminiBattle = false;
+   comboHit = 0;
 
-    // 通常の敵のHP更新処理
-    player.isCleared = true;
-    let n_float = Number(player.killCount);
-    let base = Number(BOSS_MAX_HP_BASE);
-    let newHP = base * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
-    player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
-    currentBossHP = BigInt(player.bossMaxHP);
-    player.killCount++;
-    
-    // 次の出現判定（Gemini戦中ではない場合のみ）
-    if (Math.random() < 0.1) {
-        isGeminiBattle = true;
-        const bonus = getRelicBonus();
-        const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
-        const playerAtk = Number(totalBase.atk);
-        const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
-        currentBossHP = geminiHp;
-        addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(geminiHp)}</span></div>`);
-    }
+   // Gemini戦終了フラグ
+   isGeminiBattle = false;
+
+   // 通常の敵のHP更新処理
+   player.isCleared = true;
+   let n_float = Number(player.killCount);
+   let base = Number(BOSS_MAX_HP_BASE);
+   let newHP = base * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
+   player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
+   currentBossHP = BigInt(player.bossMaxHP);
+   player.killCount++;
+
+   // 次の出現判定（Gemini戦中ではない場合のみ）
+   if (Math.random() < 0.1) {
+       isGeminiBattle = true;
+       const bonus = getRelicBonus();
+       const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+       const playerAtk = Number(totalBase.atk);
+       const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
+       currentBossHP = geminiHp;
+       addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(geminiHp)}</span></div>`);
+   }
 }
 
 function closeClearModal() {
