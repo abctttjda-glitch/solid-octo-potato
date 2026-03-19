@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.26</title>
+<title>RELICORE - v1.25</title>
 <style>
 :root { --bg: #ffffff; --panel: #f8f9fa; --border: #dee2e6; --primary: #007bff; --text: #212529; --hp: #dc3545; --dark: #1a1a1a; --gold: #d4af37; --growth: #ff69b4; --relic-purple: #6610f2; --relic-bg: #fcfaff; --relic-deep-dark: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); --cosmic-blue: #00d4ff; --cosmic-white: #ffffff; --gemini: #4b0082; }
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
@@ -232,7 +232,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.26</div>
+<div class="ver-footer">RELICORE v1.25</div>
 <script>
 window.onerror = function(msg, src, line, col, err) {
   document.body.innerHTML = '<div style="padding:20px; font-size:14px; color:red; word-break:break-all;">'
@@ -627,7 +627,7 @@ if (r.star === 5 && player.hasCrown) { bA *= 100; bH *= 100; }
 if (r.star === 6 && player.hasMeta) { bA *= 100; bH *= 100; }
 
 // [修正①] Regalia は +20%（x1.2）に統一。getRelicBonus と renderRelics の値を合わせる。
-if (hasRegalia && r.star <= 6) { bA *= 1.2; bH *= 1.2; }
+if (hasRegalia && r.star <= 6) { bA *= 1.5; bH *= 1.5; }
 if (hasZansai && r.star !== 6) { bA *= 1000; bH *= 1000; }
 atk += bA; hp += bH; if (r.mult) mult *= Math.pow(r.mult, count);
 ```
@@ -1060,7 +1060,7 @@ if (m.star === 5 && player.hasCrown) { baseA *= 100; baseH *= 100; }
 if (m.star === 6 && player.hasMeta) { baseA *= 100; baseH *= 100; }
 
 // [修正①] getRelicBonus と統一して x1.2 に修正（旧: x1.5 は誤りだった）
-if (hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
+if (hasRegalia && m.star <= 6) { baseA *= 1.5; baseH *= 1.5; }
 if (hasZansai && m.star !== 6) { baseA *= 1000; baseH *= 1000; }
 
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
