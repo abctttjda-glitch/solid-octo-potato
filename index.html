@@ -235,7 +235,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 <div class="ver-footer">RELICORE v1.25</div>
 <script>
 const SAVE_KEY = "relicore_player_data";
-const BOSS_MAX_HP_BASE = 100000000000000000000n;
+const BOSS_MAX_HP_BASE = BigInt("100000000000000000000");
 let enemyDisasterStarUsed = false;
 let comboHit = 0;
 let isGeminiBattle = false;
@@ -243,10 +243,10 @@ let attackInterval = null;
 let activePointerId = null;
 
 const RANK_NAMES = [“初心者”, “修練者”, “熟練者”, “探求者”, “到達者”, “解放者”, “支配者”, “超越者”, “救世主”, “極致：唯一神”];
-const BASE_DROP_DATA = { 1:{p:98.9888889,cond:0n}, 2:{p:1.0,cond:0n}, 3:{p:0.01,cond:0n}, 4:{p:0.001,cond:100000n}, 5:{p:0.0001,cond:1000000n}, 6:{p:0.00001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
-const HADO_DROP_DATA = { 1:{p:88.9888989,cond:0n}, 2:{p:10.0,cond:0n}, 3:{p:1.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
-const GREAT_HADO_DROP_DATA = { 1:{p:78.9888989,cond:0n}, 2:{p:18.0,cond:0n}, 3:{p:3.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
-const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.9888989,cond:0n}, 2:{p:30.0,cond:0n}, 3:{p:10.0,cond:0n}, 4:{p:0.01,cond:100000n}, 5:{p:0.001,cond:1000000n}, 6:{p:0.0001,cond:10000000n}, 7:{p:0.000001,cond:100000000n}, 8:{p:0.0000001,cond:1000000000n}};
+const BASE_DROP_DATA = { 1:{p:98.9888889,cond:BigInt(0)}, 2:{p:1.0,cond:BigInt(0)}, 3:{p:0.01,cond:BigInt(0)}, 4:{p:0.001,cond:BigInt(100000)}, 5:{p:0.0001,cond:BigInt(1000000)}, 6:{p:0.00001,cond:BigInt(10000000)}, 7:{p:0.000001,cond:BigInt(100000000)}, 8:{p:0.0000001,cond:BigInt(1000000000)}};
+const HADO_DROP_DATA = { 1:{p:88.9888989,cond:BigInt(0)}, 2:{p:10.0,cond:BigInt(0)}, 3:{p:1.0,cond:BigInt(0)}, 4:{p:0.01,cond:BigInt(100000)}, 5:{p:0.001,cond:BigInt(1000000)}, 6:{p:0.0001,cond:BigInt(10000000)}, 7:{p:0.000001,cond:BigInt(100000000)}, 8:{p:0.0000001,cond:BigInt(1000000000)}};
+const GREAT_HADO_DROP_DATA = { 1:{p:78.9888989,cond:BigInt(0)}, 2:{p:18.0,cond:BigInt(0)}, 3:{p:3.0,cond:BigInt(0)}, 4:{p:0.01,cond:BigInt(100000)}, 5:{p:0.001,cond:BigInt(1000000)}, 6:{p:0.0001,cond:BigInt(10000000)}, 7:{p:0.000001,cond:BigInt(100000000)}, 8:{p:0.0000001,cond:BigInt(1000000000)}};
+const DIVINE_GUIDE_DROP_DATA = { 1:{p:59.9888989,cond:BigInt(0)}, 2:{p:30.0,cond:BigInt(0)}, 3:{p:10.0,cond:BigInt(0)}, 4:{p:0.01,cond:BigInt(100000)}, 5:{p:0.001,cond:BigInt(1000000)}, 6:{p:0.0001,cond:BigInt(10000000)}, 7:{p:0.000001,cond:BigInt(100000000)}, 8:{p:0.0000001,cond:BigInt(1000000000)}};
 
 // [修正③] player に isEndless を追加。isCleared は初回クリア専用フラグとして分離。
 let player = {
@@ -254,9 +254,9 @@ inventory: { 0:1 },
 deathCount: 0,
 hadoExpAccum: 0,
 totalLevel: 1,
-baseAtk: 10n,
-baseHP: 100n,
-maxDmg: 0n,
+baseAtk: BigInt(10),
+baseHP: BigInt(100),
+maxDmg: BigInt(0),
 storySeen: false,
 rebalanceSeen: false,
 hasHado: false,
@@ -274,7 +274,7 @@ isCleared: false,   // 初回クリア済みフラグ（変更しない）
 isEndless: false,   // [修正②] エンドレスモード中フラグ（新設）
 soujinCounter: 0,
 evolutionStack: 0,
-omegaCharge: 0n
+omegaCharge: BigInt(0)
 };
 
 let currentBossHP = BigInt(player.bossMaxHP);
@@ -314,30 +314,30 @@ return s;
 }
 
 function formatV(val){
-let n=BigInt(val); const LIMIT=1000000000000000n;
+let n=BigInt(val); const LIMIT=BigInt(“1000000000000000”);
 if(n<LIMIT) return n.toLocaleString();
 let unitIdx=0, base=n;
-while(base>=1000n*LIMIT){ base/=1000n; unitIdx++; }
+while(base>=BigInt(1000)*LIMIT){ base/=BigInt(1000); unitIdx++; }
 let whole=base/LIMIT;
 let remainder=(base%LIMIT).toString().padStart(15,“0”).substring(0,2);
 return whole.toString()+”.”+remainder+getUnit(unitIdx);
 }
 
 function formatFix(val){
-let v=BigInt(Math.floor(Number(val))); const LIMIT=1000000000000000n;
+let v=BigInt(Math.floor(Number(val))); const LIMIT=BigInt(“1000000000000000”);
 if(v<LIMIT) return v.toLocaleString();
 let unitIdx=0, base=v;
-while(base>=1000n*LIMIT){ base/=1000n; unitIdx++; }
+while(base>=BigInt(1000)*LIMIT){ base/=BigInt(1000); unitIdx++; }
 let whole=base/LIMIT;
 let remainder=(base%LIMIT).toString().padStart(15,“0”).substring(0,2);
 return whole.toString()+”.”+remainder+getUnit(unitIdx);
 }
 
 function formatMaxDmg(val){
-let v=BigInt(val); const LIMIT=1000000000000000n;
+let v=BigInt(val); const LIMIT=BigInt(“1000000000000000”);
 if(v<LIMIT) return v.toLocaleString();
 let unitIdx=0, base=v;
-while(base>=1000n*LIMIT){ base/=1000n; unitIdx++; }
+while(base>=BigInt(1000)*LIMIT){ base/=BigInt(1000); unitIdx++; }
 let whole=base/LIMIT;
 let remainder=(base%LIMIT).toString().padStart(15,“0”).substring(0,5);
 return whole.toString()+”.”+remainder+getUnit(unitIdx);
@@ -384,7 +384,7 @@ return 1 + Math.log10(player.totalRelics + 1) * 0.25;
 
 function applyOmegaCore(baseAtk, baseHp) {
 if ((player.inventory[801] || 0) <= 0) return { atk: baseAtk, hp: baseHp };
-let multiplier = 1n + player.omegaCharge;
+let multiplier = BigInt(1) + player.omegaCharge;
 return { atk: baseAtk * multiplier, hp: baseHp * multiplier };
 }
 
@@ -685,8 +685,8 @@ const bonus = getRelicBonus();
 const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
 
 if (isGeminiBattle) {
-player.baseAtk = (player.baseAtk * 1002n) / 1000n;
-player.baseHP = (player.baseHP * 1002n) / 1000n;
+player.baseAtk = (player.baseAtk * BigInt(1002)) / BigInt(1000);
+player.baseHP = (player.baseHP * BigInt(1002)) / BigInt(1000);
 addLog(`<div><span class="c-gemini">ERROR: 構文破壊機工がコードを書き換えています... ステータス増幅！ (ATK/HP x1.002)</span></div>`);
 }
 
@@ -712,7 +712,7 @@ const bossMaxHP = BigInt(player.bossMaxHP);
 const activeAuth = applyAuthoritySkill();
 
 if ((player.inventory[999] || 0) > 0) {
-const threshold = bossMaxHP / 10000n;
+const threshold = bossMaxHP / BigInt(10000);
 if (finalDmg < threshold) {
 const scalingMult = Math.log10(player.killCount + 1) + 1.0;
 finalDmg = BigInt(Math.floor(Number(bossMaxHP) * 0.0002 * scalingMult));
@@ -734,16 +734,16 @@ if (activeAuth === 503 && Math.random() < 0.001) { finalDmg = BigInt(Math.floor(
 if (activeAuth === 504 && Math.random() < 0.001) { finalDmg += BigInt(Math.floor(totalAtkVal)); specialTags += `<span style="color:#ff0000; font-weight:bold;">【破壊】</span>`; }
 }
 
-if ((player.inventory[702] || 0) > 0 && currentBossHP * 2n <= bossMaxHP) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 4)); specialTags += `<span style="color:#ffcc00; font-weight:bold;">【福音】</span>`; }
+if ((player.inventory[702] || 0) > 0 && currentBossHP * BigInt(2) <= bossMaxHP) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 4)); specialTags += `<span style="color:#ffcc00; font-weight:bold;">【福音】</span>`; }
 if ((player.inventory[601] || 0) > 0) {
-if (currentBossHP >= BigInt(Math.floor(totalAtkVal)) * 100n) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.80)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率】</span>`; }
+if (currentBossHP >= BigInt(Math.floor(totalAtkVal)) * BigInt(100)) { finalDmg = BigInt(Math.floor(Number(finalDmg) * 1.80)); specialTags += `<span style="color:#007bff; font-weight:bold;">【統率】</span>`; }
 const hpBonus = Math.log10(Number(totalBase.hp) + 1) * 1000;
 finalDmg += BigInt(Math.floor(hpBonus)); specialTags += `<span style="color:#5f9ea0; font-weight:bold;">【還元】</span>`;
 }
 if ((player.inventory[602] || 0) > 0) { kushiaCounter++; if (kushiaCounter >= 100) { finalDmg *= 3n; specialTags += `<span style="color:gold; font-weight:bold;">【魂律】</span>`; kushiaCounter = 0; } }
 if ((player.inventory[604] || 0) > 0 && Math.random() < 0.001) { finalDmg *= 6n; specialTags += `<span style="color:#fd7e14; font-weight:bold;">【虚無】</span>`; }
 
-if (finalDmg < 1n) finalDmg = 1n;
+if (finalDmg < BigInt(1)) finalDmg = BigInt(1);
 if (finalDmg > player.maxDmg) player.maxDmg = finalDmg;
 
 const skillLv = Math.min(10, player.totalLevel);
@@ -753,7 +753,7 @@ let logHtml = `<div>${specialTags}<span style="color:#007bff; font-weight:bold;"
 
 // オメガコア発動判定
 if (player.inventory[801] > 0 && dropBase >= 100) {
-player.omegaCharge += 1n;
+player.omegaCharge += BigInt(1);
 logHtml += `<div><span style="color:#00d4ff; font-weight:bold;">【オメガ・コア】ステータス乗算蓄積が強化されました。</span></div>`;
 }
 
@@ -762,7 +762,7 @@ comboHit = 0;
 if (!player.isCleared) {
 // 初回クリア：パンドラの箱が必要
 if ((player.inventory[701] || 0) > 0 && finalDmg >= bossMaxHP) {
-currentBossHP = 0n;
+currentBossHP = BigInt(0);
 player.killCount++;
 player.isCleared = true;  // 初回クリアフラグをセット（以降は変更しない）
 enemyDisasterStarUsed = false;
@@ -781,7 +781,7 @@ handleBossDefeat();
 }
 } else {
 currentBossHP -= finalDmg;
-if (currentBossHP < 1n && !player.isCleared) {
+if (currentBossHP < BigInt(1) && !player.isCleared) {
 comboHit = 0;
 currentBossHP = bossMaxHP;
 enemyDisasterStarUsed = false;
@@ -789,16 +789,16 @@ logHtml += `<div><span style="color:#ff0000; font-weight:bold;">終末の回帰�
 }
 }
 
-if (currentBossHP > 0n) {
+if (currentBossHP > BigInt(0)) {
 const currentTotalHP = totalBase.hp * BigInt(Math.floor(bonus.mult));
 let baseCut = Math.min(20, Math.floor(skillLv / 5) * 5);
 let ingaVal = Math.min(10, player.inventory[403] || 0);
 let minCut = baseCut + (ingaVal * 2);
 
 ```
-let rawEnemyAtk = currentTotalHP * 3n;
+let rawEnemyAtk = currentTotalHP * BigInt(3);
 let finalMitigated = BigInt(Math.floor(Number(rawEnemyAtk) * (1 - (Math.floor(Math.random() * (101 - Math.min(95, minCut))) + Math.min(95, minCut)) / 100)));
-if (finalMitigated < 0n) finalMitigated = 0n;
+if (finalMitigated < BigInt(0)) finalMitigated = BigInt(0);
 
 let baseExp = Number(player.totalClicks);
 let kenmaBonus = Math.min(1000, player.inventory[405] || 0) + player.totalLevel;
@@ -812,7 +812,7 @@ if (currentTotalHP > finalMitigated) {
 } else {
   let repeatCount = 1;
   if (activeAuth === 505 && Math.random() < 0.1) { repeatCount = 2; specialTags += `【再起】`; }
-  let totalUpHP = 0n;
+  let totalUpHP = BigInt(0);
   for (let i = 0; i < repeatCount; i++) {
     let up = BigInt(Math.floor(Math.random() * Math.max(1, Number(player.deathCount || 100))) + 1 + skillLv + Math.min(50000, player.inventory[402] || 0) * 5);
     totalUpHP += up;
@@ -939,7 +939,7 @@ hpDisp.textContent = formatV(currentBossHP);
 document.getElementById(“boss-display-name”).textContent = isGeminiBattle ? “構文破壊機工:Gemini” : “溢れし災厄”;
 }
 
-document.getElementById(“hp-bar-fill”).style.width = `${Number(currentBossHP * 100n / BigInt(player.bossMaxHP))}%`;
+document.getElementById(“hp-bar-fill”).style.width = `${Number(currentBossHP * BigInt(100) / BigInt(player.bossMaxHP))}%`;
 const area = document.getElementById(“st-rank-area”);
 const title = document.getElementById(“st-rank-title”);
 const rankIdx = getCurrentRankIndex();
