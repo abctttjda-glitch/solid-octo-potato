@@ -622,7 +622,8 @@ if (r.star === 4 && player.hasWorldOrder) { bA *= 100; bH *= 100; }
 if (r.star === 5 && player.hasCrown) { bA *= 100; bH *= 100; }
 if (r.star === 6 && player.hasMeta) { bA *= 100; bH *= 100; }
 
-if (hasRegalia && r.star <= 6) { bA *= 1.5; bH *= 1.5; }
+// [修正①] Regalia は +20%（x1.2）に統一。getRelicBonus と renderRelics の値を合わせる。
+if (hasRegalia && r.star <= 6) { bA *= 1.2; bH *= 1.2; }
 if (hasZansai && r.star !== 6) { bA *= 1000; bH *= 1000; }
 atk += bA; hp += bH; if (r.mult) mult *= Math.pow(r.mult, count);
 ```
@@ -1054,7 +1055,8 @@ if (m.star === 4 && player.hasWorldOrder) { baseA *= 100; baseH *= 100; }
 if (m.star === 5 && player.hasCrown) { baseA *= 100; baseH *= 100; }
 if (m.star === 6 && player.hasMeta) { baseA *= 100; baseH *= 100; }
 
-if (hasRegalia && m.star <= 6) { baseA *= 1.5; baseH *= 1.5; }
+// [修正①] getRelicBonus と統一して x1.2 に修正（旧: x1.5 は誤りだった）
+if (hasRegalia && m.star <= 6) { baseA *= 1.2; baseH *= 1.2; }
 if (hasZansai && m.star !== 6) { baseA *= 1000; baseH *= 1000; }
 
 let cardCls = m.star >= 8 ? 'star-ultimate' : (m.star >= 4 ? 'star-high' : 'star-low');
