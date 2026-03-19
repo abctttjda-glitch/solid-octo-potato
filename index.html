@@ -234,6 +234,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Robot
 </div>
 <div class="ver-footer">RELICORE v1.26</div>
 <script>
+window.onerror = function(msg, src, line, col, err) {
+  document.body.innerHTML = '<div style="padding:20px; font-size:14px; color:red; word-break:break-all;">'
+    + '<b>JSエラー</b><br>' + msg + '<br>行: ' + line + '<br>' + (err ? err.stack : '') + '</div>';
+};
 const SAVE_KEY = "relicore_player_data";
 const BOSS_MAX_HP_BASE = BigInt("100000000000000000000");
 let enemyDisasterStarUsed = false;
