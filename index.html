@@ -782,15 +782,15 @@ function onKousaDefeat(logH){
 
 // ============ 溢れし災厄撃破（エンドレス） ============
 function handleBossDefeat(){
- comboHit=0;
- const n=Number(player.killCount);
- const newHP=Number(BOSS_MAX_HP_BASE)*Math.pow(1.35+0.15*Math.exp(-n/50),n);
- player.bossMaxHP=BigInt(Math.floor(newHP)).toString();
- currentBossHP=BigInt(player.bossMaxHP);
- player.killCount++;enemyDisasterStarUsed=false;
- addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災厄 討伐】第${player.killCount}体目を撃破！</span></div>`);
- // 虹災割り込み抽選（30%）
- trySpawnKousa();
+  comboHit=0;
+  const n=Number(player.killCount);
+  const newHP=Number(BOSS_MAX_HP_BASE)*Math.pow(1.35+0.15*Math.exp(-n/50),n);
+  player.bossMaxHP=BigInt(Math.floor(newHP)).toString();
+  currentBossHP=BigInt(player.bossMaxHP);
+  player.killCount++;enemyDisasterStarUsed=false;
+  addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災厄 討伐】第${player.killCount}体目を撃破！</span></div>`);
+  // 虹災割り込み抽選（30%）
+  trySpawnKousa();
 }
 
 // ============ UI描画 ============
