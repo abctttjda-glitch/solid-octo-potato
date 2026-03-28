@@ -257,6 +257,47 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 
 <script>
 function safeBigInt(val){
+  if(typeof val==="bigint") return val;
+  if(typeof val==="number"){
+    if(!Number.isFinite(val)) return 0n;
+    return BigInt(Math.floor(val));
+  }
+  try{return BigInt(val);}catch{return 0n;}
+}
+
+function formatAA(num){
+  if(typeof num==="bigint"){
+    if(num<1000n) return num.toString();
+    const str=num.toString();
+    const tier=Math.floor((str.length-1)/3);
+    const lead=Number(str.slice(0,3))/100;
+
+    if(tier<10){
+      const u=["","K","M","B","T","Qa","Qi","Sx","Sp","Oc"];
+      return lead.toFixed(2)+u[tier];
+    }
+
+    const a="abcdefghijklmnopqrstuvwxyz";
+    const t=tier-10;
+    return lead.toFixed(2)+a[Math.floor(t/26)]+a[t%26];
+  }
+
+  if(!Number.isFinite(num)) return "∞";
+  if(num<1000) return num.toFixed(0);
+
+  const tier=Math.floor(Math.log10(num)/3);
+  const lead=num/Math.pow(10,tier*3);
+
+  if(tier<10){
+    const u=["","K","M","B","T","Qa","Qi","Sx","Sp","Oc"];
+    return lead.toFixed(2)+u[tier];
+  }
+
+  const a="abcdefghijklmnopqrstuvwxyz";
+  const t=tier-10;
+  return lead.toFixed(2)+a[Math.floor(t/26)]+a[t%26];
+}
+function safeBigInt(val){
   if(typeof val === "bigint") return val;
   if(typeof val === "number"){
     if(!Number.isFinite(val)) return 0n;
