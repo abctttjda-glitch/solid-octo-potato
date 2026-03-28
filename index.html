@@ -245,7 +245,36 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div id="content-area">
   <div id="battle" class="tab active"><button class="btn-attack" id="attackBtn">こうげき</button><div id="log"></div></div>
   <div id="vow" class="tab"><div id="vow-list" class="vow-list-container"></div></div>
-  <div id="relic" class="tab"><div class="relic-list-container" id="relic-list"></div></div>
+  <div id="relic" class="tab">
+    <!-- 収束核アーカイブ・ゼロ UI -->
+    <div id="compression-ui" style="display:none;background:linear-gradient(135deg,#001a12,#002a1a);border:2px solid #00ffcc;border-radius:12px;padding:14px;margin-bottom:10px;color:#fff;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="font-weight:bold;font-size:1.05em;color:#00ffcc;letter-spacing:2px;">◈ 収束核アーカイブ・ゼロ</span>
+        <span style="font-size:0.7em;color:#aaa;">溢れし災厄討伐特典</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.82em;margin-bottom:10px;">
+        <div style="background:rgba(0,255,204,0.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;">
+          <div style="color:#aaa;font-size:0.8em;">圧縮倍率</div>
+          <div id="comp-mult" style="font-weight:bold;color:#00ffcc;font-size:1.1em;">×1.000</div>
+        </div>
+        <div style="background:rgba(0,255,204,0.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;">
+          <div style="color:#aaa;font-size:0.8em;">圧縮可能回数</div>
+          <div id="comp-times" style="font-weight:bold;color:#fff;">0回</div>
+        </div>
+        <div style="background:rgba(0,255,204,0.08);padding:6px 8px;border-radius:6px;border-left:3px solid #007bff;">
+          <div style="color:#aaa;font-size:0.8em;">蓄積ATK</div>
+          <div id="comp-catk" style="font-weight:bold;color:#7af;">0</div>
+        </div>
+        <div style="background:rgba(0,255,204,0.08);padding:6px 8px;border-radius:6px;border-left:3px solid #dc3545;">
+          <div style="color:#aaa;font-size:0.8em;">蓄積HP</div>
+          <div id="comp-chp" style="font-weight:bold;color:#f88;">0</div>
+        </div>
+      </div>
+      <div style="font-size:0.7em;color:#888;margin-bottom:8px;">★1〜3の遺物10,000個を1回分として圧縮。メモリー系は30万個を保護。圧縮した遺物の能力値は蓄積されます。</div>
+      <button id="comp-btn" onclick="doCompress()" style="width:100%;padding:10px;background:#00ffcc;color:#000;border:none;border-radius:8px;font-weight:bold;font-size:1em;cursor:pointer;letter-spacing:2px;">収束圧縮</button>
+    </div>
+    <div class="relic-list-container" id="relic-list"></div>
+  </div>
   <div id="status" class="tab">
     <div class="rank-display" id="st-rank-area"><div class="rank-lv" id="st-rank-lv">Lv.1</div><div class="rank-title" id="st-rank-title">初心者</div></div>
     <div class="st-box">総攻撃数: <span id="st-totalclicks">0</span><br>戦闘経験値: <span id="v-death">0</span><br>累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold;color:var(--relic-purple);">0</span><br>最高ダメージ: <span id="st-maxdmg">0</span><br>最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold;color:var(--primary);">x1.00</span><br>獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>コンプリート数: <span id="st-comp-count" style="font-weight:bold;color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold;color:var(--growth);">x1.00</span>)<br>虹災討伐数: <span id="st-kousa-kill" style="font-weight:bold;color:var(--nox);">0</span></div>
@@ -322,7 +351,8 @@ let player={
   storySeen:false,rebalanceSeen:false,hasHado:false,hasGreatHado:false,hasDivineGuide:false,
   hasWorldOrder:false,hasCrown:false,hasMeta:false,isUra:false,
   bossMaxHP:BOSS_MAX_HP_BASE.toString(),totalClicks:0,totalRelics:0,killCount:0,
-  isCleared:false,soujinCounter:0,evolutionStack:0,omegaCharge:0n,kousaKillCount:0
+  isCleared:false,soujinCounter:0,evolutionStack:0,omegaCharge:0n,kousaKillCount:0,
+  hasCompressionCore:false,compressionPower:0,compressedAtk:0,compressedHp:0
 };
 let currentBossHP=BigInt(player.bossMaxHP);
 
@@ -358,6 +388,8 @@ function loadGame(){
     player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
     player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
     player.omegaCharge=BigInt(p.omegaCharge||"0");player.kousaKillCount=p.kousaKillCount||0;
+    player.hasCompressionCore=p.hasCompressionCore||false;player.compressionPower=p.compressionPower||0;
+    player.compressedAtk=p.compressedAtk||0;player.compressedHp=p.compressedHp||0;
     erosionStack=p.erosionStack||0;waterAccumDmg=BigInt(p.waterAccumDmg||"0");luxHitCounter=p.luxHitCounter||0;
     enemyDisasterStarUsed=p.enemyDisasterStarUsed||false;isGeminiBattle=p.isGeminiBattle||false;
     currentBossHP=p.currentBossHP?BigInt(p.currentBossHP):BigInt(player.bossMaxHP);
@@ -368,6 +400,7 @@ function loadGame(){
     if(r&&(r.star>=6||r.star===9)&&player.inventory[id]>1)player.inventory[id]=1;
   });
   if(player.isCleared&&!player.rebalanceSeen)showClearStartMsg();
+  if(player.isCleared)player.hasCompressionCore=true; // 討伐済みプレイヤーにも解放
   if(!player.storySeen)document.getElementById("story-modal").style.display="flex";
 }
 
@@ -400,7 +433,10 @@ function getRelicBonus(){
     atk+=a;hp+=h;if(r.mult)mult*=Math.pow(r.mult,c);
   });
   const gm=greedMult();
-  return{atk:BigInt(Math.floor(atk*cb*gm)),hp:BigInt(Math.floor(hp*cb*gm)),mult,compCount:comp,compBonus:cb};
+  // 圧縮蓄積分を加算
+  const cAtk=BigInt(Math.floor(player.compressedAtk));
+  const cHp=BigInt(Math.floor(player.compressedHp));
+  return{atk:BigInt(Math.floor(atk*cb*gm))+cAtk,hp:BigInt(Math.floor(hp*cb*gm))+cHp,mult,compCount:comp,compBonus:cb};
 }
 function getCurrentDropRates(){if(player.hasDivineGuide)return DIVINE_DD;if(player.hasGreatHado)return GHADO_DD;if(player.hasHado)return HADO_DD;return BASE_DD;}
 
@@ -699,6 +735,12 @@ function attack(){
   // ★9効果
   const s9=apply9Effects(fd,bossMaxHP,currentBossHP);fd=s9.dmg;tags+=s9.tags;
 
+  // 収束核：圧縮倍率
+  if(player.hasCompressionCore&&player.compressionPower>0){
+    fd=BigInt(Math.floor(Number(fd)*(1+player.compressionPower)));
+    tags+=`<span style="color:#00ffcc;font-weight:bold;">【収束×${(1+player.compressionPower).toFixed(2)}】</span>`;
+  }
+
   if(fd<1n)fd=1n;if(fd>player.maxDmg)player.maxDmg=fd;
   const lv=Math.min(10,player.totalLevel);
   const dropN=Math.min(100,lv+Math.floor(player.totalLevel/10)*5+Math.min(50,player.inventory[401]||0));
@@ -711,7 +753,9 @@ function attack(){
     comboHit=0;
     if(!player.isCleared){
       if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
-        currentBossHP=0n;player.killCount++;player.isCleared=true;enemyDisasterStarUsed=false;isModalOpen=true;
+        currentBossHP=0n;player.killCount++;player.isCleared=true;enemyDisasterStarUsed=false;
+        player.hasCompressionCore=true; // 溢れし災厄初討伐で解放
+        isModalOpen=true;
         document.getElementById("clear-modal-title").innerText="神話の終焉";
         document.getElementById("clear-modal-msg").innerHTML=`終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold);font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<span style="color:#f44;font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0;border-top:1px solid #444;margin:15px 0"><span style="color:var(--growth);">ここからはエンドレスモードです。遊んでくれてありがとうございます！</span>`;
         document.getElementById("clear-modal").style.display="flex";
@@ -804,7 +848,82 @@ function renderVow(){
   document.getElementById("vow-list").innerHTML=skills.map(s=>{const mx=lv>=10;return`<div class="vow-item"><div class="vow-header"><span class="vow-name">${s.name}</span><span class="vow-lv ${mx?"max":""}">${mx?"Lv.10 (MAX)":"Lv."+lv}</span></div><div><div class="vow-highlight">${s.hl}</div><span class="vow-sub">${s.desc}</span></div></div>`;}).join("");
 }
 
+// ============ 収束核アーカイブ・ゼロ ============
+const COMPRESS_UNIT=10000;
+const COMPRESS_PROTECT_IDS=[116,117]; // メモリーダスト、メモリースターダスト（30万保護）
+const COMPRESS_STARS=[1,2,3]; // ★1〜3対象
+const COMPRESS_EXCLUDE_IDS=[311]; // メモリークリスタル除外
+
+function getCompressibleAmount(id,count){
+  const r=RELIC_MASTER.find(m=>m.id==id);
+  if(!r||!COMPRESS_STARS.includes(r.star))return 0;
+  if(COMPRESS_EXCLUDE_IDS.includes(Number(id)))return 0;
+  if(COMPRESS_PROTECT_IDS.includes(Number(id)))return Math.max(0,count-300000);
+  return count;
+}
+
+function getCompressTimes(){
+  let total=0;
+  Object.entries(player.inventory).forEach(([id,cnt])=>{total+=getCompressibleAmount(id,cnt);});
+  return Math.floor(total/COMPRESS_UNIT);
+}
+
+function getCompressionBonus(){return 1+player.compressionPower;}
+
+function compressRelics(){
+  let times=getCompressTimes();
+  if(times<=0)return 0;
+  let remaining=times*COMPRESS_UNIT;
+  let gainedAtk=0,gainedHp=0;
+  const targets=Object.entries(player.inventory)
+    .filter(([id,cnt])=>getCompressibleAmount(id,cnt)>0)
+    .sort(([a],[b])=>{
+      const ra=RELIC_MASTER.find(m=>m.id==a),rb=RELIC_MASTER.find(m=>m.id==b);
+      return(ra?ra.star:0)-(rb?rb.star:0);// 低星から圧縮
+    });
+  for(const[id,]of targets){
+    if(remaining<=0)break;
+    const avail=getCompressibleAmount(id,player.inventory[id]);
+    const use=Math.min(avail,remaining);
+    const r=RELIC_MASTER.find(m=>m.id==id);
+    if(r){gainedAtk+=(r.atk||0)*use;gainedHp+=(r.hp||0)*use;}
+    player.inventory[id]-=use;
+    remaining-=use;
+  }
+  // ステータス蓄積
+  player.compressedAtk+=gainedAtk;
+  player.compressedHp+=gainedHp;
+  // 倍率蓄積（log10スケール）
+  const gain=Math.log10(times+1)*0.5;
+  player.compressionPower+=gain;
+  return times;
+}
+
+function renderCompressionUI(){
+  const el=document.getElementById("compression-ui");
+  if(!el)return;
+  if(!player.hasCompressionCore){el.style.display="none";return;}
+  el.style.display="block";
+  const times=getCompressTimes();
+  const mult=(1+player.compressionPower).toFixed(3);
+  document.getElementById("comp-mult").textContent="×"+mult;
+  document.getElementById("comp-times").textContent=times.toLocaleString()+"回";
+  document.getElementById("comp-catk").textContent=fmtF(Math.floor(player.compressedAtk));
+  document.getElementById("comp-chp").textContent=fmtF(Math.floor(player.compressedHp));
+  document.getElementById("comp-btn").disabled=times<=0;
+  document.getElementById("comp-btn").style.opacity=times<=0?"0.4":"1";
+}
+
+function doCompress(){
+  const t=getCompressTimes();
+  if(t<=0){alert("圧縮可能な遺物が不足しています（★1〜3が"+COMPRESS_UNIT.toLocaleString()+"個以上必要）");return;}
+  const done=compressRelics();
+  addLog(`<div><span style="color:#00ffcc;font-weight:bold;">【収束核】${done.toLocaleString()}回圧縮完了！倍率：×${getCompressionBonus().toFixed(3)}</span></div>`);
+  saveGame();triggerUIUpdate();
+}
+
 function renderRelics(){
+  renderCompressionUI();
   const c=document.getElementById("relic-list");if(!c)return;
   const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
   const sorted=Object.entries(player.inventory).filter(([,v])=>v>0).sort(([a],[b])=>{
