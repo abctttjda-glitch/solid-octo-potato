@@ -880,14 +880,14 @@ function refreshUI(){
   const nameEl=document.getElementById("boss-display-name");
   const isKousa=bossType!=="main";
   if(!player.isCleared){
-    nameEl.innerHTML="終末神アポカリス＝ティア<span class='boss-type-badge badge-main'>通常</span>";
+    nameEl.innerHTML="終末神アポカリス＝ティア";
     nameEl.style.color="#888";
   }else if(isKousa&&kousaBossData){
-    const bdg=bossType==="kousa_gemini"?`<span class='boss-type-badge badge-gemini'>Gemini</span>`:`<span class='boss-type-badge badge-kousa'>虹災</span>`;
+    const bdg=bossType==="kousa_gemini"?`<span class='boss-type-badge badge-gemini'>Gemini</span>`:`<span class='boss-type-badge badge-kousa'>厄災</span>`;
     nameEl.innerHTML=kousaBossData.name+bdg;
     nameEl.style.color=kousaBossData.colorVar;
   }else{
-    nameEl.innerHTML="溢れし災厄<span class='boss-type-badge badge-main'>通常</span>";
+    nameEl.innerHTML="溢れし災厄";
     nameEl.style.color="#888";
   }
 
