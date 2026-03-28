@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -421,19 +420,19 @@ function selectKousaBoss(){
 }
 function trySpawnKousa(){if(Math.random()<0.30)spawnKousa();}
 function spawnKousa(){
- kousaBossData=selectKousaBoss();
- const bonus=getRelicBonus();
- const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
- const patk=Number(tb.atk);
- const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
- currentBossHP=BigInt(Math.floor(patk*mul));
- // 虹災戦用に bossMaxHP を一時保存（HPバー用）
- player.bossMaxHP=currentBossHP.toString();
- bossType="kousa_"+kousaBossData.id;
- erosionStack=0;waterAccumDmg=0n;comboHit=0;
- addLog(`<div><span style="color:var(--nox);font-weight:bold;font-size:1.1em;">【虹災割り込み】${kousaBossData.intro}</span></div>`);
- updateBossHeaderStyle();
- saveGame();triggerUIUpdate();
+  kousaBossData=selectKousaBoss();
+  const bonus=getRelicBonus();
+  const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
+  const mulBig=BigInt(Math.round(mul*100000));
+  currentBossHP=tb.atk*mulBig/100000n;
+  if(currentBossHP>BIG_CAP)currentBossHP=BIG_CAP;
+  // 虹災戦用に bossMaxHP を一時保存（HPバー用）
+  player.bossMaxHP=currentBossHP.toString();
+  bossType="kousa_"+kousaBossData.id;
+  erosionStack=0;waterAccumDmg=0n;comboHit=0;
+  addLog(`<div><span style="color:var(--nox);font-weight:bold;font-size:1.1em;">【虹災割り込み】${kousaBossData.intro}</span></div>`);
+  updateBossHeaderStyle();
+  saveGame();triggerUIUpdate();
 }
 
 // ============ ヘッダー演出 ============
