@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -420,19 +421,19 @@ function selectKousaBoss(){
 }
 function trySpawnKousa(){if(Math.random()<0.30)spawnKousa();}
 function spawnKousa(){
-  kousaBossData=selectKousaBoss();
-  const bonus=getRelicBonus();
-  const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
-  const mulBig=BigInt(Math.round(mul*100000));
-  currentBossHP=tb.atk*mulBig/100000n;
-  if(currentBossHP>BIG_CAP)currentBossHP=BIG_CAP;
-  // 虹災戦用に bossMaxHP を一時保存（HPバー用）
-  player.bossMaxHP=currentBossHP.toString();
-  bossType="kousa_"+kousaBossData.id;
-  erosionStack=0;waterAccumDmg=0n;comboHit=0;
-  addLog(`<div><span style="color:var(--nox);font-weight:bold;font-size:1.1em;">【虹災割り込み】${kousaBossData.intro}</span></div>`);
-  updateBossHeaderStyle();
-  saveGame();triggerUIUpdate();
+ kousaBossData=selectKousaBoss();
+ const bonus=getRelicBonus();
+ const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
+ const patk=Number(tb.atk);
+ const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
+ currentBossHP=BigInt(Math.floor(patk*mul));
+ // 虹災戦用に bossMaxHP を一時保存（HPバー用）
+ player.bossMaxHP=currentBossHP.toString();
+ bossType="kousa_"+kousaBossData.id;
+ erosionStack=0;waterAccumDmg=0n;comboHit=0;
+ addLog(`<div><span style="color:var(--nox);font-weight:bold;font-size:1.1em;">【虹災割り込み】${kousaBossData.intro}</span></div>`);
+ updateBossHeaderStyle();
+ saveGame();triggerUIUpdate();
 }
 
 // ============ ヘッダー演出 ============
@@ -591,62 +592,14 @@ function activateDisasterStar(bonus){
 }
 function applyAuthSkill(){for(const id of[501,502,503,504,505,506])if((player.inventory[id]||0)>0)return id;return null;}
 
-/**
- * RELICORE v1.25 攻撃計算・全ステータス復旧修正
- * ガイドライン遵守：BigInt統一, 既存変数名（player, enemy, boss, currentEnemyHp, player.bossMaxHP）の厳守
- */
 function attack(){
-  // モーダルガード（既存仕様維持）
-  if(typeof isModalOpen!=='undefined'&&isModalOpen)return;
-
-  try{
-    // === 1. 既存データの更新（変数名厳守） ===
-    if(typeof player==='undefined'||typeof currentEnemyHp==='undefined'||typeof boss==='undefined') return;
-    
-    player.totalClicks++; // クリック数
-    if(typeof comboHit!=='undefined')comboHit++; // コンボ数
-
-    // === 2. 安全な巨大数計算（BigInt統一） ===
-    // 既存の関数 getRelicBonus(), calcFinalDmgMult() を利用
-    const bonus = typeof getRelicBonus === 'function' ? getRelicBonus() : { atk: 0n, hp: 0n };
-    const skillM = typeof calcFinalDmgMult === 'function' ? calcFinalDmgMult() : 1.0;
-
-    // プレイヤーATK（ベース + ボーナス）
-    // omegaApply などの既存関数が BigInt を返す場合を想定し、安全に結合
-    const baseAtkBig = BigInt(player.baseAtk || 0);
-    const bonusAtkBig = BigInt(bonus.atk || 0);
-    const totalAtk = baseAtkBig + bonusAtkBig;
-
-    // 最終ダメージ倍率（小数点をBigIntで安全処理：ガイドライン④）
-    const damage = (totalAtk * BigInt(Math.floor(skillM * 1000))) / 1000n;
-
-    // === 3. 敵HPへの適用（変数名：currentEnemyHp） ===
-    if(damage > 0n){
-      const enemyHpValue = BigInt(currentEnemyHp || 0);
-      let nHp = enemyHpValue - damage;
-      if(nHp < 0n) nHp = 0n; // 負数防止ガード
-
-      // 値の書き戻し（※最重要。お使いのコードが currentEnemyHp を書き戻す仕様か確認してください。もし敵データが別にある場合は、そちらも更新が必要です。）
-      currentEnemyHp = nHp;
-    }
-
-    // === 4. UI表示更新（既存関数を呼び出し） ===
-    if(typeof updateDisplay==='function') updateDisplay();
-
-    // === 5. 敵撃破判定（変数名：currentEnemyHp） ===
-    if(currentEnemyHp === 0n && typeof enemyDefeated === 'function') enemyDefeated();
-
-  } catch (e) {
-    // 高負荷・無限ループ防止（ガイドライン④）
-    console.error("Atk復旧Err:",e);
-    if(typeof attackInterval !== 'undefined' && attackInterval){
-      clearInterval(attackInterval);
-      attackInterval = null;
-    }
-  }
-}
-
-
+ if(isModalOpen)return;
+ player.totalClicks++;comboHit++;
+ const bonus=getRelicBonus();
+ const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
+ const skillM=calcFinalDmgMult();
+ const bossMaxHP=BigInt(player.bossMaxHP);
+ const isKousa=bossType!=="main";
 
  // Gemini効果（虹災Gemini戦のみ）
  if(bossType==="kousa_gemini"){
@@ -782,15 +735,15 @@ function onKousaDefeat(logH){
 
 // ============ 溢れし災厄撃破（エンドレス） ============
 function handleBossDefeat(){
-  comboHit=0;
-  const n=Number(player.killCount);
-  const newHP=Number(BOSS_MAX_HP_BASE)*Math.pow(1.35+0.15*Math.exp(-n/50),n);
-  player.bossMaxHP=BigInt(Math.floor(newHP)).toString();
-  currentBossHP=BigInt(player.bossMaxHP);
-  player.killCount++;enemyDisasterStarUsed=false;
-  addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災厄 討伐】第${player.killCount}体目を撃破！</span></div>`);
-  // 虹災割り込み抽選（30%）
-  trySpawnKousa();
+ comboHit=0;
+ const n=Number(player.killCount);
+ const newHP=Number(BOSS_MAX_HP_BASE)*Math.pow(1.35+0.15*Math.exp(-n/50),n);
+ player.bossMaxHP=BigInt(Math.floor(newHP)).toString();
+ currentBossHP=BigInt(player.bossMaxHP);
+ player.killCount++;enemyDisasterStarUsed=false;
+ addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災厄 討伐】第${player.killCount}体目を撃破！</span></div>`);
+ // 虹災割り込み抽選（30%）
+ trySpawnKousa();
 }
 
 // ============ UI描画 ============
