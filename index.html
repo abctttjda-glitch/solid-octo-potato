@@ -592,22 +592,61 @@ function activateDisasterStar(bonus){
 }
 function applyAuthSkill(){for(const id of[501,502,503,504,505,506])if((player.inventory[id]||0)>0)return id;return null;}
 
+/**
+ * RELICORE v1.25 攻撃計算・全ステータス復旧修正
+ * ガイドライン遵守：BigInt統一, 既存変数名（player, enemy, boss, currentEnemyHp, player.bossMaxHP）の厳守
+ */
 function attack(){
+  // モーダルガード（既存仕様維持）
   if(typeof isModalOpen!=='undefined'&&isModalOpen)return;
+
   try{
-    player.totalClicks++;if(typeof comboHit!=='undefined')comboHit++;
-    const bonus=typeof getRelicBonus==='function'?getRelicBonus():{atk:0n};
-    const skillM=typeof calcFinalDmgMult==='function'?calcFinalDmgMult():1.0;
-    const totalAtk=BigInt(player.baseAtk||0)+BigInt(bonus.atk||0);
-    const damage=(totalAtk*BigInt(Math.floor(skillM*1000)))/1000n;
-    if(damage>0n){
-      let nHp=BigInt(enemy.hp||0)-damage;
-      enemy.hp=nHp<0n?0n:nHp;
+    // === 1. 既存データの更新（変数名厳守） ===
+    if(typeof player==='undefined'||typeof currentEnemyHp==='undefined'||typeof boss==='undefined') return;
+    
+    player.totalClicks++; // クリック数
+    if(typeof comboHit!=='undefined')comboHit++; // コンボ数
+
+    // === 2. 安全な巨大数計算（BigInt統一） ===
+    // 既存の関数 getRelicBonus(), calcFinalDmgMult() を利用
+    const bonus = typeof getRelicBonus === 'function' ? getRelicBonus() : { atk: 0n, hp: 0n };
+    const skillM = typeof calcFinalDmgMult === 'function' ? calcFinalDmgMult() : 1.0;
+
+    // プレイヤーATK（ベース + ボーナス）
+    // omegaApply などの既存関数が BigInt を返す場合を想定し、安全に結合
+    const baseAtkBig = BigInt(player.baseAtk || 0);
+    const bonusAtkBig = BigInt(bonus.atk || 0);
+    const totalAtk = baseAtkBig + bonusAtkBig;
+
+    // 最終ダメージ倍率（小数点をBigIntで安全処理：ガイドライン④）
+    const damage = (totalAtk * BigInt(Math.floor(skillM * 1000))) / 1000n;
+
+    // === 3. 敵HPへの適用（変数名：currentEnemyHp） ===
+    if(damage > 0n){
+      const enemyHpValue = BigInt(currentEnemyHp || 0);
+      let nHp = enemyHpValue - damage;
+      if(nHp < 0n) nHp = 0n; // 負数防止ガード
+
+      // 値の書き戻し（※最重要。お使いのコードが currentEnemyHp を書き戻す仕様か確認してください。もし敵データが別にある場合は、そちらも更新が必要です。）
+      currentEnemyHp = nHp;
     }
-    if(typeof updateDisplay==='function')updateDisplay();
-    if(enemy.hp===0n&&typeof enemyDefeated==='function')enemyDefeated();
-  }catch(e){console.error("AtkErr:",e);if(attackInterval){clearInterval(attackInterval);attackInterval=null;}}
+
+    // === 4. UI表示更新（既存関数を呼び出し） ===
+    if(typeof updateDisplay==='function') updateDisplay();
+
+    // === 5. 敵撃破判定（変数名：currentEnemyHp） ===
+    if(currentEnemyHp === 0n && typeof enemyDefeated === 'function') enemyDefeated();
+
+  } catch (e) {
+    // 高負荷・無限ループ防止（ガイドライン④）
+    console.error("Atk復旧Err:",e);
+    if(typeof attackInterval !== 'undefined' && attackInterval){
+      clearInterval(attackInterval);
+      attackInterval = null;
+    }
+  }
 }
+
 
 
  // Gemini効果（虹災Gemini戦のみ）
