@@ -271,7 +271,12 @@ function safeBigInt(val){
   }
   return 0n;
 }
-
+function clampNumber(n){
+  if(!Number.isFinite(n)) return 0;
+  if(n > 1e308) return 1e308;
+  if(n < -1e308) return -1e308;
+  return n;
+}
 
 const SAVE_KEY="relicore_player_data";
 const BOSS_MAX_HP_BASE=100000000000000000000n;
