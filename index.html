@@ -761,7 +761,7 @@ function refreshUI(){
   const nameEl=document.getElementById("boss-display-name");
   const isKousa=bossType!=="main";
   if(!player.isCleared){
-    nameEl.innerHTML="終末神アポカリス＝ティア<span class='boss-type-badge badge-main'> </span>";
+    nameEl.innerHTML="終末神アポカリス＝ティア<span class='boss-type-badge badge-main'>";
     nameEl.style.color="#888";
   }else if(isKousa&&kousaBossData){
     const bdg=bossType==="kousa_gemini"?`<span class='boss-type-badge badge-gemini'>Gemini</span>`:`<span class='boss-type-badge badge-kousa'>虹災</span>`;
