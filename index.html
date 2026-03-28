@@ -108,7 +108,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .hpfill-valka{background:linear-gradient(90deg,#c2410c,var(--valka))!important}
 .hpfill-igna{background:linear-gradient(90deg,#b91c1c,var(--igna))!important}
 .hpfill-lux{background:linear-gradient(90deg,#a16207,var(--lux))!important}
-.hpfill-magmel{background:var(--magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
+.hpfill-magmel{background:(--magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
 .hpfill-gemini{background:linear-gradient(90deg,#2d0057,var(--gemini))!important}
 .status-box{display:flex;gap:8px;margin-top:10px}
 .stat-card{flex:1;background:rgba(255,255,255,.08);padding:5px 10px;border-radius:6px;border-left:3px solid var(--primary);display:flex;flex-direction:column;overflow:hidden}
@@ -694,8 +694,6 @@ function activateDisasterStar(bonus){
   player.baseAtk+=g;player.baseHP+=g;enemyDisasterStarUsed=true;
   addLog(`<div><span style="color:#d4af37;font-weight:bold;">★災禍殲星発動！ATKとHPが成長した！</span></div>`);
 }
-function applyAuthSkill(){for(const id of[501,502,503,504,505,506])if((player.inventory[id]||0)>0)return id;return null;}
-
 function attack(){
   if(isModalOpen)return;
   player.totalClicks++;comboHit++;
@@ -735,23 +733,37 @@ function attack(){
   let fd=atvBig*randBig/100000n;
   if(fd>BIG_CAP)fd=BIG_CAP;
   let tags="";
-  const auth=applyAuthSkill();
 
   // 救済（メイン戦のみ）
   if(!isKousa&&(player.inventory[999]||0)>0){const thr=bossMaxHP/10000n;if(fd<thr){const smBig=BigInt(Math.round((Math.log10(player.killCount+1)+1)*100000));fd=bossMaxHP*2n/10000n*smBig/100000n;tags+=`<span class="c-order">【救済】</span>`;}}
 
-  if(!tags.includes("【救済】")&&auth){
-    if(auth===501){const cm=BigInt(Math.round((1+Math.min(comboHit*0.0005,0.30))*100000));fd=fd*cm/100000n;tags+=`<span style="color:#d4af37;font-weight:bold;">【連撃】</span>`;}
-    if(auth===506){player.soujinCounter++;if(player.soujinCounter>=150){fd*=2n;tags+=`<span style="color:#0f0;font-weight:bold;">【双刃】</span>`;player.soujinCounter=0;}}
-    if(auth===503&&Math.random()<0.001){fd=fd*3n/2n;tags+=`<span style="color:var(--growth);font-weight:bold;">【超越】</span>`;}
-    if(auth===504&&Math.random()<0.001){fd+=atvBig;tags+=`<span style="color:#f00;font-weight:bold;">【破壊】</span>`;}
+  // ★5権能：全て独立発動（applyAuthSkill廃止・各所持チェックに変更）
+  if(!tags.includes("【救済】")){
+    // 501 連撃の権能
+    if((player.inventory[501]||0)>0){const cm=BigInt(Math.round((1+Math.min(comboHit*0.0005,0.30))*100000));fd=fd*cm/100000n;tags+=`<span style="color:#d4af37;font-weight:bold;">【連撃】</span>`;}
+    // 503 超越の権能
+    if((player.inventory[503]||0)>0&&Math.random()<0.001){fd=fd*3n/2n;tags+=`<span style="color:var(--growth);font-weight:bold;">【超越】</span>`;}
+    // 504 破壊の権能
+    if((player.inventory[504]||0)>0&&Math.random()<0.001){fd+=atvBig;tags+=`<span style="color:#f00;font-weight:bold;">【破壊】</span>`;}
+    // 506 双刃の権能（重複不可＝効果自体は重ならない）
+    if((player.inventory[506]||0)>0){player.soujinCounter++;if(player.soujinCounter>=150){fd*=2n;tags+=`<span style="color:#0f0;font-weight:bold;">【双刃】</span>`;player.soujinCounter=0;}}
   }
-  if(!isKousa){
-    if((player.inventory[702]||0)>0&&currentBossHP*2n<=bossMaxHP){fd=fd*4n;tags+=`<span style="color:#fc0;font-weight:bold;">【福音】</span>`;}
-    if((player.inventory[601]||0)>0){if(currentBossHP>=atvBig*100n){fd=fd*180n/100n;tags+=`<span style="color:#07f;font-weight:bold;">【統率】</span>`;}const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;const hpLog=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);fd+=hpLog;tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;}
-    if((player.inventory[602]||0)>0){kushiaCounter++;if(kushiaCounter>=100){fd*=3n;tags+=`<span style="color:#d4af37;font-weight:bold;">【魂律】</span>`;kushiaCounter=0;}}
-    if((player.inventory[604]||0)>0&&Math.random()<0.001){fd*=6n;tags+=`<span style="color:#fd7e14;font-weight:bold;">【虚無】</span>`;}
+
+  // ★6/★7 遺物効果（全ボス共通）
+  // 702 終焉の福音：HP50%以下で×4
+  if((player.inventory[702]||0)>0&&currentBossHP*2n<=bossMaxHP){fd=fd*4n;tags+=`<span style="color:#fc0;font-weight:bold;">【福音】</span>`;}
+  // 601 絶対統率：敵HPが自身のATKの100倍以上で+80%。常時【還元】
+  if((player.inventory[601]||0)>0){
+    if(currentBossHP>=tb.atk*100n){fd=fd*180n/100n;tags+=`<span style="color:#07f;font-weight:bold;">【統率】</span>`;}
+    const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;
+    fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);
+    tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;
   }
+  // 602 魂律：100回ごとに×3
+  if((player.inventory[602]||0)>0){kushiaCounter++;if(kushiaCounter>=100){fd*=3n;tags+=`<span style="color:#d4af37;font-weight:bold;">【魂律】</span>`;kushiaCounter=0;}}
+  // 604 虚無：0.1%で×6
+  if((player.inventory[604]||0)>0&&Math.random()<0.001){fd*=6n;tags+=`<span style="color:#fd7e14;font-weight:bold;">【虚無】</span>`;}
+  // 災厄の残滓(804)：メイン戦のみ討伐数ボーナス（虹災戦では適用済みatvBigをそのまま使う）
 
   // ★9効果
   const s9=apply9Effects(fd,bossMaxHP,currentBossHP);fd=s9.dmg;tags+=s9.tags;
@@ -808,7 +820,7 @@ function attack(){
     if(curHP>mitig){
       player.deathCount+=exp;logH+=`<div><span style="color:#28a745;font-weight:bold;">敵の攻撃！${fmtV(mitig)} ダメージ。障壁展開！</span></div>`+getGuaranteedDrop();
     }else{
-      let rep=1;if(auth===505&&Math.random()<0.1)rep=2;
+      let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
       let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,Number(player.deathCount||100))+1+lv+(Math.min(50000,player.inventory[402]||0)*5)));
       player.baseHP+=upHP;player.deathCount+=exp;
       logH+=`<div><span style="color:#dc3545;">敵の攻撃！${fmtV(mitig)} ダメージ。</span><span style="color:#07f;font-weight:bold;">再起の誓いによって新たなる力を得た</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}<span style="color:var(--growth);font-weight:bold;">(基礎HP+${fmtV(upHP)})</span></div>`;
@@ -826,11 +838,13 @@ function onKousaDefeat(logH){
 
   // メイン戦に戻す
   bossType="main";kousaBossData=null;
-  // bossMaxHP を元に戻す
+  // bossMaxHP を元に戻す（BIG_CAP安全付き）
   const n=Number(player.killCount);
-  const newHP=n>0?Number(BOSS_MAX_HP_BASE)*Math.pow(1.35+0.15*Math.exp(-n/50),n):Number(BOSS_MAX_HP_BASE);
-  player.bossMaxHP=BigInt(Math.floor(newHP>0?newHP:Number(BOSS_MAX_HP_BASE))).toString();
-  currentBossHP=BigInt(player.bossMaxHP);
+  let newHP=n>0?Number(BOSS_MAX_HP_BASE)*Math.pow(1.35+0.15*Math.exp(-n/50),n):Number(BOSS_MAX_HP_BASE);
+  if(!isFinite(newHP)||newHP<=0)newHP=Number(BOSS_MAX_HP_BASE);
+  const newHPBig=newHP>1e60?BIG_CAP:safeBigInt(newHP);
+  player.bossMaxHP=newHPBig.toString();
+  currentBossHP=newHPBig;
 
   logH+=`<div><span style="color:var(--nox);font-weight:bold;">【虹災討伐】${def.name}を撃破！(累計${player.kousaKillCount}体)</span></div>`;
   addLog(logH);
