@@ -593,13 +593,22 @@ function activateDisasterStar(bonus){
 function applyAuthSkill(){for(const id of[501,502,503,504,505,506])if((player.inventory[id]||0)>0)return id;return null;}
 
 function attack(){
- if(isModalOpen)return;
- player.totalClicks++;comboHit++;
- const bonus=getRelicBonus();
- const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
- const skillM=calcFinalDmgMult();
- const bossMaxHP=BigInt(player.bossMaxHP);
- const isKousa=bossType!=="main";
+  if(typeof isModalOpen!=='undefined'&&isModalOpen)return;
+  try{
+    player.totalClicks++;if(typeof comboHit!=='undefined')comboHit++;
+    const bonus=typeof getRelicBonus==='function'?getRelicBonus():{atk:0n};
+    const skillM=typeof calcFinalDmgMult==='function'?calcFinalDmgMult():1.0;
+    const totalAtk=BigInt(player.baseAtk||0)+BigInt(bonus.atk||0);
+    const damage=(totalAtk*BigInt(Math.floor(skillM*1000)))/1000n;
+    if(damage>0n){
+      let nHp=BigInt(enemy.hp||0)-damage;
+      enemy.hp=nHp<0n?0n:nHp;
+    }
+    if(typeof updateDisplay==='function')updateDisplay();
+    if(enemy.hp===0n&&typeof enemyDefeated==='function')enemyDefeated();
+  }catch(e){console.error("AtkErr:",e);if(attackInterval){clearInterval(attackInterval);attackInterval=null;}}
+}
+
 
  // Gemini効果（虹災Gemini戦のみ）
  if(bossType==="kousa_gemini"){
