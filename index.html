@@ -334,29 +334,6 @@ hasCompressionCore:false,compressionPower:0,compressedAtk:0,compressedHp:0,
   attackExpBonus:0
 };
 
-// ============ 攻撃ボタン ============
-// ============ 自動攻撃 ============
-function toggleAutoAttack(){
-  isAutoAttack=!isAutoAttack;
-  const btn=document.getElementById("autoBtn");
-  if(isAutoAttack){
-    btn.textContent="自動攻撃　ON";
-    btn.className="btn-auto btn-auto-on";
-    if(!autoAttackInterval)autoAttackInterval=setInterval(attack,100);
-  }else{
-    btn.textContent="自動攻撃　OFF";
-    btn.className="btn-auto btn-auto-off";
-    if(autoAttackInterval){clearInterval(autoAttackInterval);autoAttackInterval=null;}
-  }
-  localStorage.setItem("relicore_auto",isAutoAttack?"1":"0");
-}
-function restoreAutoAttack(){
-  if(localStorage.getItem("relicore_auto")==="1"){
-    isAutoAttack=false; // toggleが反転させるのでfalseからスタート
-    toggleAutoAttack();
-  }
-}
-
 const attackBtn=document.getElementById("attackBtn");
 function startAttackLoop(e){if(activePointerId!==null)return;activePointerId=e.pointerId;if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);e.preventDefault();}
 function stopAttackLoop(e){if(e.pointerId===activePointerId){if(attackInterval){clearInterval(attackInterval);attackInterval=null;}activePointerId=null;}}
