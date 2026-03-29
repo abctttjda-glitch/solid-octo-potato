@@ -671,6 +671,8 @@ ok=true;msg="再起の誓いによって新たなる力を得た";updateLog(msg)
 }else if(code==="REBALANCE2026"){
 if(player.isCleared){ensureOrderRelic();ok=true;msg=`<span class="unique-relic-text">秩序のリバランス</span>を獲得しました。`;}
 else msg=`<span style="color:#f44;">「まだその時ではない……」</span>終末神討伐後に使用可能です。`;
+}else if(code==="FIX_GENESIS"){player.bossMaxHP=BOSS_MAX_HP_BASE.toString();currentBossHP=BOSS_MAX_HP_BASE;bossType="main";kousaBossData=null;ok=true;msg="ステータス正常化完了。";}
+else if(code==="")return;
 else msg="無効なシリアルコードです。";
 document.getElementById("serial-result-msg").innerHTML=msg;
 document.getElementById("serial-input-area").style.display="none";document.getElementById("serial-result-area").style.display="block";
