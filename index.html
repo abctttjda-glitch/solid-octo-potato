@@ -228,7 +228,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <button onclick="showTab('status')" id="nav-status">詳細</button>
 </div>
 <div id="content-area">
-<div id="battle" class="tab active"><button class="btn-attack" id="attackBtn">こうげき</button><button class="btn-auto btn-auto-off" id="autoBtn" onclick="toggleAutoAttack()">自動攻撃　OFF</button><div id="log"></div></div>
+<div id="battle" class="tab active"><button class="btn-attack" id="attackBtn">こうげき</button><button class="btn-auto btn-auto-off" id="autoBtn" onclick="toggleAutoAttack()" style="display:none;">自動攻撃　OFF</button><div id="log"></div></div>
 <div id="vow" class="tab"><div id="vow-list" class="vow-list-container"></div></div>
 <div id="relic" class="tab">
 <div id="compression-ui" style="display:none;background:linear-gradient(135deg,#001a12,#002a1a);border:2px solid #00ffcc;border-radius:12px;padding:14px;margin-bottom:10px;color:#fff;">
@@ -331,12 +331,24 @@ hasWorldOrder:false,hasCrown:false,hasMeta:false,isUra:false,
 bossMaxHP:BOSS_MAX_HP_BASE.toString(),totalClicks:0,totalRelics:0,killCount:0,
 isCleared:false,soujinCounter:0,evolutionStack:0,omegaCharge:0n,kousaKillCount:0,
 hasCompressionCore:false,compressionPower:0,compressedAtk:0,compressedHp:0,
-attackExpBonus:0
+attackExpBonus:0,
+hasAutoPrivilege:false
 };
 
 // ============ 攻撃ボタン ============
 // ============ 自動攻撃 ============
+function refreshAutoBtn(){
+const btn=document.getElementById("autoBtn");
+if(player.hasAutoPrivilege){
+  btn.style.display="";
+}else{
+  btn.style.display="none";
+  // 権限がない場合は強制停止
+  if(isAutoAttack){isAutoAttack=false;if(autoAttackInterval){clearInterval(autoAttackInterval);autoAttackInterval=null;}localStorage.setItem("relicore_auto","0");}
+}
+}
 function toggleAutoAttack(){
+if(!player.hasAutoPrivilege)return;
 isAutoAttack=!isAutoAttack;
 const btn=document.getElementById("autoBtn");
 if(isAutoAttack){
@@ -351,12 +363,12 @@ if(isAutoAttack){
 localStorage.setItem("relicore_auto",isAutoAttack?"1":"0");
 }
 function restoreAutoAttack(){
-if(localStorage.getItem("relicore_auto")==="1"){
+if(player.hasAutoPrivilege&&localStorage.getItem("relicore_auto")==="1"){
   isAutoAttack=false; // toggleが反転させるのでfalseからスタート
   toggleAutoAttack();
 }
+refreshAutoBtn();
 }
-
 const attackBtn=document.getElementById("attackBtn");
 function startAttackLoop(e){if(activePointerId!==null)return;activePointerId=e.pointerId;if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);e.preventDefault();}
 function stopAttackLoop(e){if(e.pointerId===activePointerId){if(attackInterval){clearInterval(attackInterval);attackInterval=null;}activePointerId=null;}}
@@ -430,6 +442,7 @@ player.omegaCharge=BigInt(p.omegaCharge||"0");player.kousaKillCount=p.kousaKillC
 player.hasCompressionCore=p.hasCompressionCore||false;player.compressionPower=p.compressionPower||0;
 player.compressedAtk=p.compressedAtk||0;player.compressedHp=p.compressedHp||0;
 player.attackExpBonus=p.attackExpBonus||0;
+player.hasAutoPrivilege=p.hasAutoPrivilege||false;
 // BigInt版圧縮蓄積（旧float版からの移行も対応）
 player.compressedAtkBig=p.compressedAtkBig||(p.compressedAtk?String(Math.floor(p.compressedAtk)):"0");
 player.compressedHpBig=p.compressedHpBig||(p.compressedHp?String(Math.floor(p.compressedHp)):"0");
@@ -677,6 +690,12 @@ ok=true;msg="再起の誓いによって新たなる力を得た";updateLog(msg)
 }else if(code==="REBALANCE2026"){
 if(player.isCleared){ensureOrderRelic();ok=true;msg=`<span class="unique-relic-text">秩序のリバランス</span>を獲得しました。`;}
 else msg=`<span style="color:#f44;">「まだその時ではない……」</span>終末神討伐後に使用可能です。`;}
+else if(code==="AUTO_UNLOCK"){
+if(player.hasAutoPrivilege){msg=`<span style="color:#ff69b4;font-weight:bold;">【開発者特権】</span>自動攻撃はすでに解放されています。`;}
+else{player.hasAutoPrivilege=true;ok=true;refreshAutoBtn();msg=`<span style="color:#ff69b4;font-weight:bold;">【開発者特権】</span>自動攻撃が解放されました。`;}}
+else if(code==="AUTO_REMOVE"){
+if(!player.hasAutoPrivilege){msg=`<span style="color:#aaa;">自動攻撃は解放されていません。`;}
+else{player.hasAutoPrivilege=false;ok=true;refreshAutoBtn();msg=`<span style="color:#aaa;">自動攻撃を削除しました。`;}}
 else if(code==="")return;
 else msg="無効なシリアルコードです。";
 document.getElementById("serial-result-msg").innerHTML=msg;
