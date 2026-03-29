@@ -968,7 +968,7 @@ const hd=document.getElementById("bosshp-cur");
 // 終末神アポカリス＝ティア（初回・未クリア）は演出用固定表記
 if(bossType==="main"&&!player.isCleared){
   const _bmx=BigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
-  const _ratio=_bmx>0n?Number(currentBossHP)*999999999999999/Number(_bmx):0;
+  const _ratio=_bmx>0n?Number(currentBossHP)*1000000000000000000000/Number(_bmx):0;
   hd.textContent=Math.max(0,Math.floor(_ratio)).toLocaleString();
 }else{
   hd.textContent=fmtV(currentBossHP);
