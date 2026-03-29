@@ -228,7 +228,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <button onclick="showTab('status')" id="nav-status">詳細</button>
 </div>
 <div id="content-area">
-<div id="battle" class="tab active"><button class="btn-attack" id="attackBtn">こうげき</button><button class="btn-auto btn-auto-off" id="autoBtn" onclick="toggleAutoAttack()">自動攻撃　OFF</button><div id="log"></div></div>
+<div id="battle" class="tab active"><button class="btn-attack" id="attackBtn">こうげき</button><button class="btn-auto btn-auto-off" id="autoBtn" onclick="toggleAutoAttack()" style="display:none;">自動攻撃　OFF</button><div id="log"></div></div>
 <div id="vow" class="tab"><div id="vow-list" class="vow-list-container"></div></div>
 <div id="relic" class="tab">
 <div id="compression-ui" style="display:none;background:linear-gradient(135deg,#001a12,#002a1a);border:2px solid #00ffcc;border-radius:12px;padding:14px;margin-bottom:10px;color:#fff;">
@@ -331,12 +331,24 @@ hasWorldOrder:false,hasCrown:false,hasMeta:false,isUra:false,
 bossMaxHP:BOSS_MAX_HP_BASE.toString(),totalClicks:0,totalRelics:0,killCount:0,
 isCleared:false,soujinCounter:0,evolutionStack:0,omegaCharge:0n,kousaKillCount:0,
 hasCompressionCore:false,compressionPower:0,compressedAtk:0,compressedHp:0,
-attackExpBonus:0
+attackExpBonus:0,
+hasAutoPrivilege:false
 };
 
 // ============ 攻撃ボタン ============
 // ============ 自動攻撃 ============
+function refreshAutoBtn(){
+const btn=document.getElementById("autoBtn");
+if(player.hasAutoPrivilege){
+ btn.style.display="";
+}else{
+ btn.style.display="none";
+ // 権限がない場合は強制停止
+ if(isAutoAttack){isAutoAttack=false;if(autoAttackInterval){clearInterval(autoAttackInterval);autoAttackInterval=null;}localStorage.setItem("relicore_auto","0");}
+}
+}
 function toggleAutoAttack(){
+if(!player.hasAutoPrivilege)return;
 isAutoAttack=!isAutoAttack;
 const btn=document.getElementById("autoBtn");
 if(isAutoAttack){
@@ -351,12 +363,12 @@ if(isAutoAttack){
 localStorage.setItem("relicore_auto",isAutoAttack?"1":"0");
 }
 function restoreAutoAttack(){
-if(localStorage.getItem("relicore_auto")==="1"){
+if(player.hasAutoPrivilege&&localStorage.getItem("relicore_auto")==="1"){
  isAutoAttack=false; // toggleが反転させるのでfalseからスタート
  toggleAutoAttack();
 }
+refreshAutoBtn();
 }
-
 const attackBtn=document.getElementById("attackBtn");
 function startAttackLoop(e){if(activePointerId!==null)return;activePointerId=e.pointerId;if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);e.preventDefault();}
 function stopAttackLoop(e){if(e.pointerId===activePointerId){if(attackInterval){clearInterval(attackInterval);attackInterval=null;}activePointerId=null;}}
@@ -396,6 +408,12 @@ const L=1000000000000000n;if(v<L)return v.toLocaleString();
 let u=0,b=v;while(b>=1000n*L){b/=1000n;u++;}
 return(b/L).toString()+"."+(b%L).toString().padStart(15,"0").substring(0,2)+getUnit(u);
 }
+function fmtStat(val){
+let v;try{v=typeof val==="bigint"?val:safeBigInt(val);}catch(e){return "???";}
+const L=1000000000000000n;if(v<L)return v.toLocaleString();
+let u=0,b=v;while(b>=1000n*L){b/=1000n;u++;}
+return(b/L).toString()+"."+(b%L).toString().padStart(15,"0").substring(0,4)+getUnit(u);
+}
 function fmtMD(val){
 let v;try{v=typeof val==="bigint"?val:safeBigInt(val);}catch(e){return "???";}
 const L=1000000000000000n;if(v<L)return v.toLocaleString();
@@ -424,6 +442,7 @@ player.omegaCharge=BigInt(p.omegaCharge||"0");player.kousaKillCount=p.kousaKillC
 player.hasCompressionCore=p.hasCompressionCore||false;player.compressionPower=p.compressionPower||0;
 player.compressedAtk=p.compressedAtk||0;player.compressedHp=p.compressedHp||0;
 player.attackExpBonus=p.attackExpBonus||0;
+player.hasAutoPrivilege=p.hasAutoPrivilege||false;
 // BigInt版圧縮蓄積（旧float版からの移行も対応）
 player.compressedAtkBig=p.compressedAtkBig||(p.compressedAtk?String(Math.floor(p.compressedAtk)):"0");
 player.compressedHpBig=p.compressedHpBig||(p.compressedHp?String(Math.floor(p.compressedHp)):"0");
@@ -457,8 +476,8 @@ function getRankIdx(){return Math.min(RANK_NAMES.length-1,Math.floor((player.tot
 // ============ ステータス計算 ============
 function greedMult(){return(player.inventory[502]||0)>0?1+Math.log10(player.totalRelics+1)*0.25:1.0;}
 function omegaApply(a,h){if(!(player.inventory[801]>0))return{atk:a,hp:h};const m=1n+player.omegaCharge;return{atk:a*m,hp:h*m};}
-function calcFinalDmgMult(){const lv=Math.min(10,player.totalLevel);const kf=(player.inventory[406]||0)*0.00004;// 再起Lv対数ボーナス：log10(Lv+1)×0.1
-const lvBonus=Math.log10((player.totalLevel||1)+1)*0.1;let m=(1+(lv*0.00004))+kf+lvBonus;if((player.inventory[703]||0)>0)m+=4;return m;}
+function calcFinalDmgMult(){const lv=Math.min(10,player.totalLevel);const kf=(player.inventory[406]||0)*0.00004;// 再起Lv対数ボーナス：log10(Lv+1)×0.01
+const lvBonus=Math.log10((player.totalLevel||1)+1)*0.01;let m=(1+(lv*0.00004))+kf+lvBonus;if((player.inventory[703]||0)>0)m+=4;return m;}
 function getRelicBonus(){
 let atkBig=0n,hpBig=0n,mult=1;
 const hasReg=(player.inventory[603]||0)>0,hasZan=(player.inventory[804]||0)>0;
@@ -671,6 +690,12 @@ ok=true;msg="再起の誓いによって新たなる力を得た";updateLog(msg)
 }else if(code==="REBALANCE2026"){
 if(player.isCleared){ensureOrderRelic();ok=true;msg=`<span class="unique-relic-text">秩序のリバランス</span>を獲得しました。`;}
 else msg=`<span style="color:#f44;">「まだその時ではない……」</span>終末神討伐後に使用可能です。`;}
+else if(code==="AUTO_UNLOCK"){
+if(player.hasAutoPrivilege){msg=`<span style="color:#ff69b4;font-weight:bold;">【開発者特権】</span>自動攻撃はすでに解放されています。`;}
+else{player.hasAutoPrivilege=true;ok=true;refreshAutoBtn();msg=`<span style="color:#ff69b4;font-weight:bold;">【開発者特権】</span>自動攻撃が解放されました。`;}}
+else if(code==="AUTO_REMOVE"){
+if(!player.hasAutoPrivilege){msg=`<span style="color:#aaa;">自動攻撃は解放されていません。`;}
+else{player.hasAutoPrivilege=false;ok=true;refreshAutoBtn();msg=`<span style="color:#aaa;">自動攻撃を削除しました。`;}}
 else if(code==="")return;
 else msg="無効なシリアルコードです。";
 document.getElementById("serial-result-msg").innerHTML=msg;
@@ -960,8 +985,8 @@ const b=getRelicBonus(),sm=calcFinalDmgMult();
 const tb=omegaApply(player.baseAtk+b.atk,player.baseHP+b.hp);
 const smBig=BigInt(Math.round(sm*100000));
 const multBig2=BigInt(Math.round(b.mult*100000));
-document.getElementById("p-atk").textContent=fmtV(tb.atk*multBig2/100000n*smBig/100000n);
-document.getElementById("p-hp").textContent=fmtV(tb.hp*multBig2/100000n);
+document.getElementById("p-atk").textContent=fmtStat(tb.atk*multBig2/100000n*smBig/100000n);
+document.getElementById("p-hp").textContent=fmtStat(tb.hp*multBig2/100000n);
 let bmaxHP;try{bmaxHP=BigInt(player.bossMaxHP||"1");}catch(e){bmaxHP=1n;}if(bmaxHP<=0n)bmaxHP=1n;
 const hd=document.getElementById("bosshp-cur");
 // 終末神アポカリス＝ティア（初回・未クリア）は演出用固定表記
@@ -1025,7 +1050,7 @@ const skills=[
  const total=Math.floor((Number(player.totalClicks)+player.totalLevel+km+player.attackExpBonus)*ens);
  return`<span class="vow-tag">経験値：+${lv+km}</span><span class="vow-tag">【賢者：+${km}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:#00d4ff;">【核Lv×10：+${nbBonus}/回】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span>`;
 })()},
-{name:"死を刻む",desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004;const lvB=Math.log10((player.totalLevel||1)+1)*0.1;const total=calcFinalDmgMult()*_vowBonus.mult;return`<span class="vow-tag">最終ダメ倍率：x${total.toFixed(4)}</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
+{name:"死を刻む",desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004;const lvB=Math.log10((player.totalLevel||1)+1)*0.01;const total=calcFinalDmgMult()*_vowBonus.mult;return`<span class="vow-tag">最終ダメ倍率：x${total.toFixed(4)}</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
 ];
 document.getElementById("vow-list").innerHTML=skills.map(s=>{const mx=lv>=10;return`<div class="vow-item"><div class="vow-header"><span class="vow-name">${s.name}</span><span class="vow-lv ${mx?"max":""}">${mx?"Lv.10 (MAX)":"Lv."+lv}</span></div><div><div class="vow-highlight">${s.hl}</div><span class="vow-sub">${s.desc}</span></div></div>`;}).join("");
 }
