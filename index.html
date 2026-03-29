@@ -112,7 +112,8 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .hpfill-gemini{background:linear-gradient(90deg,#2d0057,var(--gemini))!important}
 .status-box{display:flex;gap:8px;margin-top:10px}
 .stat-card{flex:1;background:rgba(255,255,255,.08);padding:5px 10px;border-radius:6px;border-left:3px solid var(--primary);display:flex;flex-direction:column;overflow:hidden}
-.stat-card.hp-card{border-left-color:var(--hp)}
+.hp-card .stat-label{color:var(--hp);}
+.atk-card .stat-label{color:var(--primary);}
 .stat-label{font-size:.65em;color:#aaa;text-transform:uppercase;margin-bottom:1px}
 .stat-val{font-size:.95em;font-weight:bold;font-family:monospace;color:#fff;overflow-x:auto;white-space:nowrap}
 .nav{display:flex;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
