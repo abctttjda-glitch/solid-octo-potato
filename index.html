@@ -341,11 +341,11 @@ window.addEventListener("pointerup",stopAttackLoop);
 
 // ============ BigInt安全変換 ============
 // Number→BigInt変換。Infinity/NaN/overflow対策
-const BIG_CAP=BigInt("9".repeat(60)); // 10^60上限（実用上十分な値）
+const BIG_CAP=BigInt("9".repeat(200)); // 10^200上限
 function safeBigInt(n){
 if(typeof n==="bigint")return n<0n?0n:n;
 if(!isFinite(n)||isNaN(n)||n<0)return 0n;
-if(n>1e60)return BIG_CAP;
+if(n>1e200)return BIG_CAP;
 try{return BigInt(Math.floor(n));}catch(e){return 0n;}
 }
 // BigInt同士の乗算でオーバーフロー対策付き（上限キャップ）
@@ -856,7 +856,7 @@ bossType="main";kousaBossData=null;
 // bossMaxHP を元に戻す（BIG_CAP安全付き）
 const n=Number(player.killCount);
 let newHP=n>0?Number(BOSS_MAX_HP_BASE)*Math.pow(1.35+0.15*Math.exp(-n/50),n):Number(BOSS_MAX_HP_BASE);
-if(!isFinite(newHP)||newHP<=0||newHP>1e60)newHP=Number(BOSS_MAX_HP_BASE);
+if(!isFinite(newHP)||newHP<=0)newHP=Number(BOSS_MAX_HP_BASE);
 const newHPBig=safeBigInt(newHP)>0n?safeBigInt(newHP):BOSS_MAX_HP_BASE;
 player.bossMaxHP=newHPBig.toString();
 currentBossHP=newHPBig;
@@ -883,7 +883,7 @@ comboHit=0;
 player.killCount++;enemyDisasterStarUsed=false;
 const n=Number(player.killCount);
 let newHP=Number(BOSS_MAX_HP_BASE)*Math.pow(1.35+0.15*Math.exp(-n/50),n);
-if(!isFinite(newHP)||newHP<=0||newHP>1e60)newHP=Number(BOSS_MAX_HP_BASE);
+if(!isFinite(newHP)||newHP<=0)newHP=Number(BOSS_MAX_HP_BASE);
 const newHPBig=safeBigInt(newHP)>0n?safeBigInt(newHP):BOSS_MAX_HP_BASE;
 player.bossMaxHP=newHPBig.toString();
 currentBossHP=newHPBig;
