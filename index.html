@@ -1051,30 +1051,38 @@ function updateLog(message) { addLog(`<div>${message}</div>`); }
 function closeStory() { player.storySeen = true; document.getElementById("story-modal").style.display = "none"; saveGame(); }
 
 function handleBossDefeat() {
-  comboHit = 0;
+   comboHit = 0;
+   isGeminiBattle = false;
 
-  // Gemini戦終了フラグ
-  isGeminiBattle = false;
+   // 討伐数の加算（HP計算の前に実施）
+   player.killCount++;
+   player.isCleared = true;
 
-  // 通常の敵のHP更新処理
-  player.isCleared = true;
-  let n_float = Number(player.killCount);
-  let base = Number(BOSS_MAX_HP_BASE);
-  let newHP = base * Math.pow(1.35 + 0.15 * Math.exp(-n_float / 50), n_float);
-  player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
-  currentBossHP = BigInt(player.bossMaxHP);
-  player.killCount++;
+   // 通常ボスのHP更新: 指数関数的に増加
+   let n_float = Number(player.killCount);
+   let base = Number(BOSS_MAX_HP_BASE);
+   let newHP = base * Math.pow(1.35 + (0.15 * Math.exp(-n_float / 50)), n_float);
+   player.bossMaxHP = BigInt(Math.floor(newHP)).toString();
 
-  // 次の出現判定（Gemini戦中ではない場合のみ）
-  if (Math.random() < 0.1) {
-      isGeminiBattle = true;
-      const bonus = getRelicBonus();
-      const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
-      const playerAtk = Number(totalBase.atk);
-      const geminiHp = BigInt(Math.floor(playerAtk * (800 + Math.random() * 400)));
-      currentBossHP = geminiHp;
-      addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(geminiHp)}</span></div>`);
-  }
+   // 次の敵の出現判定
+   if (Math.random() < 0.1) {
+       isGeminiBattle = true;
+       const bonus = getRelicBonus();
+       const skillMult = calcFinalDmgMult();
+       const totalBase = applyOmegaCore(player.baseAtk + bonus.atk, player.baseHP + bonus.hp);
+
+       // プレイヤーの「実効攻撃力」をベースにHPを設定 (800〜1200倍)
+       let playerRealAtk = Number(totalBase.atk) * bonus.mult * skillMult;
+       let geminiHpVal = playerRealAtk * (800 + Math.random() * 400);
+
+       currentBossHP = BigInt(Math.floor(geminiHpVal));
+       // Gemini出現時は最大HP表示もGeminiのものに合わせる
+       player.bossMaxHP = currentBossHP.toString();
+
+       addLog(`<div><span class="c-gemini" style="font-size:1.2em;">EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが観測されました。HP: ${formatV(currentBossHP)}</span></div>`);
+   } else {
+       currentBossHP = BigInt(player.bossMaxHP);
+   }
 }
 
 function closeClearModal() {
