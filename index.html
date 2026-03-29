@@ -457,8 +457,8 @@ function getRankIdx(){return Math.min(RANK_NAMES.length-1,Math.floor((player.tot
 // ============ ステータス計算 ============
 function greedMult(){return(player.inventory[502]||0)>0?1+Math.log10(player.totalRelics+1)*0.25:1.0;}
 function omegaApply(a,h){if(!(player.inventory[801]>0))return{atk:a,hp:h};const m=1n+player.omegaCharge;return{atk:a*m,hp:h*m};}
-function calcFinalDmgMult(){const lv=Math.min(10,player.totalLevel);const kf=(player.inventory[406]||0)*0.00004;// 再起Lv対数ボーナス：log10(Lv+1)×0.001（Lv300≒+0.247%、緩やか上昇）
-const lvBonus=Math.log10((player.totalLevel||1)+1)*0.001;let m=(1+(lv*0.00004))+kf+lvBonus;if((player.inventory[703]||0)>0)m+=4;return m;}
+function calcFinalDmgMult(){const lv=Math.min(10,player.totalLevel);const kf=(player.inventory[406]||0)*0.00004;// 再起Lv対数ボーナス：log10(Lv+1)×0.01
+const lvBonus=Math.log10((player.totalLevel||1)+1)*0.01;let m=(1+(lv*0.00004))+kf+lvBonus;if((player.inventory[703]||0)>0)m+=4;return m;}
 function getRelicBonus(){
 let atkBig=0n,hpBig=0n,mult=1;
 const hasReg=(player.inventory[603]||0)>0,hasZan=(player.inventory[804]||0)>0;
