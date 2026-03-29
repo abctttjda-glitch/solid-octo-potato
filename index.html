@@ -1011,6 +1011,7 @@ if(tid==="vow")renderVow();else if(tid==="relic")renderRelics();else if(tid==="s
 
 function renderVow(){
 const rlv=player.totalLevel,lv=Math.min(10,rlv);
+const _vowBonus=getRelicBonus();
 const nb=Math.min(50,Math.floor(rlv/10)*5),bc=Math.min(50,player.inventory[401]||0);
 const skills=[
 {name:"不退転の力",desc:"戦闘を経験するたびにランダムな遺物を獲得する。最大100個まで。",hl:`<span class="vow-tag">ボーナス：+${nb+bc}</span><span class="vow-tag">【核Lv:+${nb}】</span><span class="vow-tag">【不退転:+${bc}】</span>`},
@@ -1024,7 +1025,7 @@ const skills=[
   const total=Math.floor((Number(player.totalClicks)+player.totalLevel+km+player.attackExpBonus)*ens);
   return`<span class="vow-tag">経験値：+${lv+km}</span><span class="vow-tag">【賢者：+${km}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:#00d4ff;">【核Lv×10：+${nbBonus}/回】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span>`;
 })()},
-{name:"死を刻む",desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004,tb=(lv*0.00004)+kf;const lvB=Math.log10((player.totalLevel||1)+1)*0.01;return`<span class="vow-tag">最終ダメ：+${((tb+lvB)*100).toFixed(4)}%</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
+{name:"死を刻む",desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004;const lvB=Math.log10((player.totalLevel||1)+1)*0.01;const total=calcFinalDmgMult()*_vowBonus.mult;return`<span class="vow-tag">最終ダメ倍率：x${total.toFixed(4)}</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
 ];
 document.getElementById("vow-list").innerHTML=skills.map(s=>{const mx=lv>=10;return`<div class="vow-item"><div class="vow-header"><span class="vow-name">${s.name}</span><span class="vow-lv ${mx?"max":""}">${mx?"Lv.10 (MAX)":"Lv."+lv}</span></div><div><div class="vow-highlight">${s.hl}</div><span class="vow-sub">${s.desc}</span></div></div>`;}).join("");
 }
