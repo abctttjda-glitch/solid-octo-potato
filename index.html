@@ -842,6 +842,29 @@ if(!isKousa&&currentBossHP>0n){
   }
   checkLevelUp();
 }
+// 虹災反撃（虹災戦のみ）
+if(isKousa&&currentBossHP>0n&&kousaBossData){
+  const km=Math.min(1000,player.inventory[405]||0);const ens=(player.inventory[605]||0)>=1?1.5:1.0;
+  const exp=Math.floor((Number(player.totalClicks)+player.totalLevel+km)*ens);
+  player.hadoExpAccum+=exp;player.deathCount+=exp;
+  // 虹災の攻撃力：ボスHPの0.1%相当
+  const kousaAtk=bossMaxHP/1000n;
+  const multForHP=BigInt(Math.max(1,Math.round(bonus.mult*1000)));
+  const curHP=tb.hp*multForHP/1000n;
+  const baseCut=Math.min(20,Math.floor(lv/5)*5),ingaV=Math.min(10,player.inventory[403]||0);
+  const minCut=baseCut+ingaV*2;
+  const cutPct=BigInt(Math.floor(Math.random()*(101-Math.min(95,minCut)))+Math.min(95,minCut));
+  const mitig=kousaAtk*(100n-cutPct)/100n>0n?kousaAtk*(100n-cutPct)/100n:0n;
+  if(curHP>mitig){
+    logH+=`<div><span style="color:${kousaBossData.colorVar};font-weight:bold;">${kousaBossData.name}の反撃！${fmtV(mitig)} ダメージ。障壁展開！</span></div>`;
+  }else{
+    let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
+    let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,Number(player.deathCount||100))+1+lv+(Math.min(50000,player.inventory[402]||0)*5)));
+    player.baseHP+=upHP;
+    logH+=`<div><span style="color:${kousaBossData.colorVar};font-weight:bold;">${kousaBossData.name}の反撃！${fmtV(mitig)} ダメージ。</span><span style="color:#07f;font-weight:bold;">再起の誓いによって新たなる力を得た</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}<span style="color:var(--growth);font-weight:bold;">(基礎HP+${fmtV(upHP)})</span></div>`;
+  }
+  checkLevelUp();
+}
 addLog(logH);saveGame();triggerUIUpdate();
 }
 
@@ -966,7 +989,17 @@ const targets=Object.entries(player.inventory).filter(([id,cnt])=>getCompressibl
 for(const[id,]of targets){
   if(remaining<=0)break;const avail=getCompressibleAmount(id,player.inventory[id]);const use=Math.min(avail,remaining);
   const r=RELIC_MASTER.find(m=>m.id==id);
-  if(r){gainedAtkBig+=safeBigInt((r.atk||0)*use);gainedHpBig+=safeBigInt((r.hp||0)*use);}
+  if(r){
+    let a=r.atk||0,h=r.hp||0;
+    // 各種強化倍率を適用（getRelicBonusと同じ計算）
+    if(r.star===1&&player.hasHado){a*=100;h*=100;}else if(r.star===2&&player.hasGreatHado){a*=100;h*=100;}else if(r.star===3&&player.hasDivineGuide){a*=100;h*=100;}
+    if(r.star===4&&player.hasWorldOrder){a*=100;h*=100;}
+    if(r.star===5&&player.hasCrown){a*=100;h*=100;}
+    if(r.star===6&&player.hasMeta){a*=100;h*=100;}
+    if((player.inventory[603]||0)>0&&r.star<=6){a*=1.5;h*=1.5;}
+    if((player.inventory[804]||0)>0&&r.star!==6){a*=1000;h*=1000;}
+    gainedAtkBig+=safeBigInt(a*use);gainedHpBig+=safeBigInt(h*use);
+  }
   player.inventory[id]-=use;remaining-=use;
 }
 // BigInt保存
