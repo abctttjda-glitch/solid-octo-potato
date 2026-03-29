@@ -1007,11 +1007,11 @@ const skills=[
 {name:"刹那の堆積",desc:"再起するたびにHP増加幅+1。",hl:(()=>{const sv=Math.min(50000,player.inventory[402]||0)*5;return`<span class="vow-tag">HP増加：+${lv+sv}</span><span class="vow-tag">/ 上限1〜${fmtV(player.deathCount||100)}</span><span class="vow-tag">【刹那：+${sv}】</span>`})()},
 {name:"因果の拒絶",desc:"稀に攻撃を無効化する。",hl:(()=>{const bc2=Math.min(20,Math.floor(lv/5)*5),iv=Math.min(10,player.inventory[403]||0);return`<span class="vow-tag">無効化：${Math.min(95,bc2+iv*2)}%〜100%</span><span class="vow-tag">【因果：+${iv*2}%】</span>`})()},
 {name:"反撃の狼煙",desc:"生存時★2〜3の遺物を確定で入手する。",hl:`<span class="vow-tag">確定：1〜${lv}個</span><span class="vow-tag">(★2${(player.inventory[404]||0)>0?"/★3":""})</span>`},
-{name:"魂の研磨",desc:"経験値ボーナスが向上。攻撃のたびに基礎値+1で永続蓄積。",hl:(()=>{
+{name:"魂の研磨",desc:"経験値ボーナスが向上。攻撃のたびに基礎値+10で永続蓄積。",h10:(()=>{
  const km=Math.min(1000,player.inventory[405]||0);
  const ens=(player.inventory[605]||0)>=1?1.5:1.0;
  const total=Math.floor((Number(player.totalClicks)+player.totalLevel+km+player.attackExpBonus)*ens);
- return`<span class="vow-tag">経験値：+${lv+km}</span><span class="vow-tag">【賢者：+${km}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span>`;
+ return`<span class="vow-tag">経験値：+10{lv+km}</span><span class="vow-tag">【賢者：+${km}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span>`;
 })()},
 {name:"死を刻む",desc:"経験を積むたびに最終ダメージを増加させる。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004,tb=(lv*0.00004)+kf;return`<span class="vow-tag">最終ダメ：+${(tb*100).toFixed(4)}%</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span>`})()}
 ];
