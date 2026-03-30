@@ -440,7 +440,8 @@ const p=JSON.parse(s);Object.assign(player,p);
 player.baseAtk=BigInt(p.baseAtk||"10");player.baseHP=BigInt(p.baseHP||"100");player.maxDmg=BigInt(p.maxDmg||"0");
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
-player.omegaCharge=BigInt(p.omegaCharge||"0");player.kousaKillCount=p.kousaKillCount||0;
+player.omegaCharge=0n; // 蓄積回数リセット（倍率を1回目×1.30から再スタート）
+player.kousaKillCount=p.kousaKillCount||0;
 player.omegaAtkBig=p.omegaAtkBig||"0";player.omegaHpBig=p.omegaHpBig||"0";
 player.hasCompressionCore=p.hasCompressionCore||false;player.compressionPower=p.compressionPower||0;
 player.compressedAtk=p.compressedAtk||0;player.compressedHp=p.compressedHp||0;
