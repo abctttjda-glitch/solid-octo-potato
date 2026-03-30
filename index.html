@@ -729,6 +729,11 @@ const rates={};for(let s in raw)rates[s]={p:(raw[s].p/tp)*100,cond:raw[s].cond};
 let sc={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},sg={1:{},2:{},3:{},4:{},5:{},6:{},7:{},8:{}},showR=null;
 let gainedAtk=0n,gainedHp=0n; // オメガコア用：今回ドロップ遺物のATK/HP合計
 const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
+// オメガ集計用：コンプリート倍率・強欲倍率を事前計算
+let _omegaCompCount=0;
+for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at.length>0&&at.every(m=>(player.inventory[m.id]||0)>0))_omegaCompCount++;}
+const _omegaCbBig=BigInt(Math.round(Math.pow(2,_omegaCompCount)));
+const _omegaGmBig=BigInt(Math.round(greedMult()*10000));
 for(let i=0;i<count;i++){
 let rv=Math.random()*100,star=1,cp=0;
 for(let s in rates){cp+=rates[s].p;if(rv<=cp){star=parseInt(s);break;}}
@@ -749,7 +754,9 @@ if((player.inventory[801]||0)>0&&count>=100&&sel.star<9&&sel.star!==999){
   if(sel.star===1&&player.hasHado){da*=100;dh*=100;}else if(sel.star===2&&player.hasGreatHado){da*=100;dh*=100;}else if(sel.star===3&&player.hasDivineGuide){da*=100;dh*=100;}
   if(sel.star===4&&player.hasWorldOrder){da*=100;dh*=100;}if(sel.star===5&&player.hasCrown){da*=100;dh*=100;}if(sel.star===6&&player.hasMeta){da*=100;dh*=100;}
   if(hasR&&sel.star<=6){da*=1.5;dh*=1.5;}if(hasZ&&sel.star<=6){da*=1000;dh*=1000;}
-  gainedAtk+=safeBigInt(da);gainedHp+=safeBigInt(dh);
+  // コンプリート倍率・強欲倍率を適用（getRelicBonusと同じレイヤー）
+  gainedAtk+=safeBigInt(da)*_omegaCbBig*_omegaGmBig/10000n;
+  gainedHp+=safeBigInt(dh)*_omegaCbBig*_omegaGmBig/10000n;
 }
 }
 if(showR)openRareModal(showR);
