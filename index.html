@@ -1091,7 +1091,7 @@ const km=player.inventory[405]||0;
 const _hlTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?(1+Math.log10(_hlTK+1)):1.0;
 const nbBonus=Math.min(50,Math.floor((player.totalLevel||1)/10)*5)*10;
 const total=Math.floor((Number(player.totalClicks)+player.totalLevel+km*1000+player.attackExpBonus)*ens);
-return`<span class="vow-tag">経験値：+${lv+km*1000}</span><span class="vow-tag">【賢者：+${km*1000}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:#00d4ff;">【核Lv×10：+${nbBonus}/回】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span><span class="vow-tag" style="color:#f97316;">【エンス×${ens.toFixed(2)}】</span>`;
+return`<span class="vow-tag">経験値：+${lv+km*1000}</span><span class="vow-tag">【賢者：+${km*1000}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:#00d4ff;">【核Lv×10：+${nbBonus}/回】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span><span class="vow-tag" style="color:#f97316;">【レリ・エンス×${ens.toFixed(2)}】</span>`;
 })()},
 {name:"死を刻む",desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004;const lvB=Math.log10((player.totalLevel||1)+1)*0.01;const total=calcFinalDmgMult()*_vowBonus.mult;return`<span class="vow-tag">最終ダメ倍率：x${total.toFixed(4)}</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
 ];
