@@ -234,14 +234,14 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div id="relic" class="tab">
 <div id="compression-ui" style="display:none;background:linear-gradient(135deg,#001a12,#002a1a);border:2px solid #00ffcc;border-radius:12px;padding:14px;margin-bottom:10px;color:#fff;">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-  <span style="font-weight:bold;font-size:1.05em;color:#00ffcc;letter-spacing:2px;">◈ 収束核アーカイブ・ゼロ</span>
-  <span style="font-size:.7em;color:#aaa;">溢れし災厄討伐特典</span>
+ <span style="font-weight:bold;font-size:1.05em;color:#00ffcc;letter-spacing:2px;">◈ 収束核アーカイブ・ゼロ</span>
+ <span style="font-size:.7em;color:#aaa;">溢れし災厄討伐特典</span>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.82em;margin-bottom:10px;">
-  <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;"><div style="color:#aaa;font-size:.8em;">圧縮倍率</div><div id="comp-mult" style="font-weight:bold;color:#00ffcc;font-size:1.1em;">×1.000</div></div>
-  <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;"><div style="color:#aaa;font-size:.8em;">圧縮可能回数</div><div id="comp-times" style="font-weight:bold;color:#fff;">0回</div></div>
-  <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #007bff;"><div style="color:#aaa;font-size:.8em;">蓄積ATK(実効値)</div><div id="comp-catk" style="font-weight:bold;color:#7af;">0</div></div>
-  <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #dc3545;"><div style="color:#aaa;font-size:.8em;">蓄積HP(実効値)</div><div id="comp-chp" style="font-weight:bold;color:#f88;">0</div></div>
+ <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;"><div style="color:#aaa;font-size:.8em;">圧縮倍率</div><div id="comp-mult" style="font-weight:bold;color:#00ffcc;font-size:1.1em;">×1.000</div></div>
+ <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;"><div style="color:#aaa;font-size:.8em;">圧縮可能回数</div><div id="comp-times" style="font-weight:bold;color:#fff;">0回</div></div>
+ <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #007bff;"><div style="color:#aaa;font-size:.8em;">蓄積ATK(実効値)</div><div id="comp-catk" style="font-weight:bold;color:#7af;">0</div></div>
+ <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #dc3545;"><div style="color:#aaa;font-size:.8em;">蓄積HP(実効値)</div><div id="comp-chp" style="font-weight:bold;color:#f88;">0</div></div>
 </div>
 <div style="font-size:.7em;color:#888;margin-bottom:8px;">★1〜3の遺物10,000個を1回分として圧縮。メモリー系は30万個を保護。圧縮した遺物の能力値は蓄積されます。</div>
 <button id="comp-btn" onclick="doCompress()" style="width:100%;padding:10px;background:#00ffcc;color:#000;border:none;border-radius:8px;font-weight:bold;font-size:1em;cursor:pointer;letter-spacing:2px;">収束圧縮</button>
@@ -298,7 +298,7 @@ const KOUSA_RATES=[
 
 // ============ ★9遺物 ============
 const STAR9=[
-{id:901,star:9,name:"侵界の芽核",fromBoss:"緑災のエデラ",desc:"攻撃命中時50%で【侵食】付与。侵食対象へのダメージ×3.0。重複ごとに×1.5追加。"},
+{id:901,star:9,name:"侵界の芽核",fromBoss:"緑災のエデラ",desc:"攻撃時50%で【侵食】付与。侵食対象へのダメージ×3.0。重複ごとに×1.5追加。"},
 {id:902,star:9,name:"流転の水環",fromBoss:"青災のネレイア",desc:"与ダメージの50%を蓄積。次の攻撃時、蓄積分を全放出して上乗せ。"},
 {id:903,star:9,name:"歪界の観測器",fromBoss:"紫災のノクス",desc:"25%でダメージ×8。毎回ダメージ結果を再抽選する。"},
 {id:904,star:9,name:"契愛の呪印",fromBoss:"桃災のリリス",desc:"20%で攻撃を再発動（×2）。再発動は連鎖可能。連鎖ごとに最終ダメージ×1.5。"},
@@ -751,13 +751,13 @@ if(sel.star>=6){if(!(player.inventory[sel.id]>0)){player.inventory[sel.id]=1;pla
 else{player.inventory[sel.id]=(player.inventory[sel.id]||0)+1;player.totalRelics++;sc[star]++;sg[star][sel.id]=(sg[star][sel.id]||0)+1;if(sel.star>=4&&player.inventory[sel.id]===1)if(!showR||sel.star>showR.star)showR=sel;}
 // オメガコア用：ドロップ遺物のATK/HPを集計（各種強化倍率を適用）
 if((player.inventory[801]||0)>0&&count>=100&&sel.star<9&&sel.star!==999){
- let da=sel.atk||0,dh=sel.hp||0;
- if(sel.star===1&&player.hasHado){da*=100;dh*=100;}else if(sel.star===2&&player.hasGreatHado){da*=100;dh*=100;}else if(sel.star===3&&player.hasDivineGuide){da*=100;dh*=100;}
- if(sel.star===4&&player.hasWorldOrder){da*=100;dh*=100;}if(sel.star===5&&player.hasCrown){da*=100;dh*=100;}if(sel.star===6&&player.hasMeta){da*=100;dh*=100;}
- if(hasR&&sel.star<=6){da*=1.5;dh*=1.5;}if(hasZ&&sel.star<=6){da*=1000;dh*=1000;}
- // コンプリート倍率・強欲倍率を適用（getRelicBonusと同じレイヤー）
- gainedAtk+=safeBigInt(da)*_omegaCbBig*_omegaGmBig/10000n;
- gainedHp+=safeBigInt(dh)*_omegaCbBig*_omegaGmBig/10000n;
+let da=sel.atk||0,dh=sel.hp||0;
+if(sel.star===1&&player.hasHado){da*=100;dh*=100;}else if(sel.star===2&&player.hasGreatHado){da*=100;dh*=100;}else if(sel.star===3&&player.hasDivineGuide){da*=100;dh*=100;}
+if(sel.star===4&&player.hasWorldOrder){da*=100;dh*=100;}if(sel.star===5&&player.hasCrown){da*=100;dh*=100;}if(sel.star===6&&player.hasMeta){da*=100;dh*=100;}
+if(hasR&&sel.star<=6){da*=1.5;dh*=1.5;}if(hasZ&&sel.star<=6){da*=1000;dh*=1000;}
+// コンプリート倍率・強欲倍率を適用（getRelicBonusと同じレイヤー）
+gainedAtk+=safeBigInt(da)*_omegaCbBig*_omegaGmBig/10000n;
+gainedHp+=safeBigInt(dh)*_omegaCbBig*_omegaGmBig/10000n;
 }
 }
 if(showR)openRareModal(showR);
@@ -886,18 +886,18 @@ let logH=`<div>${tags}<span style="color:#07f;font-weight:bold;">攻撃！${fmtV
 
 // オメガコア：獲得遺物のATK/HPを蓄積（メイン・虹災共通）
 if((player.inventory[801]||0)>0&&dropN>=100&&(_dropResult.gainedAtk>0n||_dropResult.gainedHp>0n)){
- player.omegaCharge+=1n;
- // 蓄積回数に応じた乗算：1 + log10(回数+1) × 1.0（1回目≈×1.30、100回目≈×2.00）
- // + 攻撃回数依存の微増：log10(totalClicks+1) × 0.15（長期プレイで緩やかに上昇）
- const _omegaMult=1+Math.log10(Number(player.omegaCharge)+1)*1.0+Math.log10(Number(player.totalClicks)+1)*0.15;
- const _omegaMultBig=BigInt(Math.round(_omegaMult*100000));
- const _boostedAtk=_dropResult.gainedAtk*_omegaMultBig/100000n;
- const _boostedHp=_dropResult.gainedHp*_omegaMultBig/100000n;
- const _oAtkNow=BigInt(player.omegaAtkBig||"0");
- const _oHpNow=BigInt(player.omegaHpBig||"0");
- player.omegaAtkBig=(_oAtkNow+_boostedAtk>BIG_CAP?BIG_CAP:_oAtkNow+_boostedAtk).toString();
- player.omegaHpBig=(_oHpNow+_boostedHp>BIG_CAP?BIG_CAP:_oHpNow+_boostedHp).toString();
- logH+=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【オメガ・コア】ATK+${fmtV(_boostedAtk)} HP+${fmtV(_boostedHp)} 蓄積（×${_omegaMult.toFixed(2)}）</span></div>`;
+player.omegaCharge+=1n;
+// 蓄積回数に応じた乗算：1 + log10(回数+1) × 1.0（1回目≈×1.30、100回目≈×2.00）
+// + 攻撃回数依存の微増：log10(totalClicks+1) × 0.15（長期プレイで緩やかに上昇）
+const _omegaMult=1+Math.log10(Number(player.omegaCharge)+1)*1.0+Math.log10(Number(player.totalClicks)+1)*0.15;
+const _omegaMultBig=BigInt(Math.round(_omegaMult*100000));
+const _boostedAtk=_dropResult.gainedAtk*_omegaMultBig/100000n;
+const _boostedHp=_dropResult.gainedHp*_omegaMultBig/100000n;
+const _oAtkNow=BigInt(player.omegaAtkBig||"0");
+const _oHpNow=BigInt(player.omegaHpBig||"0");
+player.omegaAtkBig=(_oAtkNow+_boostedAtk>BIG_CAP?BIG_CAP:_oAtkNow+_boostedAtk).toString();
+player.omegaHpBig=(_oHpNow+_boostedHp>BIG_CAP?BIG_CAP:_oHpNow+_boostedHp).toString();
+logH+=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【オメガ・コア】ATK+${fmtV(_boostedAtk)} HP+${fmtV(_boostedHp)} 蓄積（×${_omegaMult.toFixed(2)}）</span></div>`;
 }
 
 // === ボスHP処理 ===
@@ -910,13 +910,13 @@ return;
 }else{
 // メインボス撃破
 if(!player.isCleared){
-  if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
-    currentBossHP=0n;player.killCount++;player.isCleared=true;enemyDisasterStarUsed=false;
-    player.hasCompressionCore=true;isModalOpen=true;
-    document.getElementById("clear-modal-title").innerText="神話の終焉";
-    document.getElementById("clear-modal-msg").innerHTML=`終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold);font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<span style="color:#f44;font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0;border-top:1px solid #444;margin:15px 0"><span style="color:var(--growth);">ここからはエンドレスモードです。遊んでくれてありがとうございます！</span>`;
-    document.getElementById("clear-modal").style.display="flex";
-  }else{currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;logH+=`<div><span style="color:#f00;font-weight:bold;">終末の回帰……！時が巻き戻る！！</span></div>`;}
+ if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
+   currentBossHP=0n;player.killCount++;player.isCleared=true;enemyDisasterStarUsed=false;
+   player.hasCompressionCore=true;isModalOpen=true;
+   document.getElementById("clear-modal-title").innerText="神話の終焉";
+   document.getElementById("clear-modal-msg").innerHTML=`終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold);font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<span style="color:#f44;font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0;border-top:1px solid #444;margin:15px 0"><span style="color:var(--growth);">ここからはエンドレスモードです。遊んでくれてありがとうございます！</span>`;
+   document.getElementById("clear-modal").style.display="flex";
+ }else{currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;logH+=`<div><span style="color:#f00;font-weight:bold;">終末の回帰……！時が巻き戻る！！</span></div>`;}
 }else{handleBossDefeat();}
 }
 }else{
