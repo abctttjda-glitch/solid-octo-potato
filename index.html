@@ -1065,7 +1065,7 @@ if(curHP>mitig){
 player.deathCount+=exp;logH+=`<div><span style="color:#28a745;font-weight:bold;">敵の反撃！${fmtV(mitig)} ダメージ。障壁展開！</span></div>`+getGuaranteedDrop();
 }else{
 let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
-let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,Number(player.deathCount||100))+1+player.totalLevel+(player.inventory[402]||0)*5));
+let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,Number(player.deathCount||100))+1+player.totalLevel+player.inventory[402]||0)*5);
 player.baseHP+=upHP;player.deathCount+=exp;
 logH+=`<div><span style="color:#dc3545;">敵の反撃！${fmtV(mitig)} ダメージ。</span><span style="color:#07f;font-weight:bold;">再起の誓いによって新たなる力を得た</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}<span style="color:var(--growth);font-weight:bold;">(基礎HP+${fmtV(upHP)})</span></div>`;
 }
