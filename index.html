@@ -250,7 +250,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 </div>
 <div id="status" class="tab">
 <div class="rank-display" id="st-rank-area"><div class="rank-lv" id="st-rank-lv">Lv.1</div><div class="rank-title" id="st-rank-title">初心者</div></div>
-<div class="st-box">総攻撃数: <span id="st-totalclicks">0</span><br>戦闘経験値: <span id="v-death">0</span><br>累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold;color:var(--relic-purple);">0</span><br>最高ダメージ: <span id="st-maxdmg">0</span><br>最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold;color:var(--primary);">x1.00</span><br>獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>コンプリート数: <span id="st-comp-count" style="font-weight:bold;color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold;color:var(--growth);">x1.00</span>)<br>溢れし討伐数: <span id="st-kill-count" style="font-weight:bold;color:var(--gold);">0</span><br>虹災討伐数: <span id="st-kousa-kill" style="font-weight:bold;color:var(--nox);">0</span></div>
+<div class="st-box" id="st-lv100bonus" style="border-left-color:var(--gold);display:none;"></div><div class="st-box">総攻撃数: <span id="st-totalclicks">0</span><br>戦闘経験値: <span id="v-death">0</span><br>累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold;color:var(--relic-purple);">0</span><br>最高ダメージ: <span id="st-maxdmg">0</span><br>最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold;color:var(--primary);">x1.00</span><br>獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>コンプリート数: <span id="st-comp-count" style="font-weight:bold;color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold;color:var(--growth);">x1.00</span>)<br>溢れし討伐数: <span id="st-kill-count" style="font-weight:bold;color:var(--gold);">0</span><br>虹災討伐数: <span id="st-kousa-kill" style="font-weight:bold;color:var(--nox);">0</span></div>
 <div id="hado-box" class="st-box" style="display:none;border:none;border-left:4px solid gold;"><span id="hado-status-text" style="color:gold;font-weight:bold;"></span><br><span id="hado-status-desc"></span></div>
 <div class="st-box"><div class="st-title-flex"><span>遺物出現率</span><span id="st-collection" style="color:#666;font-size:.9em;">0/72</span></div><table style="width:100%;font-size:.9em;margin-top:5px;" id="prob-list"></table></div>
 <button class="btn-serial" onclick="openSerialModal()">シリアルコード入力</button>
@@ -335,7 +335,8 @@ attackExpBonus:0,
 hasAutoPrivilege:false,autoSpeed:1,
 omegaAtkBig:"0",omegaHpBig:"0",
 residue:{total:0,edel:0,neria:0,nox:0,lilith:0,valka:0,igna:0,lux:0,magmel:0},
-hasFusionCore:false
+hasFusionCore:false,
+lv100AtkBonus:"0",lv100HpBonus:"0",lv100ExpBonus:0
 };
 
 // ============ 攻撃ボタン ============
@@ -452,6 +453,9 @@ player.hasAutoPrivilege=p.hasAutoPrivilege||false;
 player.autoSpeed=p.autoSpeed||1;
 player.residue=p.residue||{total:0,edel:0,neria:0,nox:0,lilith:0,valka:0,igna:0,lux:0,magmel:0};
 player.hasFusionCore=p.hasFusionCore||false;
+player.lv100AtkBonus=p.lv100AtkBonus||"0";
+player.lv100HpBonus=p.lv100HpBonus||"0";
+player.lv100ExpBonus=p.lv100ExpBonus||0;
 // BigInt版圧縮蓄積（旧float版からの移行も対応）
 player.compressedAtkBig=p.compressedAtkBig||(p.compressedAtk?String(Math.floor(p.compressedAtk)):"0");
 player.compressedHpBig=p.compressedHpBig||(p.compressedHp?String(Math.floor(p.compressedHp)):"0");
@@ -478,8 +482,37 @@ restoreAutoAttack();
 }
 
 // ============ レベル/ランク ============
-function getExpThreshold(lv){return Math.floor(500*Math.pow(1.1,lv));}
-function checkLevelUp(){let lv=false;while(player.deathCount>=getExpThreshold(player.totalLevel)){player.deathCount-=getExpThreshold(player.totalLevel);player.totalLevel++;lv=true;}if(lv&&player.totalLevel%10===0)openRankUpModal(player.totalLevel);return lv;}
+function getExpThreshold(lv){return Math.floor(100*Math.pow(1.03,lv));}
+function checkLevelUp(){let lv=false;while(player.deathCount>=getExpThreshold(player.totalLevel)){player.deathCount-=getExpThreshold(player.totalLevel);player.totalLevel++;lv=true;}if(lv&&player.totalLevel%10===0)openRankUpModal(player.totalLevel);if(lv&&player.totalLevel%100===0)applyLv100Bonus(player.totalLevel);return lv;}
+
+// ============ Lv100ボーナス ============
+function applyLv100Bonus(lv){
+  const milestone=Math.floor(lv/100);
+  // ATK/HP永続ブースト：現在のbaseAtk/baseHPの5%を永続加算
+  const atkGain=player.baseAtk*5n/100n+1n;
+  const hpGain=player.baseHP*5n/100n+1n;
+  player.baseAtk+=atkGain;
+  player.baseHP+=hpGain;
+  // lv100AtkBonus/lv100HpBonus に累積記録（表示用）
+  const prevA=BigInt(player.lv100AtkBonus||"0");
+  const prevH=BigInt(player.lv100HpBonus||"0");
+  player.lv100AtkBonus=(prevA+atkGain).toString();
+  player.lv100HpBonus=(prevH+hpGain).toString();
+  // 経験値ボーナス永続増加：1回あたり+2%（累積無制限）
+  player.lv100ExpBonus+=2;
+  const msg=`<div><span style="color:var(--gold);font-weight:bold;font-size:1.05em;">【Lv${lv} 節目覚醒】`
+    +`baseATK +${fmtV(atkGain)} / baseHP +${fmtV(hpGain)}</span>`
+    +`<span style="color:var(--primary);"> 経験値ボーナス+2%（累積×${(1+player.lv100ExpBonus/100).toFixed(2)}）</span></div>`;
+  addLog(msg);
+  // 軽くランクアップモーダルを流用（lv100専用メッセージ）
+  isModalOpen=true;
+  document.getElementById("rank-up-msg-text").innerHTML=
+    `<span style="color:var(--gold);font-size:1.3em;font-weight:bold;">Lv.${lv} 節目覚醒</span><br><br>`
+    +`<span style="color:#fff;">baseATK / baseHP が永続強化された！</span><br>`
+    +`<span style="color:var(--primary);">経験値ボーナスが永続増加した！(累積×${(1+player.lv100ExpBonus/100).toFixed(2)})</span>`;
+  document.getElementById("rank-up-modal").style.display="flex";
+  saveGame();
+}
 function getRankIdx(){return Math.min(RANK_NAMES.length-1,Math.floor((player.totalLevel-1)/99));}
 
 // ============ ステータス計算 ============
@@ -972,7 +1005,8 @@ const eatk=curHP*3n;
 const cutPct=BigInt(Math.floor(Math.random()*(101-Math.min(95,minCut)))+Math.min(95,minCut));
 const mitig=eatk*(100n-cutPct)/100n>0n?eatk*(100n-cutPct)/100n:0n;
 const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?(1+Math.log10(_ensTK+1)):1.0;
-const exp=Math.floor((Number(player.totalClicks)+player.totalLevel+km*100000+player.attackExpBonus)*ens);
+const lv100ExpMult=1+(player.lv100ExpBonus||0)/100;
+const exp=Math.floor((Number(player.totalClicks)+player.totalLevel+km*100000+player.attackExpBonus)*ens*lv100ExpMult);
 player.hadoExpAccum+=exp;
 if(curHP>mitig){
 player.deathCount+=exp;logH+=`<div><span style="color:#28a745;font-weight:bold;">敵の反撃！${fmtV(mitig)} ダメージ。障壁展開！</span></div>`+getGuaranteedDrop();
@@ -987,7 +1021,8 @@ checkLevelUp();
 // 虹災反撃（虹災戦のみ）
 if(isKousa&&currentBossHP>0n&&kousaBossData){
 const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?(1+Math.log10(_ensTK+1)):1.0;
-const exp=Math.floor((Number(player.totalClicks)+player.totalLevel+km*100000+player.attackExpBonus)*ens);
+const lv100ExpMult2=1+(player.lv100ExpBonus||0)/100;
+const exp=Math.floor((Number(player.totalClicks)+player.totalLevel+km*100000+player.attackExpBonus)*ens*lv100ExpMult2);
 player.hadoExpAccum+=exp;player.deathCount+=exp;
 // 虹災の攻撃力：ボスHPの0.1%相当
 const kousaAtk=bossMaxHP/1000n;
@@ -1160,17 +1195,17 @@ const labels=[
 ['lux','黄',((0.1+fusionRate(r.lux,1000)*0.9)*100).toFixed(0)+'%','割合ダメ'],
 ['magmel','虹','×'+(1+fusionRate(r.magmel,500)*3).toFixed(2),'全効果増幅']
 ];
-return`<span class="vow-tag" style="color:#00ffcc;font-weight:bold;">基礎共鳴：×${br.toFixed(2)}</span><span class="vow-tag" style="color:#aaa;">総残滓：${r.total}</span><br>`
+return`<span class="vow-tag" style="color:#ff9500;font-weight:bold;font-size:1.05em;">基礎共鳴：×${br.toFixed(2)}</span><span class="vow-tag" style="color:#aaa;">総残滓：${r.total}</span><br>`
 +labels.map(([id,col,val,lbl])=>`<span class="vow-tag" style="font-size:.9em;"><span class="c-${id}">${col}</span> ${lbl}：${val} (${r[id]})</span>`).join('');
 })()}
 ];
 document.getElementById("vow-list").innerHTML=skills.map(s=>{
 const lvLabel=s.fusion
-  ?(player.hasFusionCore?`<span class="vow-lv max" style="color:#00ffcc;">解放済</span>`:`<span class="vow-lv" style="color:#888;">未解放</span>`)
+  ?(player.hasFusionCore?`<span class="vow-lv max" style="color:#d4af37;text-shadow:0 0 6px rgba(212,175,55,.6);">解放済</span>`:`<span class="vow-lv" style="color:#888;">未解放</span>`)
   :s.capLv10
   ?(lv>=10?`<span class="vow-lv max">LvMax</span>`:`<span class="vow-lv">Lv.${lv}</span>`)
   :`<span class="vow-lv">Lv.${rlv}</span>`;
-const fusionStyle=s.fusion?` style="border-left-color:#00ffcc;background:linear-gradient(135deg,#f0fffc,#fff);"`:"";return`<div class="vow-item"${fusionStyle}><div class="vow-header"><span class="vow-name"${s.fusion?` style="color:#00ffcc;"`:""}>${s.name}</span>${lvLabel}</div><div><div class="vow-highlight">${s.hl}</div><span class="vow-sub">${s.desc}</span></div></div>`;}).join("");
+const fusionStyle=s.fusion?` style="border-left-color:#d4af37;background:linear-gradient(135deg,#fffbf0,#fff5e0);box-shadow:0 2px 8px rgba(212,175,55,.18);"`:"";return`<div class="vow-item"${fusionStyle}><div class="vow-header"><span class="vow-name"${s.fusion?` style="color:#d4af37;text-shadow:0 0 8px rgba(212,175,55,.4);"`:""}>${s.name}</span>${lvLabel}</div><div><div class="vow-highlight">${s.hl}</div><span class="vow-sub">${s.desc}</span></div></div>`;}).join("");
 }
 
 // ============ 収束核 ============
@@ -1272,7 +1307,16 @@ document.getElementById("st-collection").textContent=`${Object.keys(player.inven
 document.getElementById("st-comp-count").textContent=b.compCount;
 document.getElementById("st-comp-bonus").textContent="x"+b.compBonus.toFixed(2);
 document.getElementById("st-kousa-kill").textContent=fmtV(player.kousaKillCount||0);
+// Lv100ボーナス表示（st-boxがなければスキップ）
+const lv100el=document.getElementById("st-lv100bonus");
+if(lv100el){
+  const la=BigInt(player.lv100AtkBonus||"0");
+  const lh=BigInt(player.lv100HpBonus||"0");
+  lv100el.innerHTML=`Lv100節目ボーナス: ATK累積 <b>+${fmtV(la)}</b> / HP累積 <b>+${fmtV(lh)}</b><br>経験値ボーナス: <b>×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</b>`;
+}
 document.getElementById("st-kill-count").textContent=fmtV(player.killCount||0);
+const lv100box=document.getElementById("st-lv100bonus");
+if(lv100box)(player.lv100ExpBonus||0)>0?lv100box.style.display="block":lv100box.style.display="none";
 document.getElementById("prob-list").innerHTML=Object.entries(rates).map(([s,d])=>`<tr><td class="c${s}">★${s}</td><td style="text-align:right;">${d.p.toFixed(7)}%</td></tr>`).join("");
 }
 
