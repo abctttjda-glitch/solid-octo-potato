@@ -554,7 +554,7 @@ function applyRetroactiveLv100Bonuses(){
   const missing=expected-already;
   if(missing<=0)return;
   for(let i=0;i<missing;i++)applyLv100Bonus((already+i+1)*100,true);
-  addLog(`<div><span style="color:var(--gold);font-weight:bold;">【節目覚醒 遡及】Lv100節目ボーナスを${missing}回分付与（合計${expected}回 / baseATK累積+${fmtV(BigInt(player.lv100AtkBonus))}）</span></div>`);
+  addLog(`<div><span style="color:var(--gold);font-weight:bold;">【覚醒 遡及】覚醒ボーナスを${missing}回分付与（合計${expected}回 / baseATK累積+${fmtV(BigInt(player.lv100AtkBonus))}）</span></div>`);
   saveGame();
 }
 
@@ -1367,7 +1367,7 @@ const lv100el=document.getElementById("st-lv100bonus");
 if(lv100el){
   const la=BigInt(player.lv100AtkBonus||"0");
   const lh=BigInt(player.lv100HpBonus||"0");
-  lv100el.innerHTML=`Lv100節目ボーナス: ATK累積 <b>+${fmtV(la)}</b> / HP累積 <b>+${fmtV(lh)}</b><br>経験値ボーナス: <b>×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</b>`;
+  lv100el.innerHTML=`覚醒ボーナス: ATK累積 <b>+${fmtV(la)}</b> / HP累積 <b>+${fmtV(lh)}</b><br>経験値ボーナス: <b>×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</b>`;
 }
 document.getElementById("st-kill-count").textContent=fmtV(player.killCount||0);
 const lv100box=document.getElementById("st-lv100bonus");
