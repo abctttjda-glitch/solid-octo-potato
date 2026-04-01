@@ -526,13 +526,13 @@ function applyLv100Bonus(lv,silent){
   player.lv100ExpBonus+=2;
   player.lv100MilestonesApplied=(player.lv100MilestonesApplied||0)+1;
   if(silent)return;
-  const msg=`<div><span style="color:var(--gold);font-weight:bold;font-size:1.05em;">【Lv${lv} 節目覚醒】`
+  const msg=`<div><span style="color:var(--gold);font-weight:bold;font-size:1.05em;">【Lv${lv} 覚醒】`
     +`baseATK +${fmtV(atkGain)} / baseHP +${fmtV(hpGain)}</span>`
     +`<span style="color:var(--primary);"> 経験値ボーナス+2%（累積×${(1+player.lv100ExpBonus/100).toFixed(2)}）</span></div>`;
   addLog(msg);
   isModalOpen=true;
   document.getElementById("rank-up-msg-text").innerHTML=
-    `<span style="color:var(--gold);font-size:1.3em;font-weight:bold;">Lv.${lv} 節目覚醒</span><br><br>`
+    `<span style="color:var(--gold);font-size:1.3em;font-weight:bold;">Lv.${lv} 覚醒</span><br><br>`
     +`<span style="color:#fff;">baseATK / baseHP が永続強化された！</span><br>`
     +`<span style="color:var(--primary);">経験値ボーナスが永続増加した！(累積×${(1+player.lv100ExpBonus/100).toFixed(2)})</span>`;
   document.getElementById("rank-up-modal").style.display="flex";
