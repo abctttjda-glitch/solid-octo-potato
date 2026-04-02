@@ -947,8 +947,37 @@ if(geminiShieldHP>0){
     // シールド中はATK/HP継続バフ（毎攻撃 ×1.012）
     player.baseAtk=(player.baseAtk*1012n)/1000n;
     player.baseHP=(player.baseHP*1012n)/1000n;
-    addLog(`<div><span class="c-gemini">SHIELD[${geminiShieldHP}/${geminiShieldMax}]: 構文破壊機工がコードを書き換え中... (ATK/HP ×1.012) バフ蓄積:${geminiBuffStack}回突破済</span></div>`);
-    // シールド中は攻撃を弾く
+    // ── シールド中でも獲得処理は通常通り行う ──
+    // 遺物獲得
+    const _slv=Math.min(10,player.totalLevel);
+    const _sdropN=Math.min(100,_slv+Math.floor(player.totalLevel/10)*5+Math.min(50,player.inventory[401]||0));
+    const _sdrop=getDropLog(_sdropN);
+    // 魂の研磨・経験値蓄積
+    const _skm=player.inventory[405]||0;
+    const _sensTK=(player.killCount||0)+(player.kousaKillCount||0);
+    const _sens=(player.inventory[605]||0)>=1?(1+Math.log10(_sensTK+1)):1.0;
+    const _slv100Mult=1+(player.lv100ExpBonus||0)/100;
+    const _sexp=Math.floor((Number(player.totalClicks)+player.totalLevel+_skm*100000+player.attackExpBonus)*_sens*_slv100Mult);
+    player.hadoExpAccum+=_sexp;player.deathCount+=_sexp;
+    // オメガコア蓄積
+    if((player.inventory[801]||0)>0&&_sdropN>=100&&(_sdrop.gainedAtk>0n||_sdrop.gainedHp>0n)){
+      player.omegaCharge+=1n;
+      const _om=1+Math.log10(Number(player.omegaCharge)+1)*1.0+Math.log10(Number(player.totalClicks)+1)*0.15;
+      const _omB=BigInt(Math.round(_om*100000));
+      const _oAtk=_sdrop.gainedAtk*_omB/100000n;
+      const _oHp=_sdrop.gainedHp*_omB/100000n;
+      const _oA=BigInt(player.omegaAtkBig||"0");const _oH=BigInt(player.omegaHpBig||"0");
+      player.omegaAtkBig=(_oA+_oAtk>BIG_CAP?BIG_CAP:_oA+_oAtk).toString();
+      player.omegaHpBig=(_oH+_oHp>BIG_CAP?BIG_CAP:_oH+_oHp).toString();
+    }
+    // 記憶の遺産
+    let _smemLog="";
+    if((player.inventory[803]||0)>0){
+      const _sml=activateMemoryLegacy();
+      if(_sml)_smemLog=`<div><span style="color:#d4af37;font-weight:bold;">【星の記憶】 ATK+${fmtV(_sml.atkGain)}(+1%) HP+${fmtV(_sml.hpGain)}(+10%) (残晶：${(player.inventory[311]||0).toLocaleString()})</span></div>`;
+    }
+    checkLevelUp();
+    addLog(`<div><span class="c-gemini">SHIELD[${geminiShieldHP}/${geminiShieldMax}]: 構文破壊機工がコードを書き換え中... (ATK/HP ×1.012) バフ蓄積:${geminiBuffStack}回突破済</span></div>`+_sdrop.log+_smemLog);
     saveGame();triggerUIUpdate();
     return;
   }
