@@ -320,7 +320,7 @@ const RELIC_MASTER=[
 {id:501,star:5,name:"連撃の権能",atk:382660,hp:916330,desc:"攻撃回数に応じてダメージが増加する。1HITごとに+0.05%、最大+30%。撃破でリセット。"},{id:502,star:5,name:"強欲の権能",atk:649800,hp:812400,desc:"パッシブ：総遺物数に応じてATK/HPが倍率強化される。"},{id:503,star:5,name:"超越の権能",atk:524180,hp:689450,desc:"1%の確率で、その一撃のダメージを1.5倍にする。"},{id:504,star:5,name:"破壊の権能",atk:999999,hp:0,desc:"1%の確率で、総ATK分のダメージを最終ダメージに直接加算する。"},{id:505,star:5,name:"再生の権能",atk:222222,hp:1528931,desc:"被弾時10%の確率でHP増加(再起)が2回発生。(重複不可)"},{id:506,star:5,name:"双刃の権能",atk:454649,hp:519700,desc:"150回攻撃ごとに次の一撃のダメージ+100%。(重複不可)"},
 {id:601,star:6,name:"絶対統率レリック・オーバーロード",atk:1500000,hp:4500000,desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+80%。【還元】現在のHPに応じてATKが微増。"},{id:602,star:6,name:"魂律解放レリ・クシア",atk:2500000,hp:3500000,desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"},{id:603,star:6,name:"原初核冠レリコア・レガリア",atk:2000000,hp:4000000,desc:"★1〜6遺物のステータス上昇効果を50%増加させる。"},{id:604,star:6,name:"虚無終焉レリ・ノヴァ",atk:5555555,hp:0,desc:"攻撃時1%の確率で与ダメージ+500%。"},{id:605,star:6,name:"戦碑累功レリ・エンス",atk:3000000,hp:3000000,desc:"獲得経験値に討伐数ボーナスを乗算。(溢れ＋虹災合計, 1万討伐で×5, 対数成長)"},
 {id:701,star:7,name:"パンドラの箱",atk:0,hp:0,desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"},{id:702,star:7,name:"終焉の福音",atk:0,hp:0,desc:"敵HPが50%以下のとき、与ダメージ+400%。(重複不可)"},{id:703,star:7,name:"神滅のアカシックレコード",atk:0,hp:0,desc:"与ダメージの最終倍率にさらに+400%。(重複不可)"},
-{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPが自ATKの100倍以上の時、差分比に応じた乗算（最大×8）で火力を補正。Stack蓄積でさらに底上げ。100回ごとにbaseATK/HP永続成長。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"★3メモリークリスタル10000個消費で「災禍殲星」発動。敵に1500%ダメージを与え、最大HP割合で能力値を成長させる。(同一の敵には1度のみ発動)"},
+{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPが自ATKの100倍以上の時、差分比に応じた乗算（最大×8）で火力を補正。Stack蓄積でさらに底上げ。100回ごとにbaseATK/HP永続成長。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"★3メモリークリスタル100個消費で「災禍殲星」発動。敵に1500%ダメージを与え、最大HP割合で能力値を成長させる。(同一の敵には1度のみ発動)"},
 ...STAR9
 ];
 
@@ -936,7 +936,7 @@ else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&pl
 }
 
 // 災禍殲星（メイン戦のみ）
-if(!isKousa&&!enemyDisasterStarUsed&&(player.inventory[803]||0)>0&&(player.inventory[311]||0)>=10000&&currentBossHP>(player.baseAtk+bonus.atk)&&Math.random()<1)activateDisasterStar(bonus);
+if(!isKousa&&!enemyDisasterStarUsed&&(player.inventory[803]||0)>0&&(player.inventory[311]||0)>=100&&currentBossHP>(player.baseAtk+bonus.atk)&&Math.random()<1)activateDisasterStar(bonus);
 
 // ダメージ計算：全てBigInt演算でNumber()オーバーフロー回避
 // bonus.mult と skillM をスケール整数化してBigInt乗算
