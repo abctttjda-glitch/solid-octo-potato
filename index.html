@@ -828,6 +828,7 @@ if(code==="DEBUG_READY_2026"){
 player.totalLevel=999;player.deathCount=100000000;player.hadoExpAccum=10000000;
 RELIC_MASTER.forEach(r=>{if(r.id===0||r.id===999)return;if(r.id===116||r.id===117)player.inventory[r.id]=300000;else if(r.id===311)player.inventory[r.id]=30000;else player.inventory[r.id]=1;});
 ok=true;msg="再起の誓いによって新たなる力を得た";updateLog(msg);}
+else if(code==="STATRESET2026"){player.attack = safeBigInt("1" + "0".repeat(96));player.maxHp = safeBigInt("1" + "0".repeat(100));player.hp = player.maxHp;ok = true;msg = `ステータスを安全に補正しました。`;}
 else if(code==="AUTO_UNLOCK"){
 if(player.hasAutoPrivilege){msg=`<span style="color:#ff69b4;font-weight:bold;">【開発者特権】</span>自動攻撃はすでに解放されています。`;}
 else{player.hasAutoPrivilege=true;ok=true;refreshAutoBtn();msg=`<span style="color:#ff69b4;font-weight:bold;">【開発者特権】</span>自動攻撃が解放されました。`;}}
