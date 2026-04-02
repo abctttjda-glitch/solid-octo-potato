@@ -923,9 +923,9 @@ const isKousa=bossType!=="main";
 if(bossType==="kousa_gemini"){
 // シールド初期化（初回攻撃時）
 if(geminiShieldMax===0){
-  geminiShieldMax=100+Math.floor(Math.random()*101); // 100〜200回
-  geminiShieldHP=geminiShieldMax;
-  geminiBuffStack=0;
+  geminiShieldMax = 50 + Math.floor(Math.random() * 51); // 50〜100回
+  geminiShieldHP = geminiShieldMax;
+  geminiBuffStack = 0;
   addLog(`<div><span class="c-gemini">SHIELD_ACTIVE: Geminiがシールドを展開。耐久 ${geminiShieldMax} 回分。</span></div>`);
 }
 // シールドが残っている場合は攻撃を弾く
@@ -940,10 +940,7 @@ if(geminiShieldHP>0){
     player.baseHP=player.baseHP*buffMult;
     addLog(`<div><span class="c-gemini">SHIELD_BROKEN: Geminiシールド撃破！バフ蓄積×${geminiBuffStack} → baseATK/HP ×${Number(buffMult)} 強化！</span></div>`);
     // 次のシールドを再生成
-    geminiShieldMax=100+Math.floor(Math.random()*101);
-    geminiShieldHP=geminiShieldMax;
-    addLog(`<div><span class="c-gemini">NEW_SHIELD: 次のシールド展開（耐久 ${geminiShieldMax} 回）</span></div>`);
-  }else{
+    if(geminiShieldMax===0){geminiShieldMax = 50 + Math.floor(Math.random() * 51); // 50〜100回geminiShieldHP = geminiShieldMax;geminiBuffStack = 0;addLog(`<div><span class="c-gemini">SHIELD_ACTIVE: Geminiがシールドを展開。耐久 ${geminiShieldMax} 回分。</span></div>`);}
     // シールド中はATK/HP継続バフ（毎攻撃 ×1.012）
     player.baseAtk=(player.baseAtk*1012n)/1000n;
     player.baseHP=(player.baseHP*1012n)/1000n;
