@@ -324,7 +324,7 @@ const RELIC_MASTER=[
 {id:501,star:5,name:"連撃の権能",atk:382660,hp:916330,desc:"攻撃回数に応じてダメージが増加する。1HITごとに+0.05%、最大+30%。撃破でリセット。"},{id:502,star:5,name:"強欲の権能",atk:649800,hp:812400,desc:"パッシブ：総遺物数に応じてATK/HPが倍率強化される。"},{id:503,star:5,name:"超越の権能",atk:524180,hp:689450,desc:"1%の確率で、その一撃のダメージを1.5倍にする。"},{id:504,star:5,name:"破壊の権能",atk:999999,hp:0,desc:"1%の確率で、総ATK分のダメージを最終ダメージに直接加算する。"},{id:505,star:5,name:"再生の権能",atk:222222,hp:1528931,desc:"被弾時10%の確率でHP増加(再起)が2回発生。(重複不可)"},{id:506,star:5,name:"双刃の権能",atk:454649,hp:519700,desc:"150回攻撃ごとに次の一撃のダメージ+100%。(重複不可)"},
 {id:601,star:6,name:"絶対統率レリック・オーバーロード",atk:1500000,hp:4500000,desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+80%。【還元】現在のHPに応じてATKが微増。"},{id:602,star:6,name:"魂律解放レリ・クシア",atk:2500000,hp:3500000,desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"},{id:603,star:6,name:"原初核冠レリコア・レガリア",atk:2000000,hp:4000000,desc:"★1〜6遺物のステータス上昇効果を50%増加させる。"},{id:604,star:6,name:"虚無終焉レリ・ノヴァ",atk:5555555,hp:0,desc:"攻撃時1%の確率で与ダメージ+500%。"},{id:605,star:6,name:"戦碑累功レリ・エンス",atk:3000000,hp:3000000,desc:"獲得経験値に討伐数ボーナスを乗算。(溢れ＋虹災合計, 1万討伐で×5, 対数成長)"},
 {id:701,star:7,name:"パンドラの箱",atk:0,hp:0,desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"},{id:702,star:7,name:"終焉の福音",atk:0,hp:0,desc:"敵HPが50%以下のとき、与ダメージ+400%。(重複不可)"},{id:703,star:7,name:"神滅のアカシックレコード",atk:0,hp:0,desc:"与ダメージの最終倍率にさらに+400%。(重複不可)"},
-{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPがダメージの100倍以上の時、演算機関が自己進化する。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"★3メモリークリスタル1000個消費で「災禍殲星」発動。敵に1500%ダメージを与え、最大HP割合で能力値を成長させる。(同一の敵には1度のみ発動)"},
+{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPがダメージの100倍以上の時、演算機関が自己進化する。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"攻撃のたびにメモリークリスタル100個を消費して確定発動。baseATK+1%・baseHP+10%を永続成長させる。クリスタル不足時は発動しない。"},
 ...STAR9
 ];
 
@@ -897,19 +897,16 @@ return{log:fe.length?`<div style="font-size:.82em;">獲得：${fe.join("、")}</
 }
 
 // ============ メイン攻撃 ============
-function activateDisasterStar(bonus){
-player.inventory[311]-=1000;
-const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
-const multBig=BigInt(Math.round(bonus.mult*100000));
-const dmg=tb.atk*multBig/100000n*15n;
-if(currentBossHP>dmg)currentBossHP-=dmg;else currentBossHP=0n;
-// 成長計算（Number変換が必要なため安全に）
-const atkN=Number(tb.atk)>1e15?1e15:Number(tb.atk);
-const maxHPN=Number(BigInt(player.bossMaxHP));
-const growVal=isFinite(atkN)&&atkN>0&&isFinite(maxHPN)&&maxHPN>atkN?Math.log10(maxHPN/atkN)*0.05:0;
-const g=safeBigInt(atkN*growVal);
-player.baseAtk+=g;player.baseHP+=g;enemyDisasterStarUsed=true;
-addLog(`<div><span style="color:#d4af37;font-weight:bold;">★災禍殲星発動！ATKとHPが成長した！</span></div>`);
+// 記憶の遺産：メモリークリスタル100個消費で確定発動
+// ATK +1%、HP +10% 成長
+function activateMemoryLegacy(){
+if((player.inventory[311]||0)<100)return false;
+player.inventory[311]-=100;
+const atkGain=player.baseAtk/100n+1n;       // ATK +1%
+const hpGain=player.baseHP*10n/100n+1n;     // HP  +10%
+player.baseAtk+=atkGain;
+player.baseHP+=hpGain;
+return{atkGain,hpGain};
 }
 function attack(){
 if(isModalOpen)return;
@@ -926,9 +923,9 @@ const isKousa=bossType!=="main";
 if(bossType==="kousa_gemini"){
 // シールド初期化（初回攻撃時）
 if(geminiShieldMax===0){
-  geminiShieldMax = 50 + Math.floor(Math.random() * 51); // 50〜100回
-  geminiShieldHP = geminiShieldMax;
-  geminiBuffStack = 0;
+  geminiShieldMax=100+Math.floor(Math.random()*101); // 100〜200回
+  geminiShieldHP=geminiShieldMax;
+  geminiBuffStack=0;
   addLog(`<div><span class="c-gemini">SHIELD_ACTIVE: Geminiがシールドを展開。耐久 ${geminiShieldMax} 回分。</span></div>`);
 }
 // シールドが残っている場合は攻撃を弾く
@@ -943,7 +940,10 @@ if(geminiShieldHP>0){
     player.baseHP=player.baseHP*buffMult;
     addLog(`<div><span class="c-gemini">SHIELD_BROKEN: Geminiシールド撃破！バフ蓄積×${geminiBuffStack} → baseATK/HP ×${Number(buffMult)} 強化！</span></div>`);
     // 次のシールドを再生成
-    geminiShieldMax = 50 + Math.floor(Math.random() * 51);geminiShieldHP = geminiShieldMax;addLog(`<div><span class="c-gemini">NEW_SHIELD: 次のシールド展開（耐久 ${geminiShieldMax} 回）</span></div>`);else{
+    geminiShieldMax=100+Math.floor(Math.random()*101);
+    geminiShieldHP=geminiShieldMax;
+    addLog(`<div><span class="c-gemini">NEW_SHIELD: 次のシールド展開（耐久 ${geminiShieldMax} 回）</span></div>`);
+  }else{
     // シールド中はATK/HP継続バフ（毎攻撃 ×1.012）
     player.baseAtk=(player.baseAtk*1012n)/1000n;
     player.baseHP=(player.baseHP*1012n)/1000n;
@@ -965,8 +965,15 @@ else if(player.hasWorldOrder&&!player.hasCrown&&(player.inventory[117]||0)>=2000
 else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&player.hadoExpAccum>=30000000)openCosmicModal("meta");
 }
 
-// 災禍殲星（メイン戦のみ）
-if(!isKousa&&!enemyDisasterStarUsed&&(player.inventory[803]||0)>0&&(player.inventory[311]||0)>=1000&&currentBossHP>(player.baseAtk+bonus.atk)&&Math.random()<0.0001)activateDisasterStar(bonus);
+// 記憶の遺産（メイン・虹災両方で毎回確定発動、クリスタル100個消費）
+let _memLegacyLog="";
+if((player.inventory[803]||0)>0){
+const _ml=activateMemoryLegacy();
+if(_ml){
+tags+=`<span style="color:#d4af37;font-weight:bold;">【星の記憶】</span>`;
+_memLegacyLog=`<div><span style="color:#d4af37;font-weight:bold;">【星の記憶】 ATK+${fmtV(_ml.atkGain)}(+1%) HP+${fmtV(_ml.hpGain)}(+10%) 成長！ (残晶：${(player.inventory[311]||0).toLocaleString()})</span></div>`;
+}
+}
 
 // ダメージ計算：全てBigInt演算でNumber()オーバーフロー回避
 // bonus.mult と skillM をスケール整数化してBigInt乗算
@@ -1054,7 +1061,7 @@ if(_totalSkills>0){
 }
 
 // ダメージを1行でまとめて表示
-let logH=`<div>${_dispTags}<span style="color:#07f;font-weight:bold;">⚔ 合計 ${fmtV(fd)} ダメージ</span></div>`+_dropResult.log+(_genesisLog||"");
+let logH=`<div>${_dispTags}<span style="color:#07f;font-weight:bold;">⚔ 合計 ${fmtV(fd)} ダメージ</span></div>`+_dropResult.log+(_genesisLog||"")+(_memLegacyLog||"");
 
 // オメガコア：獲得遺物のATK/HPを蓄積（メイン・虹災共通）
 if((player.inventory[801]||0)>0&&dropN>=100&&(_dropResult.gainedAtk>0n||_dropResult.gainedHp>0n)){
