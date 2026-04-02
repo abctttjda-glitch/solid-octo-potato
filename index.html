@@ -940,8 +940,12 @@ if(geminiShieldHP>0){
     player.baseHP=player.baseHP*buffMult;
     addLog(`<div><span class="c-gemini">SHIELD_BROKEN: Geminiシールド撃破！バフ蓄積×${geminiBuffStack} → baseATK/HP ×${Number(buffMult)} 強化！</span></div>`);
     // 次のシールドを再生成
-    if(geminiShieldMax===0){geminiShieldMax = 50 + Math.floor(Math.random() * 51); // 50〜100回geminiShieldHP = geminiShieldMax;geminiBuffStack = 0;addLog(`<div><span class="c-gemini">SHIELD_ACTIVE: Geminiがシールドを展開。耐久 ${geminiShieldMax} 回分。</span></div>`);}
-    // シールド中はATK/HP継続バフ（毎攻撃 ×1.012）
+    if(geminiShieldMax===0){
+  geminiShieldMax = 50 + Math.floor(Math.random() * 51); // 50〜100回
+  geminiShieldHP = geminiShieldMax;
+  geminiBuffStack = 0;
+  addLog(`<div><span class="c-gemini">SHIELD_ACTIVE: Geminiがシールドを展開。耐久 ${geminiShieldMax} 回分。</span></div>`);
+}    // シールド中はATK/HP継続バフ（毎攻撃 ×1.012）
     player.baseAtk=(player.baseAtk*1012n)/1000n;
     player.baseHP=(player.baseHP*1012n)/1000n;
     // ── シールド中でも獲得処理は通常通り行う ──
