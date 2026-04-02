@@ -894,8 +894,7 @@ return{log:fe.length?`<div style="font-size:.82em;">獲得：${fe.join("、")}</
 }
 
 // ============ メイン攻撃 ============
-function activateDisasterStar(bonus){
-player.inventory[311]-=1000;
+function activateDisasterStar(bonus){player.inventory[311]-=100;
 const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
 const multBig=BigInt(Math.round(bonus.mult*100000));
 const dmg=tb.atk*multBig/100000n*15n;
