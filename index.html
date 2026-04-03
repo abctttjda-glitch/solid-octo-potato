@@ -378,7 +378,7 @@ toggleAutoAttack();
 refreshAutoBtn();
 }
 const attackBtn=document.getElementById("attackBtn");
-function startAttackLoop(e){if(activePointerId!==null)return;activePointerId=e.pointerId;if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);e.preventDefault();}
+function startAttackLoop(e){if(activePointerId!==null)return;e.preventDefault();activePointerId=e.pointerId;try{e.target.setPointerCapture(e.pointerId);}catch(_){}if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);}
 function stopAttackLoop(e){if(e.pointerId===activePointerId){if(attackInterval){clearInterval(attackInterval);attackInterval=null;}activePointerId=null;}}
 attackBtn.addEventListener("contextmenu",e=>e.preventDefault());
 attackBtn.addEventListener("pointerdown",startAttackLoop);
@@ -991,6 +991,7 @@ else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&pl
 }
 
 // 記憶の遺産（メイン・虹災両方で毎回確定発動、クリスタル100個消費）
+let tags="";
 let _memLegacyLog="";
 if((player.inventory[803]||0)>0){
 const _ml=activateMemoryLegacy();
@@ -1028,7 +1029,7 @@ _genesisLog=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【�
 }
 let fd=atvBig*(randBig>0n?randBig:100000n)/100000n;
 if(fd>BIG_CAP)fd=BIG_CAP;
-let tags="";
+tags="";
 
 // 救済（メイン戦のみ）
 if(!isKousa&&(player.inventory[999]||0)>0){const thr=bossMaxHP/10000n;if(fd<thr){const smBig=BigInt(Math.round((Math.log10(player.killCount+1)+1)*100000));fd=bossMaxHP*2n/10000n*smBig/100000n;tags+=`<span class="c-order">【救済】</span>`;}}
