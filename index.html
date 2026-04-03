@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.30</title>
+<title>RELICORE - v1.29</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899)}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -234,14 +234,14 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div id="relic" class="tab">
 <div id="compression-ui" style="display:none;background:linear-gradient(135deg,#001a12,#002a1a);border:2px solid #00ffcc;border-radius:12px;padding:14px;margin-bottom:10px;color:#fff;">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-  <span style="font-weight:bold;font-size:1.05em;color:#00ffcc;letter-spacing:2px;">◈ 収束核アーカイブ・ゼロ</span>
-  <span style="font-size:.7em;color:#aaa;">溢れし災厄討伐特典</span>
+<span style="font-weight:bold;font-size:1.05em;color:#00ffcc;letter-spacing:2px;">◈ 収束核アーカイブ・ゼロ</span>
+<span style="font-size:.7em;color:#aaa;">溢れし災厄討伐特典</span>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.82em;margin-bottom:10px;">
-  <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;"><div style="color:#aaa;font-size:.8em;">圧縮倍率</div><div id="comp-mult" style="font-weight:bold;color:#00ffcc;font-size:1.1em;">×1.000</div></div>
-  <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;"><div style="color:#aaa;font-size:.8em;">圧縮可能回数</div><div id="comp-times" style="font-weight:bold;color:#fff;">0回</div></div>
-  <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #007bff;"><div style="color:#aaa;font-size:.8em;">蓄積ATK(実効値)</div><div id="comp-catk" style="font-weight:bold;color:#7af;">0</div></div>
-  <div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #dc3545;"><div style="color:#aaa;font-size:.8em;">蓄積HP(実効値)</div><div id="comp-chp" style="font-weight:bold;color:#f88;">0</div></div>
+<div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;"><div style="color:#aaa;font-size:.8em;">圧縮倍率</div><div id="comp-mult" style="font-weight:bold;color:#00ffcc;font-size:1.1em;">×1.000</div></div>
+<div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #00ffcc;"><div style="color:#aaa;font-size:.8em;">圧縮可能回数</div><div id="comp-times" style="font-weight:bold;color:#fff;">0回</div></div>
+<div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #007bff;"><div style="color:#aaa;font-size:.8em;">蓄積ATK(実効値)</div><div id="comp-catk" style="font-weight:bold;color:#7af;">0</div></div>
+<div style="background:rgba(0,255,204,.08);padding:6px 8px;border-radius:6px;border-left:3px solid #dc3545;"><div style="color:#aaa;font-size:.8em;">蓄積HP(実効値)</div><div id="comp-chp" style="font-weight:bold;color:#f88;">0</div></div>
 </div>
 <div style="font-size:.7em;color:#888;margin-bottom:8px;">★1〜3の遺物10,000個を1回分として圧縮。メモリー系は30万個を保護。圧縮した遺物の能力値は蓄積されます。</div>
 <button id="comp-btn" onclick="doCompress()" style="width:100%;padding:10px;background:#00ffcc;color:#000;border:none;border-radius:8px;font-weight:bold;font-size:1em;cursor:pointer;letter-spacing:2px;">収束圧縮</button>
@@ -258,7 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.30</div>
+<div class="ver-footer">RELICORE v1.29</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -267,9 +267,6 @@ let enemyDisasterStarUsed=false,comboHit=0,attackInterval=null,activePointerId=n
 let autoAttackInterval=null,isAutoAttack=false;
 let erosionStack=0,waterAccumDmg=0n,luxHitCounter=0,kushiaCounter=0;
 let isModalOpen=false,needsUIUpdate=false;
-// Geminiシールド関連
-let geminiShieldHP=0; // 残りシールド耐久（攻撃回数）
-let geminiShieldMax=0; // 最大シールド耐久
 
 // ============ ボス状態管理 ============
 // bossType: "main"(終末神/溢れし災厄) | "kousa_edel" | "kousa_neria" | ... | "kousa_gemini"
@@ -323,7 +320,7 @@ const RELIC_MASTER=[
 {id:501,star:5,name:"連撃の権能",atk:382660,hp:916330,desc:"攻撃回数に応じてダメージが増加する。1HITごとに+0.05%、最大+30%。撃破でリセット。"},{id:502,star:5,name:"強欲の権能",atk:649800,hp:812400,desc:"パッシブ：総遺物数に応じてATK/HPが倍率強化される。"},{id:503,star:5,name:"超越の権能",atk:524180,hp:689450,desc:"1%の確率で、その一撃のダメージを1.5倍にする。"},{id:504,star:5,name:"破壊の権能",atk:999999,hp:0,desc:"1%の確率で、総ATK分のダメージを最終ダメージに直接加算する。"},{id:505,star:5,name:"再生の権能",atk:222222,hp:1528931,desc:"被弾時10%の確率でHP増加(再起)が2回発生。(重複不可)"},{id:506,star:5,name:"双刃の権能",atk:454649,hp:519700,desc:"150回攻撃ごとに次の一撃のダメージ+100%。(重複不可)"},
 {id:601,star:6,name:"絶対統率レリック・オーバーロード",atk:1500000,hp:4500000,desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+80%。【還元】現在のHPに応じてATKが微増。"},{id:602,star:6,name:"魂律解放レリ・クシア",atk:2500000,hp:3500000,desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"},{id:603,star:6,name:"原初核冠レリコア・レガリア",atk:2000000,hp:4000000,desc:"★1〜6遺物のステータス上昇効果を50%増加させる。"},{id:604,star:6,name:"虚無終焉レリ・ノヴァ",atk:5555555,hp:0,desc:"攻撃時1%の確率で与ダメージ+500%。"},{id:605,star:6,name:"戦碑累功レリ・エンス",atk:3000000,hp:3000000,desc:"獲得経験値に討伐数ボーナスを乗算。(溢れ＋虹災合計, 1万討伐で×5, 対数成長)"},
 {id:701,star:7,name:"パンドラの箱",atk:0,hp:0,desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"},{id:702,star:7,name:"終焉の福音",atk:0,hp:0,desc:"敵HPが50%以下のとき、与ダメージ+400%。(重複不可)"},{id:703,star:7,name:"神滅のアカシックレコード",atk:0,hp:0,desc:"与ダメージの最終倍率にさらに+400%。(重複不可)"},
-{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPがダメージの100倍以上の時、演算機関が自己進化する。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"攻撃のたびにメモリークリスタル10000個を消費して確定発動。baseATK+1%・baseHP+10%を永続成長させる。クリスタル不足時は発動しない。"},
+{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPが自ATKの100倍以上の時、差分比に応じた乗算（最大×8）で火力を補正。Stack蓄積でさらに底上げ。100回ごとにbaseATK/HP永続成長。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"★3メモリークリスタル1000個消費で「災禍殲星」発動。敵に1500%ダメージを与え、最大HP割合で能力値を成長させる。(同一の敵には1度のみ発動)"},
 ...STAR9
 ];
 
@@ -339,6 +336,7 @@ hasAutoPrivilege:false,autoSpeed:1,
 omegaAtkBig:"0",omegaHpBig:"0",
 residue:{total:0,edel:0,neria:0,nox:0,lilith:0,valka:0,igna:0,lux:0,magmel:0},
 hasFusionCore:false,
+mainBossMaxHP:null,
 lv100AtkBonus:"0",lv100HpBonus:"0",lv100ExpBonus:0,lv100MilestonesApplied:0
 };
 
@@ -435,8 +433,7 @@ currentBossHP:currentBossHP.toString(),bossType,enemyDisasterStarUsed,omegaCharg
 omegaAtkBig:player.omegaAtkBig||"0",omegaHpBig:player.omegaHpBig||"0",
 erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
-compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
-geminiShieldHP,geminiShieldMax};
+compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -457,6 +454,7 @@ player.hasAutoPrivilege=p.hasAutoPrivilege||false;
 player.autoSpeed=p.autoSpeed||1;
 player.residue=p.residue||{total:0,edel:0,neria:0,nox:0,lilith:0,valka:0,igna:0,lux:0,magmel:0};
 player.hasFusionCore=p.hasFusionCore||false;
+player.mainBossMaxHP=p.mainBossMaxHP||null;
 player.lv100AtkBonus=p.lv100AtkBonus||"0";
 player.lv100HpBonus=p.lv100HpBonus||"0";
 player.lv100ExpBonus=p.lv100ExpBonus||0;
@@ -466,8 +464,6 @@ player.compressedAtkBig=p.compressedAtkBig||(p.compressedAtk?String(Math.floor(p
 player.compressedHpBig=p.compressedHpBig||(p.compressedHp?String(Math.floor(p.compressedHp)):"0");
 erosionStack=p.erosionStack||0;waterAccumDmg=BigInt(p.waterAccumDmg||"0");luxHitCounter=p.luxHitCounter||0;
 enemyDisasterStarUsed=p.enemyDisasterStarUsed||false;
-// Geminiシールド復元
-geminiShieldHP=p.geminiShieldHP||0;geminiShieldMax=p.geminiShieldMax||0;
 // ボス状態復元
 bossType=p.bossType||"main";
 try{currentBossHP=p.currentBossHP?BigInt(p.currentBossHP):BigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());}catch(e){currentBossHP=BOSS_MAX_HP_BASE;}
@@ -492,26 +488,26 @@ applyRetroactiveLv100Bonuses();
 // ============ レベル/ランク ============
 // 経験値閾値: 20000 × lv^3
 function getExpThreshold(lv){
-  return Math.floor(20000*Math.pow(Math.max(1,lv),3));
+return Math.floor(20000*Math.pow(Math.max(1,lv),3));
 }
 const MAX_LEVEL=9999;
 
 function checkLevelUp(){
-  let leveled=false;
-  const prevRank=getRankIdx();
-  const prevStars=getRankStars();
-  while(player.totalLevel<MAX_LEVEL&&player.deathCount>=getExpThreshold(player.totalLevel)){
-    player.deathCount-=getExpThreshold(player.totalLevel);
-    player.totalLevel++;
-    leveled=true;
-    if(player.totalLevel%100===0)applyLv100Bonus(player.totalLevel);
-  }
-  if(leveled){
-    const newRank=getRankIdx();
-    const newStars=getRankStars();
-    if(newRank>prevRank||newStars>prevStars)openRankUpModal(player.totalLevel);
-  }
-  return leveled;
+let leveled=false;
+const prevRank=getRankIdx();
+const prevStars=getRankStars();
+while(player.totalLevel<MAX_LEVEL&&player.deathCount>=getExpThreshold(player.totalLevel)){
+  player.deathCount-=getExpThreshold(player.totalLevel);
+  player.totalLevel++;
+  leveled=true;
+  if(player.totalLevel%100===0)applyLv100Bonus(player.totalLevel);
+}
+if(leveled){
+  const newRank=getRankIdx();
+  const newStars=getRankStars();
+  if(newRank>prevRank||newStars>prevStars)openRankUpModal(player.totalLevel);
+}
+return leveled;
 }
 
 // ============ Lv100ボーナス ============
@@ -519,30 +515,30 @@ function checkLevelUp(){
 // HPゲイン:  baseHPの5%
 // silent=true: ロード時遡及用（ログ・モーダルなし）
 function applyLv100Bonus(lv,silent){
-  // baseHPが実際に成長している唯一の基礎値なので両方の基準にする
-  const base=player.baseHP>player.baseAtk?player.baseHP:player.baseAtk;
-  const atkGain=base*5n/100n+1n;
-  const hpGain=player.baseHP*5n/100n+1n;
-  player.baseAtk+=atkGain;
-  player.baseHP+=hpGain;
-  const prevA=BigInt(player.lv100AtkBonus||"0");
-  const prevH=BigInt(player.lv100HpBonus||"0");
-  player.lv100AtkBonus=(prevA+atkGain).toString();
-  player.lv100HpBonus=(prevH+hpGain).toString();
-  player.lv100ExpBonus+=2;
-  player.lv100MilestonesApplied=(player.lv100MilestonesApplied||0)+1;
-  if(silent)return;
-  const msg=`<div><span style="color:var(--gold);font-weight:bold;font-size:1.05em;">【Lv${lv} 覚醒】`
-    +`baseATK +${fmtV(atkGain)} / baseHP +${fmtV(hpGain)}</span>`
-    +`<span style="color:var(--primary);"> 経験値ボーナス+2%（累積×${(1+player.lv100ExpBonus/100).toFixed(2)}）</span></div>`;
-  addLog(msg);
-  isModalOpen=true;
-  document.getElementById("rank-up-msg-text").innerHTML=
-    `<span style="color:var(--gold);font-size:1.3em;font-weight:bold;">Lv.${lv} 覚醒</span><br><br>`
-    +`<span style="color:#fff;">baseATK / baseHP が永続強化された！</span><br>`
-    +`<span style="color:var(--primary);">経験値ボーナスが永続増加した！(累積×${(1+player.lv100ExpBonus/100).toFixed(2)})</span>`;
-  document.getElementById("rank-up-modal").style.display="flex";
-  saveGame();
+// baseHPが実際に成長している唯一の基礎値なので両方の基準にする
+const base=player.baseHP>player.baseAtk?player.baseHP:player.baseAtk;
+const atkGain=base*5n/100n+1n;
+const hpGain=player.baseHP*5n/100n+1n;
+player.baseAtk+=atkGain;
+player.baseHP+=hpGain;
+const prevA=BigInt(player.lv100AtkBonus||"0");
+const prevH=BigInt(player.lv100HpBonus||"0");
+player.lv100AtkBonus=(prevA+atkGain).toString();
+player.lv100HpBonus=(prevH+hpGain).toString();
+player.lv100ExpBonus+=2;
+player.lv100MilestonesApplied=(player.lv100MilestonesApplied||0)+1;
+if(silent)return;
+const msg=`<div><span style="color:var(--gold);font-weight:bold;font-size:1.05em;">【Lv${lv} 覚醒】`
+  +`baseATK +${fmtV(atkGain)} / baseHP +${fmtV(hpGain)}</span>`
+  +`<span style="color:var(--primary);"> 経験値ボーナス+2%（累積×${(1+player.lv100ExpBonus/100).toFixed(2)}）</span></div>`;
+addLog(msg);
+isModalOpen=true;
+document.getElementById("rank-up-msg-text").innerHTML=
+  `<span style="color:var(--gold);font-size:1.3em;font-weight:bold;">Lv.${lv} 覚醒</span><br><br>`
+  +`<span style="color:#fff;">baseATK / baseHP が永続強化された！</span><br>`
+  +`<span style="color:var(--primary);">経験値ボーナスが永続増加した！(累積×${(1+player.lv100ExpBonus/100).toFixed(2)})</span>`;
+document.getElementById("rank-up-modal").style.display="flex";
+saveGame();
 }
 
 // ランク閾値（Lv297=熟練者維持、9999まで対応）
@@ -555,13 +551,13 @@ function getFullRankTitle(){return getStarStr()+RANK_NAMES[getRankIdx()];}
 
 // ロード時: Lv100ボーナス遡及付与（未付与分を補完）
 function applyRetroactiveLv100Bonuses(){
-  const expected=Math.floor(player.totalLevel/100);
-  const already=player.lv100MilestonesApplied||0;
-  const missing=expected-already;
-  if(missing<=0)return;
-  for(let i=0;i<missing;i++)applyLv100Bonus((already+i+1)*100,true);
-  addLog(`<div><span style="color:var(--gold);font-weight:bold;">【覚醒 遡及】覚醒ボーナスを${missing}回分付与（合計${expected}回 / baseATK累積+${fmtV(BigInt(player.lv100AtkBonus))}）</span></div>`);
-  saveGame();
+const expected=Math.floor(player.totalLevel/100);
+const already=player.lv100MilestonesApplied||0;
+const missing=expected-already;
+if(missing<=0)return;
+for(let i=0;i<missing;i++)applyLv100Bonus((already+i+1)*100,true);
+addLog(`<div><span style="color:var(--gold);font-weight:bold;">【覚醒 遡及】覚醒ボーナスを${missing}回分付与（合計${expected}回 / baseATK累積+${fmtV(BigInt(player.lv100AtkBonus))}）</span></div>`);
+saveGame();
 }
 
 // ============ ステータス計算 ============
@@ -625,13 +621,19 @@ kousaBossData=selectKousaBoss();
 // 虹災HP = 現在の溢れし災厄MaxHP × (hpMulMin〜hpMulMax) / 100
 // 例: edel(500〜800) → メインボスHPの5〜8倍、magmel(2000〜3000) → 20〜30倍
 const mainHPBig=BigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
+// メインボスHPを別途保存（ジェネシスコード・虹災終了後の復元に使用）
+player.mainBossMaxHP=mainHPBig.toString();
 const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
 currentBossHP=mainHPBig*BigInt(Math.round(mul))/100n;
+// 虹災HPも与ダメージ基準でキャップ（magmel30倍でも暴走しない）
+const _refDmg2=player.maxDmg>0n?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})();
+const _kousaDmgCap=_refDmg2*5000000n;
+if(currentBossHP>_kousaDmgCap)currentBossHP=_kousaDmgCap;
 if(currentBossHP>BIG_CAP)currentBossHP=BIG_CAP;
-// 虹災戦用に bossMaxHP を一時保存（HPバー用）
+// 虹災戦用に bossMaxHP を一時上書き（HPバー用のみ）
 player.bossMaxHP=currentBossHP.toString();
 bossType="kousa_"+kousaBossData.id;
-erosionStack=0;waterAccumDmg=0n;comboHit=0;luxHitCounter=0;kushiaCounter=0;
+erosionStack=0;waterAccumDmg=0n;comboHit=0;
 addLog(`<div><span style="color:var(--nox);font-weight:bold;font-size:1.1em;">【虹災割り込み】${kousaBossData.intro}</span></div>`);
 updateBossHeaderStyle();
 saveGame();triggerUIUpdate();
@@ -686,24 +688,20 @@ return{dmg,tags};
 // ============ 共鳴＝災核融合 ============
 // 残滓量から融合係数を計算（0〜1、対数スケーリング）
 function fusionRate(count,cap){
-  if(count<=0)return 0;
-  return Math.min(1,Math.log10(count+1)/Math.log10(cap+1));
+if(count<=0)return 0;
+return Math.min(1,Math.log10(count+1)/Math.log10(cap+1));
 }
 // 基礎共鳴倍率：全討伐数に応じた乗算（★1〜6 & オメガコア向け）
-// ソフトキャップ：×50 上限（対数スケールで漸近）
 function getBaseResonance(){
-  if(!player.hasFusionCore)return 1;
-  const t=player.residue.total;
-  if(t<=0)return 1;
-  const raw=1+Math.pow(Math.log10(t+1),2)*2;
-  // ソフトキャップ50：超過分は sqrt で圧縮
-  const CAP=50;
-  if(raw<=CAP)return raw;
-  return CAP+Math.sqrt(raw-CAP);
+if(!player.hasFusionCore)return 1;
+const t=player.residue.total;
+if(t<=0)return 1;
+// 1討伐目で×2、以後 log10(t+1)^2 で急成長
+return 1+Math.pow(Math.log10(t+1),2)*2;
 }
 // getRelicBonus内で使う：対象遺物かどうか
 function isFusionTarget(star){
-  return star>=1&&star<=6||star===8; // ★1〜6 & ★8(オメガコア)
+return star>=1&&star<=6||star===8; // ★1〜6 & ★8(オメガコア)
 }
 function eff_edel(dmg,xtra){
 let t="";
@@ -778,16 +776,16 @@ function ensureOrderRelic(){if(player.isCleared&&!(player.inventory[999]>0))show
 function showOrderAwakenModal(){isModalOpen=true;document.getElementById("order-awaken-modal").style.display="flex";}
 function closeOrderAwakenModal(){player.inventory[999]=1;player.rebalanceSeen=true;document.getElementById("order-awaken-modal").style.display="none";isModalOpen=false;saveGame();triggerUIUpdate();}
 function openRankUpModal(lv){
-  isModalOpen=true;
-  const starStr=getStarStr();
-  const fullTitle=getFullRankTitle();
-  const stars=getRankStars();
-  const starMsg=stars>0?`<br><span style="color:gold;font-size:1.1em;font-weight:bold;">【${starStr}】の輝きが称号に宿った！</span>`:'';
-  document.getElementById("rank-up-msg-text").innerHTML=
-    `魂の核が激しく鼓動する……！<br><br>`
-    +`<span style="font-size:1.4em;color:var(--growth);font-weight:bold;">再起Lv.${lv} 到達</span><br>`
-    +`称号が【${fullTitle}】に昇格した。${starMsg}`;
-  document.getElementById("rank-up-modal").style.display="flex";
+isModalOpen=true;
+const starStr=getStarStr();
+const fullTitle=getFullRankTitle();
+const stars=getRankStars();
+const starMsg=stars>0?`<br><span style="color:gold;font-size:1.1em;font-weight:bold;">【${starStr}】の輝きが称号に宿った！</span>`:'';
+document.getElementById("rank-up-msg-text").innerHTML=
+  `魂の核が激しく鼓動する……！<br><br>`
+  +`<span style="font-size:1.4em;color:var(--growth);font-weight:bold;">再起Lv.${lv} 到達</span><br>`
+  +`称号が【${fullTitle}】に昇格した。${starMsg}`;
+document.getElementById("rank-up-modal").style.display="flex";
 }
 function closeRankUpModal(){document.getElementById("rank-up-modal").style.display="none";isModalOpen=false;}
 function closeRareModal(){document.getElementById("rare-drop-modal").style.display="none";isModalOpen=false;}
@@ -885,13 +883,13 @@ if(sel.star>=6){if(!(player.inventory[sel.id]>0)){player.inventory[sel.id]=1;pla
 else{player.inventory[sel.id]=(player.inventory[sel.id]||0)+1;player.totalRelics++;sc[star]++;sg[star][sel.id]=(sg[star][sel.id]||0)+1;if(sel.star>=4&&player.inventory[sel.id]===1)if(!showR||sel.star>showR.star)showR=sel;}
 // オメガコア用：ドロップ遺物のATK/HPを集計（各種強化倍率を適用）
 if((player.inventory[801]||0)>0&&count>=100&&sel.star<9&&sel.star!==999){
- let da=sel.atk||0,dh=sel.hp||0;
- if(sel.star===1&&player.hasHado){da*=100;dh*=100;}else if(sel.star===2&&player.hasGreatHado){da*=100;dh*=100;}else if(sel.star===3&&player.hasDivineGuide){da*=100;dh*=100;}
- if(sel.star===4&&player.hasWorldOrder){da*=100;dh*=100;}if(sel.star===5&&player.hasCrown){da*=100;dh*=100;}if(sel.star===6&&player.hasMeta){da*=100;dh*=100;}
- if(hasR&&sel.star<=6){da*=1.5;dh*=1.5;}if(hasZ&&sel.star<=6){da*=1000;dh*=1000;}
- // コンプリート倍率・強欲倍率を適用（getRelicBonusと同じレイヤー）
- gainedAtk+=safeBigInt(da)*_omegaCbBig*_omegaGmBig/10000n;
- gainedHp+=safeBigInt(dh)*_omegaCbBig*_omegaGmBig/10000n;
+let da=sel.atk||0,dh=sel.hp||0;
+if(sel.star===1&&player.hasHado){da*=100;dh*=100;}else if(sel.star===2&&player.hasGreatHado){da*=100;dh*=100;}else if(sel.star===3&&player.hasDivineGuide){da*=100;dh*=100;}
+if(sel.star===4&&player.hasWorldOrder){da*=100;dh*=100;}if(sel.star===5&&player.hasCrown){da*=100;dh*=100;}if(sel.star===6&&player.hasMeta){da*=100;dh*=100;}
+if(hasR&&sel.star<=6){da*=1.5;dh*=1.5;}if(hasZ&&sel.star<=6){da*=1000;dh*=1000;}
+// コンプリート倍率・強欲倍率を適用（getRelicBonusと同じレイヤー）
+gainedAtk+=safeBigInt(da)*_omegaCbBig*_omegaGmBig/10000n;
+gainedHp+=safeBigInt(dh)*_omegaCbBig*_omegaGmBig/10000n;
 }
 }
 if(showR)openRareModal(showR);
@@ -900,19 +898,19 @@ return{log:fe.length?`<div style="font-size:.82em;">獲得：${fe.join("、")}</
 }
 
 // ============ メイン攻撃 ============
-// 記憶の遺産：メモリークリスタル100個消費で確定発動
-// ATK +1%、HP +10% 成長（HPはbaseHPの上限キャップ付き）
-function activateMemoryLegacy(){
-if((player.inventory[311]||0)<10000)return false;
-player.inventory[311]-=10000;
-const atkGain=player.baseAtk/100n+1n;       // ATK +1%
-// HP成長：+10%だが、baseHPが baseAtk の100倍を超えたらソフトキャップ（+1%に圧縮）
-let hpPct=10n;
-if(player.baseHP>player.baseAtk*100n)hpPct=1n;
-const hpGain=player.baseHP*hpPct/100n+1n;   // HP +10% or +1%
-player.baseAtk+=atkGain;
-player.baseHP+=hpGain;
-return{atkGain,hpGain};
+function activateDisasterStar(bonus){
+player.inventory[311]-=1000;
+const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
+const multBig=BigInt(Math.round(bonus.mult*100000));
+const dmg=tb.atk*multBig/100000n*15n;
+if(currentBossHP>dmg)currentBossHP-=dmg;else currentBossHP=0n;
+// 成長計算（Number変換が必要なため安全に）
+const atkN=Number(tb.atk)>1e15?1e15:Number(tb.atk);
+const maxHPN=Number(BigInt(player.bossMaxHP));
+const growVal=isFinite(atkN)&&atkN>0&&isFinite(maxHPN)&&maxHPN>atkN?Math.log10(maxHPN/atkN)*0.05:0;
+const g=safeBigInt(atkN*growVal);
+player.baseAtk+=g;player.baseHP+=g;enemyDisasterStarUsed=true;
+addLog(`<div><span style="color:#d4af37;font-weight:bold;">★災禍殲星発動！ATKとHPが成長した！</span></div>`);
 }
 function attack(){
 if(isModalOpen)return;
@@ -927,60 +925,8 @@ const isKousa=bossType!=="main";
 
 // Gemini効果（虹災Gemini戦のみ）
 if(bossType==="kousa_gemini"){
-// シールド初期化（初回攻撃時）
-if(geminiShieldMax===0){
-  geminiShieldMax = 50 + Math.floor(Math.random() * 51); // 50〜100回
-  geminiShieldHP = geminiShieldMax;
-  addLog(`<div><span class="c-gemini">SHIELD_ACTIVE: Geminiがシールドを展開。耐久 ${geminiShieldMax} 回分。</span></div>`);
-}
-// シールドが残っている場合は攻撃を弾く
-if(geminiShieldHP>0){
-  geminiShieldHP--;
-  // シールド破壊チェック
-  if(geminiShieldHP<=0){
-    //次のシールドを再生成
-    geminiShieldMax=100+Math.floor(Math.random()*101);
-    geminiShieldHP=geminiShieldMax;
-    addLog(`<div><span class="c-gemini">NEW_SHIELD: 次のシールド展開（耐久 ${geminiShieldMax} 回）</span></div>`);
-  }else{
-    // シールド中はATK/HP継続バフ（毎攻撃 ×1.012）
-    player.baseAtk=(player.baseAtk*1012n)/1000n;
-    player.baseHP=(player.baseHP*1012n)/1000n;
-    // ── シールド中でも獲得処理は通常通り行う ──
-    // 遺物獲得
-    const _slv=Math.min(10,player.totalLevel);
-    const _sdropN=Math.min(100,_slv+Math.floor(player.totalLevel/10)*5+Math.min(50,player.inventory[401]||0));
-    const _sdrop=getDropLog(_sdropN);
-    // 魂の研磨・経験値蓄積
-    const _skm=player.inventory[405]||0;
-    const _sensTK=(player.killCount||0)+(player.kousaKillCount||0);
-    const _sensRaw=(player.inventory[605]||0)>=1?(1+Math.log10(_sensTK+1)):1.0;
-    const _sens=_sensRaw<=20?_sensRaw:20+Math.sqrt(_sensRaw-20)*0.5;
-    const _slv100Mult=1+Math.min((player.lv100ExpBonus||0),500)/100;
-    const _sexp=Math.floor((Number(player.totalClicks)+player.totalLevel+_skm*100000+player.attackExpBonus)*_sens*_slv100Mult);
-    player.hadoExpAccum+=_sexp;player.deathCount+=_sexp;
-    // オメガコア蓄積
-    if((player.inventory[801]||0)>0&&_sdropN>=100&&(_sdrop.gainedAtk>0n||_sdrop.gainedHp>0n)){
-      player.omegaCharge+=1n;
-      const _om=1+Math.log10(Number(player.omegaCharge)+1)*1.0+Math.log10(Number(player.totalClicks)+1)*0.15;
-      const _omB=BigInt(Math.round(_om*100000));
-      const _oAtk=_sdrop.gainedAtk*_omB/100000n;
-      const _oHp=_sdrop.gainedHp*_omB/100000n;
-      const _oA=BigInt(player.omegaAtkBig||"0");const _oH=BigInt(player.omegaHpBig||"0");
-      player.omegaAtkBig=(_oA+_oAtk>BIG_CAP?BIG_CAP:_oA+_oAtk).toString();
-      player.omegaHpBig=(_oH+_oHp>BIG_CAP?BIG_CAP:_oH+_oHp).toString();
-    }
-    // 記憶の遺産
-    let _smemLog="";
-    if((player.inventory[803]||0)>0){
-      const _sml=activateMemoryLegacy();
-      if(_sml)_smemLog=`<div><span style="color:#d4af37;font-weight:bold;">【星の記憶】 ATK+${fmtV(_sml.atkGain)}(+1%) HP+${fmtV(_sml.hpGain)}(+10%) (残晶：${(player.inventory[311]||0).toLocaleString()})</span></div>`;
-    }
-    checkLevelUp();
-    addLog(`<div><span class="c-gemini">SHIELD[${geminiShieldHP}/${geminiShieldMax}]: 構文破壊機工がコードを書き換え中...</span></div>`+_sdrop.log+_smemLog);    saveGame();triggerUIUpdate();
-    return;
-  }
-}
+player.baseAtk=(player.baseAtk*1002n)/1000n;player.baseHP=(player.baseHP*1002n)/1000n;
+addLog(`<div><span class="c-gemini">ERROR: 構文破壊機工がコードを書き換えています... (ATK/HP x1.002)</span></div>`);
 }
 
 // 覚醒チェック（段階的前提フラグ付き・モーダル未表示時のみ）
@@ -993,15 +939,8 @@ else if(player.hasWorldOrder&&!player.hasCrown&&(player.inventory[117]||0)>=2000
 else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&player.hadoExpAccum>=30000000)openCosmicModal("meta");
 }
 
-// 記憶の遺産（メイン・虹災両方で毎回確定発動、クリスタル100個消費）
-let _memLegacyLog="";
-if((player.inventory[803]||0)>0){
-const _ml=activateMemoryLegacy();
-if(_ml){
-tags+=`<span style="color:#d4af37;font-weight:bold;">【星の記憶】</span>`;
-_memLegacyLog=`<div><span style="color:#d4af37;font-weight:bold;">【星の記憶】 ATK+${fmtV(_ml.atkGain)}(+1%) HP+${fmtV(_ml.hpGain)}(+10%) 成長！ (残晶：${(player.inventory[311]||0).toLocaleString()})</span></div>`;
-}
-}
+// 災禍殲星（メイン戦のみ）
+if(!isKousa&&!enemyDisasterStarUsed&&(player.inventory[803]||0)>0&&(player.inventory[311]||0)>=1000&&currentBossHP>(player.baseAtk+bonus.atk)&&Math.random()<0.0001)activateDisasterStar(bonus);
 
 // ダメージ計算：全てBigInt演算でNumber()オーバーフロー回避
 // bonus.mult と skillM をスケール整数化してBigInt乗算
@@ -1011,26 +950,32 @@ const randBig=BigInt(Math.round((0.8+Math.random()*0.4)*100000));
 // multBigが0になるのを防ぐ（最低1n）
 let atvBig=tb.atk*(multBig>0n?multBig:1n)/100000n*(skillBig>0n?skillBig:100000n)/100000n;
 // 804 災厄の残滓：メイン・虹災両方に適用
-// ソフトキャップ：×5 上限（1万討伐で約×1.36、以後 sqrt で圧縮）
 if((player.inventory[804]||0)>0){
-const _rawKM=1+Math.log10(player.killCount+1)*0.06;
-const _capKM=5;
-const _softKM=_rawKM<=_capKM?_rawKM:_capKM+Math.sqrt(_rawKM-_capKM)*0.2;
-const killMult=BigInt(Math.round(_softKM*100000));
+const killMult=BigInt(Math.round((1+Math.log10(player.killCount+1)*0.06)*100000));
 atvBig=atvBig*killMult/100000n;
 }
-// 802 ジェネシスコード：敵が強すぎる場合（ダメージの100倍以上）、自己進化
-let _genesisLog="";
-if((player.inventory[802]||0)>0&&bossMaxHP>atvBig*100n){
+// 802 ジェネシスコード：敵HPと自ATKの差が大きい場合、差分乗算で追いつく
+// 虹災中は bossMaxHP が汚染されるため発動禁止
+if((player.inventory[802]||0)>0&&!isKousa&&bossMaxHP>atvBig*100n){
 player.evolutionStack++;
-const evoMult=BigInt(Math.min(player.evolutionStack,10000));
-atvBig=atvBig*(100000n+evoMult*100n)/100000n;
+// ① 差分乗算強化：ratio=敵HP/現在ATK に応じた乗算をかける
+// ratio が大きいほど倍率が上がる（log10スケール、上限×8）
+const _ratio=atvBig>0n?Number(bossMaxHP/atvBig):100;
+const _gapMult=Math.min(8.0,Math.max(1.1,Math.log10(_ratio+1)*0.8));
+const _gapBig=BigInt(Math.round(_gapMult*100000));
+atvBig=atvBig*_gapBig/100000n;
+// ② evolutionStack 累積乗算（サブ補正、暴走しない）
+const _evoBonus=1+Math.min(player.evolutionStack,5000)*0.00002;
+const _evoBig=BigInt(Math.round(_evoBonus*100000));
+atvBig=atvBig*_evoBig/100000n;
+if(atvBig>BIG_CAP)atvBig=BIG_CAP;
+// ③ baseAtk/HP成長（100回に1度）：現在ATKの0.1%を永続加算、上限5%/回
 if(player.evolutionStack%100===0){
-const logScale=BigInt(Math.max(1,Math.floor(Math.log10(player.evolutionStack+1))));
-const g=BigInt(player.bossMaxHP||"1")/200000n*logScale;
+const _rawG=tb.atk/1000n; // 現在ATK（遺物込み）の0.1%
+const _capG=player.baseAtk>0n?player.baseAtk*5n/100n:1n;
+const g=_rawG<_capG?(_rawG>0n?_rawG:1n):_capG;
 player.baseAtk+=g;player.baseHP+=g;
-const pct=(Number(logScale)/1000).toFixed(3);
-_genesisLog=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【ジェネシスコード】自己進化 Stack:${player.evolutionStack.toLocaleString()} → baseATK/HP +${fmtV(g)}（ボスHP×${pct}%）</span></div>`;
+addLog(`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【ジェネシスコード】差分×${_gapMult.toFixed(2)} Stack:${player.evolutionStack.toLocaleString()} → baseATK/HP +${fmtV(g)}</span></div>`);
 }
 }
 let fd=atvBig*(randBig>0n?randBig:100000n)/100000n;
@@ -1038,12 +983,7 @@ if(fd>BIG_CAP)fd=BIG_CAP;
 let tags="";
 
 // 救済（メイン戦のみ）
-if(!isKousa&&(player.inventory[999]||0)>0){const thr=bossMaxHP/10000n;if(fd<thr){
-// 救済倍率：ソフトキャップ×10
-const _rawSM=Math.log10(player.killCount+1)+1;
-const _softSM=_rawSM<=10?_rawSM:10+Math.sqrt(_rawSM-10)*0.3;
-const smBig=BigInt(Math.round(_softSM*100000));
-fd=bossMaxHP*2n/10000n*smBig/100000n;tags+=`<span class="c-order">【救済】</span>`;}}
+if(!isKousa&&(player.inventory[999]||0)>0){const thr=bossMaxHP/10000n;if(fd<thr){const smBig=BigInt(Math.round((Math.log10(player.killCount+1)+1)*100000));fd=bossMaxHP*2n/10000n*smBig/100000n;tags+=`<span class="c-order">【救済】</span>`;}}
 
 // ★5権能：全て独立発動（applyAuthSkill廃止・各所持チェックに変更）
 if(!tags.includes("【救済】")){
@@ -1085,34 +1025,22 @@ if(fd<1n)fd=1n;if(fd>player.maxDmg)player.maxDmg=fd;
 const lv=Math.min(10,player.totalLevel);
 const dropN=Math.min(100,lv+Math.floor(player.totalLevel/10)*5+Math.min(50,player.inventory[401]||0));
 const _dropResult=getDropLog(dropN);
-
-// スキルタグをランダム5件表示 + 総数
-const _allTags=tags.match(/<span[^>]*>【[^<]*】<\/span>/g)||[];
-const _totalSkills=_allTags.length;
-let _dispTags="";
-if(_totalSkills>0){
-  const _shuffled=[..._allTags].sort(()=>Math.random()-0.5);
-  _dispTags=_shuffled.slice(0,5).join("");
-  if(_totalSkills>5)_dispTags+=`<span style="color:#aaa;font-size:.88em;">… 他${_totalSkills-5}個発動</span>`;
-  _dispTags+=`<span style="color:#888;font-size:.85em;"> [発動計${_totalSkills}]</span>`;
-}
-
-// ダメージを1行でまとめて表示
-let logH=`<div>${_dispTags}<span style="color:#07f;font-weight:bold;">⚔ 合計 ${fmtV(fd)} ダメージ</span></div>`+_dropResult.log+(_genesisLog||"")+(_memLegacyLog||"");
+let logH=`<div>${tags}<span style="color:#07f;font-weight:bold;">攻撃！${fmtV(fd)} ダメージ！</span></div>`+_dropResult.log;
 
 // オメガコア：獲得遺物のATK/HPを蓄積（メイン・虹災共通）
 if((player.inventory[801]||0)>0&&dropN>=100&&(_dropResult.gainedAtk>0n||_dropResult.gainedHp>0n)){
- player.omegaCharge+=1n;
- const _omegaMult=1+Math.log10(Number(player.omegaCharge)+1)*1.0+Math.log10(Number(player.totalClicks)+1)*0.15;
- const _omegaMultBig=BigInt(Math.round(_omegaMult*100000));
- const _boostedAtk=_dropResult.gainedAtk*_omegaMultBig/100000n;
- const _boostedHp=_dropResult.gainedHp*_omegaMultBig/100000n;
- const _oAtkNow=BigInt(player.omegaAtkBig||"0");
- const _oHpNow=BigInt(player.omegaHpBig||"0");
- player.omegaAtkBig=(_oAtkNow+_boostedAtk>BIG_CAP?BIG_CAP:_oAtkNow+_boostedAtk).toString();
- player.omegaHpBig=(_oHpNow+_boostedHp>BIG_CAP?BIG_CAP:_oHpNow+_boostedHp).toString();
- // オメガ情報はダメージ行に追記
- logH=logH.replace('⚔ 合計',`<span style="color:var(--cosmic-blue);font-size:.85em;">Ω蓄積ATK+${fmtV(_boostedAtk)}</span> ⚔ 合計`);
+player.omegaCharge+=1n;
+// 蓄積回数に応じた乗算：1 + log10(回数+1) × 1.0（1回目≈×1.30、100回目≈×2.00）
+// + 攻撃回数依存の微増：log10(totalClicks+1) × 0.15（長期プレイで緩やかに上昇）
+const _omegaMult=1+Math.log10(Number(player.omegaCharge)+1)*1.0+Math.log10(Number(player.totalClicks)+1)*0.15;
+const _omegaMultBig=BigInt(Math.round(_omegaMult*100000));
+const _boostedAtk=_dropResult.gainedAtk*_omegaMultBig/100000n;
+const _boostedHp=_dropResult.gainedHp*_omegaMultBig/100000n;
+const _oAtkNow=BigInt(player.omegaAtkBig||"0");
+const _oHpNow=BigInt(player.omegaHpBig||"0");
+player.omegaAtkBig=(_oAtkNow+_boostedAtk>BIG_CAP?BIG_CAP:_oAtkNow+_boostedAtk).toString();
+player.omegaHpBig=(_oHpNow+_boostedHp>BIG_CAP?BIG_CAP:_oHpNow+_boostedHp).toString();
+logH+=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【オメガ・コア】ATK+${fmtV(_boostedAtk)} HP+${fmtV(_boostedHp)} 蓄積（×${_omegaMult.toFixed(2)}）</span></div>`;
 }
 
 // === ボスHP処理 ===
@@ -1125,13 +1053,13 @@ return;
 }else{
 // メインボス撃破
 if(!player.isCleared){
-  if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
-    currentBossHP=0n;player.killCount++;player.isCleared=true;enemyDisasterStarUsed=false;
-    player.hasCompressionCore=true;isModalOpen=true;
-    document.getElementById("clear-modal-title").innerText="神話の終焉";
-    document.getElementById("clear-modal-msg").innerHTML=`終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold);font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<span style="color:#f44;font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0;border-top:1px solid #444;margin:15px 0"><span style="color:var(--growth);">ここからはエンドレスモードです。遊んでくれてありがとうございます！</span>`;
-    document.getElementById("clear-modal").style.display="flex";
-  }else{currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;logH+=`<div><span style="color:#f00;font-weight:bold;">終末の回帰……！時が巻き戻る！！</span></div>`;}
+if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
+  currentBossHP=0n;player.killCount++;player.isCleared=true;enemyDisasterStarUsed=false;
+  player.hasCompressionCore=true;isModalOpen=true;
+  document.getElementById("clear-modal-title").innerText="神話の終焉";
+  document.getElementById("clear-modal-msg").innerHTML=`終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold);font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<span style="color:#f44;font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0;border-top:1px solid #444;margin:15px 0"><span style="color:var(--growth);">ここからはエンドレスモードです。遊んでくれてありがとうございます！</span>`;
+  document.getElementById("clear-modal").style.display="flex";
+}else{currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;logH+=`<div><span style="color:#f00;font-weight:bold;">終末の回帰……！時が巻き戻る！！</span></div>`;}
 }else{handleBossDefeat();}
 }
 }else{
@@ -1149,12 +1077,8 @@ const minCut=baseCut+ingaV*2;
 const eatk=curHP*3n;
 const cutPct=BigInt(Math.floor(Math.random()*(101-Math.min(95,minCut)))+Math.min(95,minCut));
 const mitig=eatk*(100n-cutPct)/100n>0n?eatk*(100n-cutPct)/100n:0n;
-const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);
-// 605 レリ・エンス：ソフトキャップ×20（1万討伐で約×5.3、以後 sqrt 圧縮）
-const _ensRaw=(player.inventory[605]||0)>=1?(1+Math.log10(_ensTK+1)):1.0;
-const _ensCap=20;
-const ens=_ensRaw<=_ensCap?_ensRaw:_ensCap+Math.sqrt(_ensRaw-_ensCap)*0.5;
-const lv100ExpMult=1+Math.min((player.lv100ExpBonus||0),500)/100; // lv100ボーナス上限+500%
+const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?(1+Math.log10(_ensTK+1)):1.0;
+const lv100ExpMult=1+(player.lv100ExpBonus||0)/100;
 const exp=Math.floor((Number(player.totalClicks)+player.totalLevel+km*100000+player.attackExpBonus)*ens*lv100ExpMult);
 player.hadoExpAccum+=exp;
 if(curHP>mitig){
@@ -1169,11 +1093,8 @@ checkLevelUp();
 }
 // 虹災反撃（虹災戦のみ）
 if(isKousa&&currentBossHP>0n&&kousaBossData){
-const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);
-const _ensRaw2=(player.inventory[605]||0)>=1?(1+Math.log10(_ensTK+1)):1.0;
-const _ensCap2=20;
-const ens=((_ensRaw2<=_ensCap2)?_ensRaw2:_ensCap2+Math.sqrt(_ensRaw2-_ensCap2)*0.5);
-const lv100ExpMult2=1+Math.min((player.lv100ExpBonus||0),500)/100;
+const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?(1+Math.log10(_ensTK+1)):1.0;
+const lv100ExpMult2=1+(player.lv100ExpBonus||0)/100;
 const exp=Math.floor((Number(player.totalClicks)+player.totalLevel+km*100000+player.attackExpBonus)*ens*lv100ExpMult2);
 player.hadoExpAccum+=exp;player.deathCount+=exp;
 // 虹災の攻撃力：ボスHPの0.1%相当
@@ -1201,27 +1122,30 @@ addLog(logH);saveGame();triggerUIUpdate();
 function onKousaDefeat(logH){
 player.kousaKillCount++;
 const def=kousaBossData;
-comboHit=0;erosionStack=0;waterAccumDmg=0n;luxHitCounter=0;kushiaCounter=0;
-// Geminiシールドリセット
-if(def&&def.id==="gemini"){geminiShieldHP=0;geminiShieldMax=0;}
+comboHit=0;erosionStack=0;waterAccumDmg=0n;
+
+// メイン戦に戻す
 bossType="main";kousaBossData=null;
-// bossMaxHP を元に戻す（プレイヤーATK追従式）
-const newHPBig=calcBossHP(player.killCount);
+// bossMaxHP を元に戻す：保存されていたmainBossMaxHPを使用（虹災HP汚染を排除）
+// player.mainBossMaxHP が存在すればそれを優先使用
+const _restoredHP=player.mainBossMaxHP?BigInt(player.mainBossMaxHP):safeBigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
+const newHPBig=_restoredHP>0n&&_restoredHP<=BIG_CAP?_restoredHP:BOSS_MAX_HP_BASE;
 player.bossMaxHP=newHPBig.toString();
+player.mainBossMaxHP=null; // リセット
 currentBossHP=newHPBig;
 
 logH+=`<div><span style="color:var(--nox);font-weight:bold;">【虹災討伐】${def.name}を撃破！(累計${player.kousaKillCount}体)</span></div>`;
 // 残滓加算（虹災種別ごと）
 if(player.hasFusionCore&&def&&def.id){
-  player.residue.total++;
-  if(def.id==="edel")player.residue.edel++;
-  else if(def.id==="neria")player.residue.neria++;
-  else if(def.id==="nox")player.residue.nox++;
-  else if(def.id==="lilith")player.residue.lilith++;
-  else if(def.id==="valka")player.residue.valka++;
-  else if(def.id==="igna")player.residue.igna++;
-  else if(def.id==="lux")player.residue.lux++;
-  else if(def.id==="magmel")player.residue.magmel++;
+player.residue.total++;
+if(def.id==="edel")player.residue.edel++;
+else if(def.id==="neria")player.residue.neria++;
+else if(def.id==="nox")player.residue.nox++;
+else if(def.id==="lilith")player.residue.lilith++;
+else if(def.id==="valka")player.residue.valka++;
+else if(def.id==="igna")player.residue.igna++;
+else if(def.id==="lux")player.residue.lux++;
+else if(def.id==="magmel")player.residue.magmel++;
 }
 addLog(logH);
 
@@ -1239,25 +1163,18 @@ saveGame();triggerUIUpdate();
 }
 
 // ============ 溢れし災厄撃破（エンドレス） ============
-function calcBossHP(killCount){
-// プレイヤーの実効ATK/HPを基準にボスHPを設定
-// 実効ATK = baseAtk + relicBonus.atk (スキル倍率なし基準)
-const b=getRelicBonus();
-const playerEffAtk=player.baseAtk+b.atk;
-// ボスHP = 実効ATK × スケール係数（討伐数で増加）
-// 初期は ATK × 1000 程度、討伐ごとに×1.15〜1.25 で増加
-const n=killCount>0?killCount:0;
-const scaleMult=Math.pow(1.18+0.07*Math.exp(-n/30),n);
-let bossHPFromAtk=playerEffAtk*BigInt(Math.max(1,Math.round(1000*scaleMult)));
-// 下限：BOSS_MAX_HP_BASE
-if(bossHPFromAtk<BOSS_MAX_HP_BASE)bossHPFromAtk=BOSS_MAX_HP_BASE;
-if(bossHPFromAtk>BIG_CAP)bossHPFromAtk=BIG_CAP;
-return bossHPFromAtk;
-}
 function handleBossDefeat(){
-comboHit=0;erosionStack=0;waterAccumDmg=0n;luxHitCounter=0;kushiaCounter=0;
+comboHit=0;
 player.killCount++;enemyDisasterStarUsed=false;
-const newHPBig=calcBossHP(player.killCount);
+// 次の敵HP = 現在与ダメージ（maxDmg）の100000倍を上限に設定
+// maxDmg未計測時はATK×100000にフォールバック
+const _refDmg=player.maxDmg>0n?player.maxDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})();
+const _dmgCap=_refDmg*100000n; // 与ダメージ×100000が上限
+const _prevHP=safeBigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
+const _minHP=_prevHP*105n/100n; // 前回の×1.05を下限
+let newHPBig=_dmgCap>_minHP?_minHP:_dmgCap; // 上限と下限の小さい方
+if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
+if(newHPBig>BIG_CAP)newHPBig=BIG_CAP;
 player.bossMaxHP=newHPBig.toString();
 currentBossHP=newHPBig;
 addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災厄 討伐】第${player.killCount}体目を撃破！</span></div>`);
@@ -1336,12 +1253,10 @@ const skills=[
 {name:"反撃の狼煙",capLv10:true,desc:"生存時★2〜3の遺物を確定で入手する。",hl:`<span class="vow-tag">確定：1〜${lv}個</span><span class="vow-tag">(★2${(player.inventory[404]||0)>0?"/★3":""})</span>`},
 {name:"魂の研磨",capLv10:false,desc:"経験値ボーナスが向上。攻撃のたびに基礎値+1で永続蓄積。攻撃のたびに核レベル×100の経験値を追加獲得（核レベルは表記上限なし）。",hl:(()=>{
 const km=player.inventory[405]||0;
-const _hlTK=(player.killCount||0)+(player.kousaKillCount||0);
-const _ensRawD=(player.inventory[605]||0)>=1?(1+Math.log10(_hlTK+1)):1.0;
-const ens=_ensRawD<=20?_ensRawD:20+Math.sqrt(_ensRawD-20)*0.5;
+const _hlTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?(1+Math.log10(_hlTK+1)):1.0;
 const nbBonus=(player.totalLevel||1)*100;
 const total=Math.floor((Number(player.totalClicks)+player.totalLevel+km*100000+player.attackExpBonus)*ens);
-return`<span class="vow-tag">経験値：+${rlv+km*100000}</span><span class="vow-tag">【賢者：+${km*100000}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:#00d4ff;">【核Lv×100：+${nbBonus}/回】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span><span class="vow-tag" style="color:#f97316;">【レリ・エンス×${ens.toFixed(2)}(上限×20)】</span>`;
+return`<span class="vow-tag">経験値：+${rlv+km*100000}</span><span class="vow-tag">【賢者：+${km*100000}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:#00d4ff;">【核Lv×100：+${nbBonus}/回】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span><span class="vow-tag" style="color:#f97316;">【レリ・エンス×${ens.toFixed(2)}】</span>`;
 })()},
 {name:"死を刻む",capLv10:false,desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004;const lvB=Math.log10((player.totalLevel||1)+1)*0.01;const total=calcFinalDmgMult()*_vowBonus.mult;return`<span class="vow-tag">最終ダメ倍率：x${total.toFixed(4)}</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
 ,{name:"共鳴＝災核融合",capLv10:false,fusion:true,desc:"溢れし災厄の討伐により解放。各災厄の残滓を蓄積・融合し、★1〜6遺物とオメガコアに圧倒的補正を付与する。",
@@ -1365,10 +1280,10 @@ return`<span class="vow-tag" style="color:#ff9500;font-weight:bold;font-size:1.0
 ];
 document.getElementById("vow-list").innerHTML=skills.map(s=>{
 const lvLabel=s.fusion
-  ?(player.hasFusionCore?`<span class="vow-lv max" style="color:#d4af37;text-shadow:0 0 6px rgba(212,175,55,.6);">解放済</span>`:`<span class="vow-lv" style="color:#888;">未解放</span>`)
-  :s.capLv10
-  ?(lv>=10?`<span class="vow-lv max">LvMax</span>`:`<span class="vow-lv">Lv.${lv}</span>`)
-  :`<span class="vow-lv">Lv.${rlv}</span>`;
+?(player.hasFusionCore?`<span class="vow-lv max" style="color:#d4af37;text-shadow:0 0 6px rgba(212,175,55,.6);">解放済</span>`:`<span class="vow-lv" style="color:#888;">未解放</span>`)
+:s.capLv10
+?(lv>=10?`<span class="vow-lv max">LvMax</span>`:`<span class="vow-lv">Lv.${lv}</span>`)
+:`<span class="vow-lv">Lv.${rlv}</span>`;
 const fusionStyle=s.fusion?` style="border-left-color:#d4af37;background:linear-gradient(135deg,#fffbf0,#fff5e0);box-shadow:0 2px 8px rgba(212,175,55,.18);"`:"";return`<div class="vow-item"${fusionStyle}><div class="vow-header"><span class="vow-name"${s.fusion?` style="color:#d4af37;text-shadow:0 0 8px rgba(212,175,55,.4);"`:""}>${s.name}</span>${lvLabel}</div><div><div class="vow-highlight">${s.hl}</div><span class="vow-sub">${s.desc}</span></div></div>`;}).join("");
 }
 
@@ -1454,7 +1369,7 @@ const cl=m.star>=8?"star-ultimate":m.star>=4?"star-high":"star-low";
 let cd="";
 if(id==116){if(!player.hasHado)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasGreatHado)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasDivineGuide)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
 else if(id==117){if(!player.hasWorldOrder)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasCrown)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasMeta)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
-return`<div class="relic-card ${cl}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==801&&(player.omegaAtkBig||"0")!=="0"?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">蓄積ATK: ${fmtV(BigInt(player.omegaAtkBig))}<br>蓄積HP: ${fmtV(BigInt(player.omegaHpBig||"0"))}</span>`:""}${m.id==802?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">自己進化回数: ${(player.evolutionStack||0).toLocaleString()} 回<br>ダメージ倍率上乗せ: +${Math.min(player.evolutionStack||0,10000)/1000..toFixed(1)}%（上限+10%）<br>baseATK/HP成長: ${Math.floor((player.evolutionStack||0)/100)}回発動済み</span>`:""}${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}${cd}</div></div>`;
+return`<div class="relic-card ${cl}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==801&&(player.omegaAtkBig||"0")!=="0"?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">蓄積ATK: ${fmtV(BigInt(player.omegaAtkBig))}<br>蓄積HP: ${fmtV(BigInt(player.omegaHpBig||"0"))}</span>`:""}${m.id==802?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">自己進化回数: ${(player.evolutionStack||0).toLocaleString()} 回<br>差分乗算：×${Math.min(8.0,Math.max(1.1,Math.log10(2)*0.8)).toFixed(2)}〜×8.00（敵HP/ATK比に応じて変動）<br>Stack補正: +${(Math.min(player.evolutionStack||0,5000)*0.002).toFixed(2)}%<br>baseATK/HP成長: ${Math.floor((player.evolutionStack||0)/100)}回発動済み</span>`:""}${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}${cd}</div></div>`;
 }).join("");
 }
 
@@ -1474,9 +1389,9 @@ document.getElementById("st-kousa-kill").textContent=fmtV(player.kousaKillCount|
 // Lv100ボーナス表示（st-boxがなければスキップ）
 const lv100el=document.getElementById("st-lv100bonus");
 if(lv100el){
-  const la=BigInt(player.lv100AtkBonus||"0");
-  const lh=BigInt(player.lv100HpBonus||"0");
-  lv100el.innerHTML=`覚醒ボーナス: ATK累積 <b>+${fmtV(la)}</b> / HP累積 <b>+${fmtV(lh)}</b><br>経験値ボーナス: <b>×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</b>`;
+const la=BigInt(player.lv100AtkBonus||"0");
+const lh=BigInt(player.lv100HpBonus||"0");
+lv100el.innerHTML=`覚醒ボーナス: ATK累積 <b>+${fmtV(la)}</b> / HP累積 <b>+${fmtV(lh)}</b><br>経験値ボーナス: <b>×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</b>`;
 }
 document.getElementById("st-kill-count").textContent=fmtV(player.killCount||0);
 const lv100box=document.getElementById("st-lv100bonus");
