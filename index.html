@@ -378,7 +378,7 @@ toggleAutoAttack();
 refreshAutoBtn();
 }
 const attackBtn=document.getElementById("attackBtn");
-function startAttackLoop(e){if(activePointerId!==null)return;e.preventDefault();activePointerId=e.pointerId;try{e.target.setPointerCapture(e.pointerId);}catch(_){}if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);}
+function startAttackLoop(e){if(activePointerId!==null)return;activePointerId=e.pointerId;if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);e.preventDefault();}
 function stopAttackLoop(e){if(e.pointerId===activePointerId){if(attackInterval){clearInterval(attackInterval);attackInterval=null;}activePointerId=null;}}
 attackBtn.addEventListener("contextmenu",e=>e.preventDefault());
 attackBtn.addEventListener("pointerdown",startAttackLoop);
@@ -923,9 +923,9 @@ const isKousa=bossType!=="main";
 if(bossType==="kousa_gemini"){
 // シールド初期化（初回攻撃時）
 if(geminiShieldMax===0){
-  geminiShieldMax = 50 + Math.floor(Math.random() * 51); // 50〜100回
-  geminiShieldHP = geminiShieldMax;
-  geminiBuffStack = 0;
+  geminiShieldMax=100+Math.floor(Math.random()*101); // 100〜200回
+  geminiShieldHP=geminiShieldMax;
+  geminiBuffStack=0;
   addLog(`<div><span class="c-gemini">SHIELD_ACTIVE: Geminiがシールドを展開。耐久 ${geminiShieldMax} 回分。</span></div>`);
 }
 // シールドが残っている場合は攻撃を弾く
@@ -940,7 +940,11 @@ if(geminiShieldHP>0){
     player.baseHP=player.baseHP*buffMult;
     addLog(`<div><span class="c-gemini">SHIELD_BROKEN: Geminiシールド撃破！バフ蓄積×${geminiBuffStack} → baseATK/HP ×${Number(buffMult)} 強化！</span></div>`);
     // 次のシールドを再生成
-    geminiShieldMax = 50 + Math.floor(Math.random() * 51); // 50〜100回geminiShieldHP = geminiShieldMax;addLog(`<div><span class="c-gemini">NEW_SHIELD: 次のシールド展開（耐久 ${geminiShieldMax} 回）</span></div>`);    // シールド中はATK/HP継続バフ（毎攻撃 ×1.012）
+    geminiShieldMax=100+Math.floor(Math.random()*101);
+    geminiShieldHP=geminiShieldMax;
+    addLog(`<div><span class="c-gemini">NEW_SHIELD: 次のシールド展開（耐久 ${geminiShieldMax} 回）</span></div>`);
+  }else{
+    // シールド中はATK/HP継続バフ（毎攻撃 ×1.012）
     player.baseAtk=(player.baseAtk*1012n)/1000n;
     player.baseHP=(player.baseHP*1012n)/1000n;
     // ── シールド中でも獲得処理は通常通り行う ──
@@ -991,7 +995,6 @@ else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&pl
 }
 
 // 記憶の遺産（メイン・虹災両方で毎回確定発動、クリスタル100個消費）
-let tags="";
 let _memLegacyLog="";
 if((player.inventory[803]||0)>0){
 const _ml=activateMemoryLegacy();
@@ -1029,7 +1032,7 @@ _genesisLog=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【�
 }
 let fd=atvBig*(randBig>0n?randBig:100000n)/100000n;
 if(fd>BIG_CAP)fd=BIG_CAP;
-tags="";
+let tags="";
 
 // 救済（メイン戦のみ）
 if(!isKousa&&(player.inventory[999]||0)>0){const thr=bossMaxHP/10000n;if(fd<thr){const smBig=BigInt(Math.round((Math.log10(player.killCount+1)+1)*100000));fd=bossMaxHP*2n/10000n*smBig/100000n;tags+=`<span class="c-order">【救済】</span>`;}}
