@@ -1215,7 +1215,7 @@ const b=getRelicBonus(),sm=calcFinalDmgMult();
 const tb=omegaApply(player.baseAtk+b.atk,player.baseHP+b.hp);
 const smBig=BigInt(Math.round(sm*100000));
 const multBig2=BigInt(Math.round(b.mult*100000));
-document.getElementById("p-atk").textContent=fmtStat(tb.atk*multBig2/100000n*smBig/100000n);
+document.getElementById("p-atk").textContent=fmtStat(tb.atk);
 document.getElementById("p-hp").textContent=fmtStat(tb.hp*multBig2/100000n);
 let bmaxHP;try{bmaxHP=BigInt(player.bossMaxHP||"1");}catch(e){bmaxHP=1n;}if(bmaxHP<=0n)bmaxHP=1n;
 const hd=document.getElementById("bosshp-cur");
