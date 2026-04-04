@@ -299,7 +299,7 @@ const KOUSA_RATES=[
 // ============ ★9遺物 ============
 const STAR9=[
 {id:901,star:9,name:"侵界の芽核",fromBoss:"緑災のエデラ",desc:"攻撃時50%で【侵食】付与。侵食対象へのダメージ×3.0。重複ごとに×1.5追加。"},
-{id:902,star:9,name:"流転の水環",fromBoss:"青災のネレイア",desc:"与ダメージの50%を蓄積。次の攻撃時、蓄積分を全放出して上乗せ。"},
+{id:902,star:9,name:"流転の水環",fromBoss:"青災のネレイア",desc:"攻撃ヒットごとに流転Lvが1上昇（上限50、ボス交代でリセット）。流転Lv×2%のダメージ乗算（最大+100%）。融合強化で上限200%まで拡大。"},
 {id:903,star:9,name:"歪界の観測器",fromBoss:"紫災のノクス",desc:"25%でダメージ×8。毎回ダメージ結果を再抽選する。"},
 {id:904,star:9,name:"契愛の呪印",fromBoss:"桃災のリリス",desc:"20%で攻撃を再発動（×2）。再発動は連鎖可能。連鎖ごとに最終ダメージ×1.5。"},
 {id:905,star:9,name:"過速の心臓",fromBoss:"橙災のヴァルカ",desc:"攻撃を2ヒット化。2ヒット目ダメージ×2.5。30%で追加ヒット（×1.5）。"},
@@ -718,10 +718,14 @@ t+=`<span class="c-edel">【侵食×${(Number(mBig)/100000).toFixed(1)}(${erosio
 return{d:dmg,t};
 }
 function eff_neria(dmg,xtra){
-const neriaRate=player.hasFusionCore?0.5+fusionRate(player.residue.neria,1000)*0.5:0.5;
-const add=dmg*BigInt(Math.round(xtra*neriaRate*1000))/1000n;
-waterAccumDmg+=add;const r=waterAccumDmg;dmg+=r;waterAccumDmg=0n;
-return{d:dmg,t:`<span class="c-neria">【水環+${fmtV(r)}】</span>`};
+// 流転スタック：攻撃ヒットごとに+1（最大50、ボス交代でリセット済み）
+if(waterAccumDmg<50n)waterAccumDmg+=1n;
+const stack=Number(waterAccumDmg);
+const fusBonus=player.hasFusionCore?Math.round(fusionRate(player.residue.neria,1000)*100):0;
+const pct=Math.min(200,stack*2+fusBonus); // 基礎：スタック×2% 最大100%→融合200%
+const multBig=BigInt(Math.round((1+pct/100)*xtra*100000));
+dmg=dmg*multBig/100000n;
+return{d:dmg,t:`<span class="c-neria">【流転Lv.${stack} ×${((1+pct/100)*xtra).toFixed(2)}】</span>`};
 }
 function eff_nox(dmg,xtra){
 const noxRate=player.hasFusionCore?0.25+fusionRate(player.residue.nox,1000)*0.75:0.25;
@@ -1278,7 +1282,7 @@ const r=player.residue;
 const br=getBaseResonance();
 const labels=[
 ['edel','緑',(0.5+fusionRate(r.edel,1000)*0.5*100).toFixed(0)+'%','侵食確率'],
-['neria','青',(0.5+fusionRate(r.neria,1000)*0.5*100).toFixed(0)+'%','蓄積率'],
+['neria','青',`Lv.${Number(waterAccumDmg)}(+${Math.min(200,Number(waterAccumDmg)*2+(player.hasFusionCore?Math.round(fusionRate(r.neria,1000)*100):0))}%)`,'流転スタック'],
 ['nox','紫',(0.25+fusionRate(r.nox,1000)*0.75*100).toFixed(0)+'%','×8発動'],
 ['lilith','桃',((0.2+fusionRate(r.lilith,1000)*0.3)*100).toFixed(0)+'% / ×'+(1.5+fusionRate(r.lilith,1000)*3.5).toFixed(1),'連鎖率/倍率'],
 ['valka','橙','×'+(2.5+fusionRate(r.valka,1000)*2.5).toFixed(1),'2HIT倍率'],
