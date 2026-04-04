@@ -748,13 +748,13 @@ t+=`<span class="c-lilith">【連愛${chain}】</span>`;
 return{d:chain>0?tot:dmg,t};
 }
 function eff_valka(dmg,xtra){
-let t=`<span class="c-valka">【2HIT】</span>`;
 const valMul=player.hasFusionCore?2.5+fusionRate(player.residue.valka,1000)*2.5:2.5;
 const valAdd=player.hasFusionCore?0.75+fusionRate(player.residue.valka,1000)*4.25:0.75;
+let t=`<span class="c-valka">【2HIT×${(1+valMul*xtra).toFixed(2)}】</span>`;
 dmg+=dmg*BigInt(Math.round(valMul*xtra*100000))/100000n;
 if(Math.random()<0.3){
 const add=dmg*BigInt(Math.round(valAdd*xtra*100000))/100000n;
-dmg+=add;t+=`<span class="c-valka">【追撃+${fmtV(add)}】</span>`;
+dmg+=add;t+=`<span class="c-valka">【追撃×${(1+valAdd*xtra).toFixed(2)}】</span>`;
 }
 return{d:dmg,t};
 }
@@ -930,11 +930,7 @@ const skillM=calcFinalDmgMult();
 let bossMaxHP;try{bossMaxHP=BigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());}catch(e){bossMaxHP=BOSS_MAX_HP_BASE;player.bossMaxHP=BOSS_MAX_HP_BASE.toString();currentBossHP=BOSS_MAX_HP_BASE;}
 const isKousa=bossType!=="main";
 
-// Gemini効果（虹災Gemini戦のみ）
-if(bossType==="kousa_gemini"){
-player.baseAtk=(player.baseAtk*1002n)/1000n;player.baseHP=(player.baseHP*1002n)/1000n;
-addLog(`<div><span class="c-gemini">ERROR: 構文破壊機工がコードを書き換えています... (ATK/HP x1.002)</span></div>`);
-}
+// Gemini効果は撃破時にonKousaDefeatで処理（per-attack廃止）
 
 // 覚醒チェック（段階的前提フラグ付き・モーダル未表示時のみ）
 if(!isModalOpen){
@@ -1151,6 +1147,17 @@ player.mainBossMaxHP=null; // リセット
 currentBossHP=newHPBig;
 
 logH+=`<div><span style="color:var(--nox);font-weight:bold;">【虹災討伐】${def.name}を撃破！(累計${player.kousaKillCount}体)</span></div>`;
+// Gemini撃破ボーナス：撃破時1回のみbaseAtk/HPを×1.002（上限10^60でキャップ）
+if(def.id==="gemini"){
+const _gemCap=10n**60n;
+if(player.baseAtk<_gemCap){
+  player.baseAtk=(player.baseAtk*1002n)/1000n;
+  player.baseHP=(player.baseHP*1002n)/1000n;
+  if(player.baseAtk>_gemCap)player.baseAtk=_gemCap;
+  if(player.baseHP>_gemCap)player.baseHP=_gemCap;
+  logH+=`<div><span class="c-gemini">ERROR: 構文破壊機工を撃滅。コード残滓を吸収... (ATK/HP ×1.002)</span></div>`;
+}
+}
 // 残滓加算（虹災種別ごと）
 if(player.hasFusionCore&&def&&def.id){
 player.residue.total++;
