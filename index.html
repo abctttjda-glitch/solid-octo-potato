@@ -273,6 +273,7 @@ let isModalOpen=false,needsUIUpdate=false;
 let bossType="main";
 let kousaBossData=null; // 現在の虹災ボス定義オブジェクト
 let currentBossHP=BOSS_MAX_HP_BASE; // BigInt
+let geminiShield=0; // Geminiシールド耐久値（0=無効）
 
 const RANK_NAMES=["初心者","修練者","熟練者","探求者","到達者","解放者","支配者","超越者","救世主","極致：唯一神"];
 const BASE_DD={1:{p:98.9888889,cond:0n},2:{p:1.0,cond:0n},3:{p:0.01,cond:0n},4:{p:0.001,cond:100000n},5:{p:0.0001,cond:1000000n},6:{p:0.00001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
@@ -637,6 +638,13 @@ if(currentBossHP>BIG_CAP)currentBossHP=BIG_CAP;
 player.bossMaxHP=currentBossHP.toString();
 bossType="kousa_"+kousaBossData.id;
 erosionStack=0;waterAccumDmg=0n;comboHit=0;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
+// Geminiシールド初期化
+if(kousaBossData.id==="gemini"){
+  geminiShield=Math.floor(Math.random()*51)+50; // 50〜100
+  addLog(`<div><span class="c-gemini">【Geminiシールド展開】耐久値：${geminiShield} — 全攻撃ダメージを無効化！</span></div>`);
+}else{
+  geminiShield=0;
+}
 addLog(`<div><span style="color:var(--nox);font-weight:bold;font-size:1.1em;">【虹災割り込み】${kousaBossData.intro}</span></div>`);
 updateBossHeaderStyle();
 saveGame();triggerUIUpdate();
@@ -1025,19 +1033,38 @@ tags+=`<span style="color:#00ffcc;font-weight:bold;">【収束×${(1+player.comp
 }
 
 if(fd<1n)fd=1n;if(fd>player.maxDmg)player.maxDmg=fd;
+
+// === Geminiシールド処理 ===
+let shieldBlocked=false;
+if(bossType==="kousa_gemini"&&geminiShield>0){
+  geminiShield--;
+  shieldBlocked=true;
+  const shieldTag=`<span class="c-gemini">【Geminiシールド】ダメージ無効！残耐久：${geminiShield}</span>`;
+  tags=shieldTag; // タグをシールド表示に差し替え
+  fd=0n; // ダメージ無効
+  if(geminiShield===0){
+    tags+=`<span class="c-gemini"> → シールド崩壊！</span>`;
+  }
+}
 const lv=Math.min(10,player.totalLevel);
 const dropN=Math.min(100,lv+Math.floor(player.totalLevel/10)*5+Math.min(50,player.inventory[401]||0));
 const _dropResult=getDropLog(dropN);
-// 発動スキルをランダム5件に絞って表示（総ダメージは常に表示）
-const _allTagsArr=(tags.match(/<span[^>]*>[\s\S]*?<\/span>/g)||[]);
-let _dispTags;
-if(_allTagsArr.length<=5){
-  _dispTags=tags;
+let logH;
+if(shieldBlocked){
+  // シールド中：ダメージ表示なし、シールド情報のみ
+  logH=`<div>${tags}</div>`+_dropResult.log;
 }else{
-  const _shuffled=_allTagsArr.slice().sort(()=>Math.random()-.5);
-  _dispTags=_shuffled.slice(0,5).join('')+`<span style="color:#888;font-size:.82em;">（他${_allTagsArr.length-5}スキル発動）</span>`;
+  // 発動スキルをランダム5件に絞って表示（総ダメージは常に表示）
+  const _allTagsArr=(tags.match(/<span[^>]*>[\s\S]*?<\/span>/g)||[]);
+  let _dispTags;
+  if(_allTagsArr.length<=5){
+    _dispTags=tags;
+  }else{
+    const _shuffled=_allTagsArr.slice().sort(()=>Math.random()-.5);
+    _dispTags=_shuffled.slice(0,5).join('')+`<span style="color:#888;font-size:.82em;">（他${_allTagsArr.length-5}スキル発動）</span>`;
+  }
+  logH=`<div>${_dispTags}<span style="color:#07f;font-weight:bold;">攻撃！${fmtV(fd)} ダメージ！</span></div>`+_dropResult.log;
 }
-let logH=`<div>${_dispTags}<span style="color:#07f;font-weight:bold;">攻撃！${fmtV(fd)} ダメージ！</span></div>`+_dropResult.log;
 
 // オメガコア：獲得遺物のATK/HPを蓄積（メイン・虹災共通）
 if((player.inventory[801]||0)>0&&dropN>=100&&(_dropResult.gainedAtk>0n||_dropResult.gainedHp>0n)){
@@ -1055,7 +1082,8 @@ player.omegaHpBig=(_oHpNow+_boostedHp>BIG_CAP?BIG_CAP:_oHpNow+_boostedHp).toStri
 logH+=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【オメガ・コア】ATK+${fmtV(_boostedAtk)} HP+${fmtV(_boostedHp)} 蓄積（×${_omegaMult.toFixed(2)}）</span></div>`;
 }
 
-// === ボスHP処理 ===
+// === ボスHP処理（シールド中はスキップ）===
+if(!shieldBlocked){
 if(fd>=currentBossHP){
 comboHit=0;
 if(isKousa){
@@ -1078,6 +1106,7 @@ if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
 currentBossHP-=fd;
 if(!isKousa&&currentBossHP<1n&&!player.isCleared){comboHit=0;currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;logH+=`<div><span style="color:#f00;font-weight:bold;">終末の回帰……！時が巻き戻る！！</span></div>`;}
 }
+} // end !shieldBlocked
 
 // 敵反撃（メイン戦のみ）
 if(!isKousa&&currentBossHP>0n){
@@ -1135,6 +1164,7 @@ function onKousaDefeat(logH){
 player.kousaKillCount++;
 const def=kousaBossData;
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
+geminiShield=0; // Geminiシールドリセット
 
 // メイン戦に戻す
 bossType="main";kousaBossData=null;
