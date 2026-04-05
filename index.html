@@ -275,6 +275,7 @@ let bossType="main";
 let kousaBossData=null; // 現在の虹災ボス定義オブジェクト
 let currentBossHP=BOSS_MAX_HP_BASE; // BigInt
 let geminiShield=0; // Geminiシールド耐久値（0=無効）
+let geminiAtkCap=0n; // Gemini戦開始時のbaseAtk×10（バフ上限）
 
 const RANK_NAMES=[
 "初心者","修練者","熟練者","探求者","到達者","解放者","支配者","超越者","救世主","極致：唯一神",
@@ -701,6 +702,7 @@ erosionStack=0;waterAccumDmg=0n;comboHit=0;kushiaCounter=0;luxHitCounter=0;playe
 // Geminiシールド初期化
 if(kousaBossData.id==="gemini"){
   geminiShield=Math.floor(Math.random()*51)+50; // 50〜100
+  geminiAtkCap=player.baseAtk*10n>0n?player.baseAtk*10n:10n; // バフ上限: 開始時baseAtk×10
   addLog(`<div><span class="c-gemini">【Geminiシールド展開】耐久値：${geminiShield} — 全攻撃ダメージを無効化！</span></div>`);
 }else{
   geminiShield=0;
@@ -1018,13 +1020,20 @@ player.attackExpBonus+=(player.totalLevel||1)*100;
 // === Geminiバフ：bonus/tb計算より前に適用してATK・HP両方を即時反映 ===
 let geminiBuffTag="";
 if(bossType==="kousa_gemini"){
-  const gemAtkGain=player.baseAtk*20n/1000n>0n?player.baseAtk*20n/1000n:1n; // ×1.020相当
-  const gemHpGain=player.baseHP*40n/1000n>0n?player.baseHP*40n/1000n:1n;   // ×1.040相当（baseHP基準）
-  player.baseAtk+=gemAtkGain;
-  player.baseHP+=gemHpGain;
-  if(player.baseAtk>BIG_CAP)player.baseAtk=BIG_CAP;
-  if(player.baseHP>BIG_CAP)player.baseHP=BIG_CAP;
-  geminiBuffTag=`<span class="c-gemini">【構文侵食】ATK+${fmtV(gemAtkGain)} HP+${fmtV(gemHpGain)}</span>`;
+  // baseAtkがキャップ未満の時のみバフを付与（指数爆発防止）
+  if(geminiAtkCap>0n&&player.baseAtk<geminiAtkCap){
+    const gemAtkGain=player.baseAtk*20n/1000n>0n?player.baseAtk*20n/1000n:1n; // ×1.020相当
+    const gemHpGain=player.baseHP*40n/1000n>0n?player.baseHP*40n/1000n:1n;   // ×1.040相当
+    // キャップを超えないよう加算量を調整
+    const actualAtkGain=player.baseAtk+gemAtkGain>geminiAtkCap?geminiAtkCap-player.baseAtk:gemAtkGain;
+    player.baseAtk+=actualAtkGain;
+    player.baseHP+=gemHpGain;
+    if(player.baseAtk>BIG_CAP)player.baseAtk=BIG_CAP;
+    if(player.baseHP>BIG_CAP)player.baseHP=BIG_CAP;
+    geminiBuffTag=`<span class="c-gemini">【構文侵食】ATK+${fmtV(actualAtkGain)} HP+${fmtV(gemHpGain)}</span>`;
+  }else if(geminiAtkCap>0n){
+    geminiBuffTag=`<span class="c-gemini">【構文侵食：上限到達】</span>`;
+  }
 }
 
 const bonus=getRelicBonus();
@@ -1269,6 +1278,7 @@ player.kousaKillCount++;
 const def=kousaBossData;
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 geminiShield=0; // Geminiシールドリセット
+geminiAtkCap=0n; // Geminiバフ上限リセット
 
 // メイン戦に戻す
 bossType="main";kousaBossData=null;
