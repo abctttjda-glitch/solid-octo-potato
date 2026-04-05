@@ -398,7 +398,7 @@ window.addEventListener("pointerup",stopAttackLoop);
 
 // ============ BigInt安全変換 ============
 // Number→BigInt変換。Infinity/NaN/overflow対策
-const BIG_CAP=BigInt("9".repeat(50600)); // xxx表記対応：10^50600上限
+const BIG_CAP=BigInt("9".repeat(3000)); // 表示上限：3000桁（amh付近）
 function safeBigInt(n){
 if(typeof n==="bigint")return n<0n?0n:(n>BIG_CAP?BIG_CAP:n);
 if(!isFinite(n)||isNaN(n)||n<0)return 0n;
@@ -454,7 +454,9 @@ function loadGame(){
 const s=localStorage.getItem(SAVE_KEY);
 if(s){
 const p=JSON.parse(s);Object.assign(player,p);
-player.baseAtk=BigInt(p.baseAtk||"10");player.baseHP=BigInt(p.baseHP||"100");player.maxDmg=BigInt(p.maxDmg||"0");
+// BigInt読み込み（旧セーブのBIG_CAP超え値を新CAPでクランプ）
+function _loadBig(str,def){try{const v=BigInt(str||def);return v>BIG_CAP?BIG_CAP:(v<0n?0n:v);}catch(e){return BigInt(def);}}
+player.baseAtk=_loadBig(p.baseAtk,"10");player.baseHP=_loadBig(p.baseHP,"100");player.maxDmg=_loadBig(p.maxDmg,"0");
 // v1.30未満のセーブ: 仕様変更に伴い最高ダメージをリセット
 if(!p.gameVersion||p.gameVersion<"1.30"){player.maxDmg=0n;}
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
@@ -462,6 +464,9 @@ player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.e
 player.omegaCharge=0n; // 蓄積回数リセット（倍率を1回目×1.30から再スタート）
 player.kousaKillCount=p.kousaKillCount||0;
 player.omegaAtkBig=p.omegaAtkBig||"0";player.omegaHpBig=p.omegaHpBig||"0";
+// 旧BIG_CAP超え値のクランプ（omegaAtk/Hp, compressedAtk/Hp）
+{const oa=_loadBig(player.omegaAtkBig,"0");player.omegaAtkBig=oa.toString();}
+{const oh=_loadBig(player.omegaHpBig,"0");player.omegaHpBig=oh.toString();}
 player.hasCompressionCore=p.hasCompressionCore||false;player.compressionPower=p.compressionPower||0;
 player.compressedAtk=p.compressedAtk||0;player.compressedHp=p.compressedHp||0;
 player.attackExpBonus=p.attackExpBonus||0;
@@ -477,6 +482,8 @@ player.lv100MilestonesApplied=p.lv100MilestonesApplied||0;
 // BigInt版圧縮蓄積（旧float版からの移行も対応）
 player.compressedAtkBig=p.compressedAtkBig||(p.compressedAtk?String(Math.floor(p.compressedAtk)):"0");
 player.compressedHpBig=p.compressedHpBig||(p.compressedHp?String(Math.floor(p.compressedHp)):"0");
+{const ca=_loadBig(player.compressedAtkBig,"0");player.compressedAtkBig=ca.toString();}
+{const ch=_loadBig(player.compressedHpBig,"0");player.compressedHpBig=ch.toString();}
 erosionStack=p.erosionStack||0;waterAccumDmg=BigInt(p.waterAccumDmg||"0");luxHitCounter=p.luxHitCounter||0;
 enemyDisasterStarUsed=p.enemyDisasterStarUsed||false;
 // ボス状態復元
@@ -488,8 +495,10 @@ if(!kousaBossData){bossType="main";currentBossHP=BigInt(player.bossMaxHP);}
 ensureOrderRelic();
 // ボスHPをセーブデータから復元（中途HPを正しく引き継ぐ）
 if(p.currentBossHP){
-  try{currentBossHP=BigInt(p.currentBossHP);}catch(e){currentBossHP=BigInt(player.bossMaxHP);}
-}else{currentBossHP=BigInt(player.bossMaxHP);}
+  currentBossHP=_loadBig(p.currentBossHP,BOSS_MAX_HP_BASE.toString());
+}else{currentBossHP=_loadBig(player.bossMaxHP,BOSS_MAX_HP_BASE.toString());}
+// bossMaxHPもクランプ
+{const bm=_loadBig(player.bossMaxHP,BOSS_MAX_HP_BASE.toString());player.bossMaxHP=bm.toString();}
 }else{currentBossHP=BigInt(player.bossMaxHP);}
 Object.keys(player.inventory).forEach(id=>{
 const r=RELIC_MASTER.find(m=>m.id==id);
@@ -761,6 +770,7 @@ function eff_edel(dmg,xtra){
 let t="";
 const edelRate=player.hasFusionCore?0.5+fusionRate(player.residue.edel,1000)*0.5:0.5;
 if(Math.random()<edelRate)erosionStack++;
+if(erosionStack>20)erosionStack=20; // 指数爆発防止：上限20
 if(erosionStack>0){
 const mBig=BigInt(Math.round(3.0*Math.pow(1.5,erosionStack-1)*xtra*100000));
 dmg=dmg*mBig/100000n;
