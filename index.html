@@ -332,7 +332,7 @@ const RELIC_MASTER=[
 {id:501,star:5,name:"連撃の権能",atk:382660,hp:916330,desc:"攻撃回数に応じてダメージが増加する。1HITごとに+0.05%、最大+30%。撃破でリセット。"},{id:502,star:5,name:"強欲の権能",atk:649800,hp:812400,desc:"パッシブ：総遺物数に応じてATK/HPが倍率強化される。"},{id:503,star:5,name:"超越の権能",atk:524180,hp:689450,desc:"1%の確率で、その一撃のダメージを1.5倍にする。"},{id:504,star:5,name:"破壊の権能",atk:999999,hp:0,desc:"1%の確率で、総ATK分のダメージを最終ダメージに直接加算する。"},{id:505,star:5,name:"再生の権能",atk:222222,hp:1528931,desc:"被弾時10%の確率でHP増加(再起)が2回発生。(重複不可)"},{id:506,star:5,name:"双刃の権能",atk:454649,hp:519700,desc:"150回攻撃ごとに次の一撃のダメージ+100%。(重複不可)"},
 {id:601,star:6,name:"絶対統率レリック・オーバーロード",atk:1500000,hp:4500000,desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+80%。【還元】現在のHPに応じてATKが微増。"},{id:602,star:6,name:"魂律解放レリ・クシア",atk:2500000,hp:3500000,desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"},{id:603,star:6,name:"原初核冠レリコア・レガリア",atk:2000000,hp:4000000,desc:"★1〜6遺物のステータス上昇効果を50%増加させる。"},{id:604,star:6,name:"虚無終焉レリ・ノヴァ",atk:5555555,hp:0,desc:"攻撃時1%の確率で与ダメージ+500%。"},{id:605,star:6,name:"戦碑累功レリ・エンス",atk:3000000,hp:3000000,desc:"獲得経験値に討伐数ボーナスを乗算。(溢れ＋虹災合計, 1万討伐で×5, 対数成長)"},
 {id:701,star:7,name:"パンドラの箱",atk:0,hp:0,desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"},{id:702,star:7,name:"終焉の福音",atk:0,hp:0,desc:"敵HPが50%以下のとき、与ダメージ+400%。(重複不可)"},{id:703,star:7,name:"神滅のアカシックレコード",atk:0,hp:0,desc:"与ダメージの最終倍率にさらに+400%。(重複不可)"},
-{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPが自ATKの100倍以上の時、差分比に応じた乗算（最大×8）で火力を補正。Stack蓄積でさらに底上げ。100回ごとにbaseATK/HP永続成長。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"敵最大HPが自ATKを上回る時、メモリークリスタル100個消費で「星の記憶」確定発動。ATK+10%・HP+50%を永続加算。（同一の敵には1度のみ発動）"},
+{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPが自ATKの100倍以上の時、差分比に応じた乗算（最大×8）で火力を補正。Stack蓄積でさらに底上げ。攻撃のたびにbaseATK/HP永続成長（0.001%/回）。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"敵最大HPが自ATKを上回る時、メモリークリスタル100個消費で「星の記憶」確定発動。ATK+10%・HP+50%を永続加算。（同一の敵には1度のみ発動）"},
 ...STAR9
 ];
 
@@ -1034,13 +1034,16 @@ const _evoBonus=1+Math.min(player.evolutionStack,5000)*0.00002;
 const _evoBig=BigInt(Math.round(_evoBonus*100000));
 atvBig=atvBig*_evoBig/100000n;
 if(atvBig>BIG_CAP)atvBig=BIG_CAP;
-// ③ baseAtk/HP成長（100回に1度）：現在ATKの0.1%を永続加算、上限5%/回
-if(player.evolutionStack%100===0){
-const _rawG=tb.atk/1000n; // 現在ATK（遺物込み）の0.1%
-const _capG=player.baseAtk>0n?player.baseAtk*5n/100n:1n;
+// ③ baseAtk/HP成長（毎回）：現在ATK（遺物込み）の0.001%を永続加算、上限0.05%/回
+{
+const _rawG=tb.atk/100000n; // 0.001%（100回分の合計が従来の0.1%と同等）
+const _capG=player.baseAtk>0n?player.baseAtk*5n/10000n:1n; // 上限0.05%/回
 const g=_rawG<_capG?(_rawG>0n?_rawG:1n):_capG;
 player.baseAtk+=g;player.baseHP+=g;
-addLog(`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【ジェネシスコード】差分×${_gapMult.toFixed(2)} Stack:${player.evolutionStack.toLocaleString()} → baseATK/HP +${fmtV(g)}</span></div>`);
+// 100回ごとにサマリーログのみ表示
+if(player.evolutionStack%100===0){
+addLog(`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【ジェネシスコード】差分×${_gapMult.toFixed(2)} Stack:${player.evolutionStack.toLocaleString()} | 毎回成長中 baseATK/HP +${fmtV(g)}/回</span></div>`);
+}
 }
 }
 let fd=atvBig*(randBig>0n?randBig:100000n)/100000n;
