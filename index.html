@@ -304,7 +304,7 @@ const KOUSA_BOSSES=[
 {id:"magmel",name:"虹災のマグメル",hpMulMin:2000,hpMulMax:3000,relicId:908,colorVar:"#ec4899",hpClass:"hpfill-magmel",btnClass:"attack-kousa-magmel",intro:"七色の混沌が渦巻く——虹災のマグメルが降臨した！"}
 ];
 const KOUSA_RATES=[
-{id:"gemini",r:10},{id:"edel",r:27},{id:"neria",r:18},{id:"nox",r:13},
+{id:"gemini",r:2},{id:"edel",r:27},{id:"neria",r:18},{id:"nox",r:13},
 {id:"lilith",r:10},{id:"valka",r:9},{id:"igna",r:7},{id:"lux",r:4},{id:"magmel",r:2}
 ];
 
@@ -973,6 +973,19 @@ if(isModalOpen)return;
 player.totalClicks++;comboHit++;player.attackExpBonus++;
 // 魂の研磨：攻撃のたびに核レベル×100の経験値を永続蓄積（attackExpBonus）に加算
 player.attackExpBonus+=(player.totalLevel||1)*100;
+
+// === Geminiバフ：bonus/tb計算より前に適用してATK・HP両方を即時反映 ===
+let geminiBuffTag="";
+if(bossType==="kousa_gemini"){
+  const gemAtkGain=player.baseAtk*20n/1000n>0n?player.baseAtk*20n/1000n:1n; // ×1.020相当
+  const gemHpGain=player.baseHP*40n/1000n>0n?player.baseHP*40n/1000n:1n;   // ×1.040相当（baseHP基準）
+  player.baseAtk+=gemAtkGain;
+  player.baseHP+=gemHpGain;
+  if(player.baseAtk>BIG_CAP)player.baseAtk=BIG_CAP;
+  if(player.baseHP>BIG_CAP)player.baseHP=BIG_CAP;
+  geminiBuffTag=`<span class="c-gemini">【構文侵食】ATK+${fmtV(gemAtkGain)} HP+${fmtV(gemHpGain)}</span>`;
+}
+
 const bonus=getRelicBonus();
 const tb=omegaApply(player.baseAtk+bonus.atk,player.baseHP+bonus.hp);
 const skillM=calcFinalDmgMult();
@@ -1076,26 +1089,16 @@ tags+=`<span style="color:#00ffcc;font-weight:bold;">【収束×${(1+player.comp
 if(fd<1n)fd=1n;if(fd>player.maxDmg)player.maxDmg=fd;
 lastDmg=fd; // 現在の与ダメを記録
 
-// === Geminiバフ：攻撃のたびに付与（シールド中も含む）===
-if(bossType==="kousa_gemini"){
-  const gemAtkGain=player.baseAtk*20n/1000n>0n?player.baseAtk*20n/1000n:1n; // ATK ×1.020 相当の加算
-  const gemHpGain=gemAtkGain*2n; // HP はATK gainの2倍
-  player.baseAtk+=gemAtkGain;
-  player.baseHP+=gemHpGain;
-  if(player.baseAtk>BIG_CAP)player.baseAtk=BIG_CAP;
-  if(player.baseHP>BIG_CAP)player.baseHP=BIG_CAP;
-  tags+=`<span class="c-gemini">【構文侵食】ATK+${fmtV(gemAtkGain)} HP+${fmtV(gemHpGain)}</span>`;
-}
-
 // === Geminiシールド処理 ===
 let shieldBlocked=false;
 if(bossType==="kousa_gemini"&&geminiShield>0){
   geminiShield--;
   shieldBlocked=true;
-  const gemBufTag=tags.match(/<span class="c-gemini">【構文侵食】[\s\S]*?<\/span>/)?.[0]||"";
   const shieldTag=`<span class="c-gemini">【Geminiシールド】ダメージ無効！残耐久：${geminiShield}</span>`;
-  tags=shieldTag+(geminiShield===0?`<span class="c-gemini"> → シールド崩壊！</span>`:"")+gemBufTag;
+  tags=shieldTag+(geminiShield===0?`<span class="c-gemini"> → シールド崩壊！</span>`:"")+geminiBuffTag;
   fd=0n; // ダメージ無効
+}else if(geminiBuffTag){
+  tags+=geminiBuffTag;
 }
 const lv=Math.min(10,player.totalLevel);
 const dropN=Math.min(100,lv+Math.floor(player.totalLevel/10)*5+Math.min(50,player.inventory[401]||0));
