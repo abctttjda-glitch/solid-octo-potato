@@ -315,8 +315,8 @@ const STAR9=[
 {id:903,star:9,name:"歪界の観測器",fromBoss:"紫災のノクス",desc:"25%でダメージ×8。毎回ダメージ結果を再抽選する。"},
 {id:904,star:9,name:"契愛の呪印",fromBoss:"桃災のリリス",desc:"20%で攻撃を再発動（×2）。再発動は連鎖可能。連鎖ごとに最終ダメージ×1.5。"},
 {id:905,star:9,name:"過速の心臓",fromBoss:"橙災のヴァルカ",desc:"攻撃を2ヒット化。2ヒット目ダメージ×2.5。30%で追加ヒット（×1.5）。"},
-{id:906,star:9,name:"終焉の焔核",fromBoss:"赤災のイグナ",desc:"敵HPが減るほどダメージ増加（最大×6）。1%で敵HPを1に固定。"},
-{id:907,star:9,name:"暴露の天輪",fromBoss:"黄災のルクス",desc:"与ダメージを敵最大HP割合（10%）に変換。5回に1回、+30%。"},
+{id:906,star:9,name:"終焉の焔核",fromBoss:"赤災のイグナ",desc:"敵HPが減るほどダメージ増加（最大×12）。"},
+{id:907,star:9,name:"暴露の天輪",fromBoss:"黄災のルクス",desc:"攻撃時に敵最大HPの10%を直接削る（最大ダメージに計上されない）。5回に1回、+30%。"},
 {id:908,star:9,name:"虹終の統核",fromBoss:"虹災のマグメル",desc:"所持虹災遺物の全効果を同時適用。各効果×1.5。攻撃ごとにランダム効果2回追加発動。"}
 ];
 
@@ -738,6 +738,7 @@ const magFusion=player.hasFusionCore&&hasMag?1+fusionRate(player.residue.magmel,
 const xtra=hasMag?1.5*magFusion:1.0;
 // 入力dmgを基準にした全体上限（★9全効果込みで元の×1000倍まで）
 const dmgCap=dmg*1000n>BIG_CAP?BIG_CAP:dmg*1000n;
+let luxDmg=0n; // 天輪割合ダメ（maxDmg計上対象外・ボスHPに直接適用）
 let pool=[];
 if((player.inventory[901]||0)>0){const e=eff_edel(dmg,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("edel");}
 if((player.inventory[902]||0)>0){const e=eff_neria(dmg,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("neria");}
@@ -745,17 +746,17 @@ if((player.inventory[903]||0)>0){const e=eff_nox(dmg,xtra);dmg=e.d;tags+=e.t;if(
 if((player.inventory[904]||0)>0){const e=eff_lilith(dmg,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("lilith");}
 if((player.inventory[905]||0)>0){const e=eff_valka(dmg,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("valka");}
 if((player.inventory[906]||0)>0){const e=eff_igna(dmg,bmaxHP,bcurHP,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("igna");}
-if((player.inventory[907]||0)>0){const e=eff_lux(dmg,bmaxHP,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("lux");}
+if((player.inventory[907]||0)>0){const e=eff_lux(dmg,bmaxHP,xtra);luxDmg+=e.lux;tags+=e.t;if(hasMag)pool.push("lux");}
 if(dmg>dmgCap)dmg=dmgCap; // 中間クランプ
 if(hasMag&&pool.length>0){
 for(let i=0;i<2;i++){
 const ch=pool[Math.floor(Math.random()*pool.length)];
 tags+=`<span class="c-magmel">【虹終:${ch}】</span>`;
-if(ch==="edel"){const e=eff_edel(dmg,1.5);dmg=e.d;}else if(ch==="neria"){const e=eff_neria(dmg,1.5);dmg=e.d;}else if(ch==="nox"){const e=eff_nox(dmg,1.5);dmg=e.d;}else if(ch==="lilith"){const e=eff_lilith(dmg,1.5);dmg=e.d;}else if(ch==="valka"){const e=eff_valka(dmg,1.5);dmg=e.d;}else if(ch==="igna"){const e=eff_igna(dmg,bmaxHP,bcurHP,1.5);dmg=e.d;}else if(ch==="lux"){const e=eff_lux(dmg,bmaxHP,1.5);dmg=e.d;}
+if(ch==="edel"){const e=eff_edel(dmg,1.5);dmg=e.d;}else if(ch==="neria"){const e=eff_neria(dmg,1.5);dmg=e.d;}else if(ch==="nox"){const e=eff_nox(dmg,1.5);dmg=e.d;}else if(ch==="lilith"){const e=eff_lilith(dmg,1.5);dmg=e.d;}else if(ch==="valka"){const e=eff_valka(dmg,1.5);dmg=e.d;}else if(ch==="igna"){const e=eff_igna(dmg,bmaxHP,bcurHP,1.5);dmg=e.d;}else if(ch==="lux"){const e=eff_lux(dmg,bmaxHP,1.5);luxDmg+=e.lux;}
 }
 if(dmg>dmgCap*2n)dmg=dmgCap*2n; // magmel追加2回後クランプ（全体上限×2000）
 }
-return{dmg,tags};
+return{dmg,luxDmg,tags};
 }
 
 // ============ 共鳴＝災核融合 ============
@@ -862,7 +863,8 @@ let lux=bmaxHP*BigInt(Math.round(luxRate*xtra*100000))/100000n;
 let t="";
 if(luxHitCounter%5===0){lux=lux*13n/10n;t+=`<span class="c-lux">【暴露+30%】</span>`;}
 t+=`<span class="c-lux">【天輪】</span>`;
-return{d:dmg+lux,t};
+// luxDmgはdmgに加算せずボスHPに直接適用（maxDmg計上対象外）
+return{d:dmg,lux,t};
 }
 
 // ============ モーダル操作 ============
@@ -1118,6 +1120,7 @@ if((player.inventory[602]||0)>0){kushiaCounter++;if(kushiaCounter>=100){fd*=3n;t
 if((player.inventory[604]||0)>0&&Math.random()<0.01){fd*=6n;tags+=`<span style="color:#fd7e14;font-weight:bold;">【虚無】</span>`;}
 // ★9効果
 const s9=apply9Effects(fd,bossMaxHP,currentBossHP);fd=s9.dmg;tags+=s9.tags;
+const luxDmg=s9.luxDmg; // 天輪割合ダメ（ボスHPに直接適用・maxDmg計上外）
 
 // 収束核
 if(player.hasCompressionCore&&player.compressionPower>0){
@@ -1179,6 +1182,10 @@ logH+=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【オメ�
 
 // === ボスHP処理（シールド中はスキップ）===
 if(!shieldBlocked){
+// 天輪割合ダメをボスHPに直接適用（maxDmg計上外）
+if(luxDmg>0n&&currentBossHP>0n){
+  currentBossHP=currentBossHP>luxDmg?currentBossHP-luxDmg:0n;
+}
 if(fd>=currentBossHP){
 comboHit=0;
 if(isKousa){
