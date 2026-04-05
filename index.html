@@ -1076,17 +1076,26 @@ tags+=`<span style="color:#00ffcc;font-weight:bold;">【収束×${(1+player.comp
 if(fd<1n)fd=1n;if(fd>player.maxDmg)player.maxDmg=fd;
 lastDmg=fd; // 現在の与ダメを記録
 
+// === Geminiバフ：攻撃のたびに付与（シールド中も含む）===
+if(bossType==="kousa_gemini"){
+  const gemAtkGain=player.baseAtk*20n/1000n>0n?player.baseAtk*20n/1000n:1n; // ATK ×1.020 相当の加算
+  const gemHpGain=gemAtkGain*2n; // HP はATK gainの2倍
+  player.baseAtk+=gemAtkGain;
+  player.baseHP+=gemHpGain;
+  if(player.baseAtk>BIG_CAP)player.baseAtk=BIG_CAP;
+  if(player.baseHP>BIG_CAP)player.baseHP=BIG_CAP;
+  tags+=`<span class="c-gemini">【構文侵食】ATK+${fmtV(gemAtkGain)} HP+${fmtV(gemHpGain)}</span>`;
+}
+
 // === Geminiシールド処理 ===
 let shieldBlocked=false;
 if(bossType==="kousa_gemini"&&geminiShield>0){
   geminiShield--;
   shieldBlocked=true;
+  const gemBufTag=tags.match(/<span class="c-gemini">【構文侵食】[\s\S]*?<\/span>/)?.[0]||"";
   const shieldTag=`<span class="c-gemini">【Geminiシールド】ダメージ無効！残耐久：${geminiShield}</span>`;
-  tags=shieldTag; // タグをシールド表示に差し替え
+  tags=shieldTag+(geminiShield===0?`<span class="c-gemini"> → シールド崩壊！</span>`:"")+gemBufTag;
   fd=0n; // ダメージ無効
-  if(geminiShield===0){
-    tags+=`<span class="c-gemini"> → シールド崩壊！</span>`;
-  }
 }
 const lv=Math.min(10,player.totalLevel);
 const dropN=Math.min(100,lv+Math.floor(player.totalLevel/10)*5+Math.min(50,player.inventory[401]||0));
@@ -1220,18 +1229,6 @@ currentBossHP=newHPBig;
 
 logH+=`<div><span style="color:var(--nox);font-weight:bold;">【虹災討伐】${def.name}を撃破！(累計${player.kousaKillCount}体)</span></div>`;
 
-// Gemini撃破ボーナス：撃破時baseAtk/HPを×1.2〜2.8（永続）
-if(def.id==="gemini"){
-  // 1.2〜2.8の倍率
-  const multiplier = 1.2 + Math.random() * 1.6; // 1.2〜2.8
-
-  // BigInt対応のため1000倍して整数化
-const multiInt = BigInt(Math.floor(multiplier * 1000));
-player.baseAtk = (player.baseAtk * multiInt) / 1000n;
-player.baseHP  = (player.baseHP  * multiInt) / 1000n;
-if(player.baseAtk > BIG_CAP) player.baseAtk = BIG_CAP;
-if(player.baseHP  > BIG_CAP) player.baseHP  = BIG_CAP;
-logH+=`<div><span class="c-gemini">ERROR: 構文破壊機工を撃滅。コード残滓を吸収... baseATK/HP ×${multiplier.toFixed(3)} → ${fmtV(player.baseAtk)}</span></div>`;}
 // 残滓加算（虹災種別ごと）
 if(player.hasFusionCore&&def&&def.id){player.residue.total++;
 if(def.id==="edel")player.residue.edel++;
