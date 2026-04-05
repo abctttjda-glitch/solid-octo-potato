@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.31</title>
+<title>RELICORE - v1.30</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899)}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -1116,42 +1116,43 @@ let tags="";
 // 救済（メイン戦のみ）
 if(!isKousa&&(player.inventory[999]||0)>0){const thr=bossMaxHP/10000n;if(fd<thr){const smBig=BigInt(Math.round(Math.min(30,Math.log10(player.killCount+1)+1)*100000));fd=bossMaxHP*2n/10000n*smBig/100000n;tags+=`<span class="c-order">【救済】</span>`;}}
 
-// ★5権能：全て独立発動（applyAuthSkill廃止・各所持チェックに変更）
+// ===== 乗算ボーナス一括計算（救済未発動時のみ）=====
 if(!tags.includes("【救済】")){
-// 501 連撃の権能
-if((player.inventory[501]||0)>0){const cm=BigInt(Math.round((1+Math.min(comboHit*0.0005,0.30))*100000));fd=fd*cm/100000n;tags+=`<span style="color:#d4af37;font-weight:bold;">【連撃】</span>`;}
-// 503 超越の権能
-if((player.inventory[503]||0)>0&&Math.random()<0.01){fd=fd*3n/2n;tags+=`<span style="color:var(--growth);font-weight:bold;">【超越】</span>`;}
-// 504 破壊の権能
+// 乗算系スキルは全て multAccum に加算し、最後に一度だけ乗算する
+// 例: 連撃+30%, 福音+300%, 魂律+200% → multAccum=1+0.3+3.0+2.0=6.3 → ×6.3で適用
+let multAccum=1.0;
+
+// 501 連撃の権能（+0〜+30%）
+if((player.inventory[501]||0)>0){multAccum+=Math.min(comboHit*0.0005,0.30);tags+=`<span style="color:#d4af37;font-weight:bold;">【連撃】</span>`;}
+// 503 超越の権能（1%で+50%）
+if((player.inventory[503]||0)>0&&Math.random()<0.01){multAccum+=0.5;tags+=`<span style="color:var(--growth);font-weight:bold;">【超越】</span>`;}
+// 506 双刃の権能（150回ごとに+100%）
+if((player.inventory[506]||0)>0){player.soujinCounter++;if(player.soujinCounter>=150){multAccum+=1.0;tags+=`<span style="color:#0f0;font-weight:bold;">【双刃】</span>`;player.soujinCounter=0;}}
+// 702 終焉の福音：HP50%以下で+300%
+if((player.inventory[702]||0)>0&&currentBossHP*2n<=bossMaxHP){multAccum+=3.0;tags+=`<span style="color:#fc0;font-weight:bold;">【福音】</span>`;}
+// 601 絶対統率：敵HPが自ATKの100倍以上で+80%
+if((player.inventory[601]||0)>0&&currentBossHP>=tb.atk*100n){multAccum+=0.8;tags+=`<span style="color:#07f;font-weight:bold;">【統率】</span>`;}
+// 602 魂律：100回ごとに+200%
+if((player.inventory[602]||0)>0){kushiaCounter++;if(kushiaCounter>=100){multAccum+=2.0;tags+=`<span style="color:#d4af37;font-weight:bold;">【魂律】</span>`;kushiaCounter=0;}}
+// 604 虚無：1%で+500%
+if((player.inventory[604]||0)>0&&Math.random()<0.01){multAccum+=5.0;tags+=`<span style="color:#fd7e14;font-weight:bold;">【虚無】</span>`;}
+// 収束核（圧縮倍率分を加算）
+if(player.hasCompressionCore&&player.compressionPower>0){multAccum+=player.compressionPower;tags+=`<span style="color:#00ffcc;font-weight:bold;">【収束+${(player.compressionPower*100).toFixed(1)}%】</span>`;}
+
+// 乗算系ボーナスを一括適用（1回のみ）
+const totalMultBig=BigInt(Math.round(multAccum*100000));
+fd=fd*(totalMultBig>0n?totalMultBig:100000n)/100000n;
+
+// --- 加算系スキル（乗算後に別途適用）---
+// 504 破壊の権能（1%でATK分を直接加算）
 if((player.inventory[504]||0)>0&&Math.random()<0.01){fd+=atvBig;tags+=`<span style="color:#f00;font-weight:bold;">【破壊】</span>`;}
-// 506 双刃の権能（重複不可＝効果自体は重ならない）
-if((player.inventory[506]||0)>0){player.soujinCounter++;if(player.soujinCounter>=150){fd*=2n;tags+=`<span style="color:#0f0;font-weight:bold;">【双刃】</span>`;player.soujinCounter=0;}}
+// 601 還元（常時：HP量に応じた微加算）
+if((player.inventory[601]||0)>0){const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;}
 }
 
-// ★6/★7 遺物効果（全ボス共通）
-// 702 終焉の福音：HP50%以下で×4
-if((player.inventory[702]||0)>0&&currentBossHP*2n<=bossMaxHP){fd=fd*4n;tags+=`<span style="color:#fc0;font-weight:bold;">【福音】</span>`;}
-// 601 絶対統率：敵HPが自身のATKの100倍以上で+80%。常時【還元】
-if((player.inventory[601]||0)>0){
-if(currentBossHP>=tb.atk*100n){fd=fd*180n/100n;tags+=`<span style="color:#07f;font-weight:bold;">【統率】</span>`;}
-const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;
-fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);
-tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;
-}
-// 602 魂律：100回ごとに×3
-if((player.inventory[602]||0)>0){kushiaCounter++;if(kushiaCounter>=100){fd*=3n;tags+=`<span style="color:#d4af37;font-weight:bold;">【魂律】</span>`;kushiaCounter=0;}}
-// 604 虚無：1%で×6
-if((player.inventory[604]||0)>0&&Math.random()<0.01){fd*=6n;tags+=`<span style="color:#fd7e14;font-weight:bold;">【虚無】</span>`;}
 // ★9効果
 const s9=apply9Effects(fd,bossMaxHP,currentBossHP);fd=s9.dmg;tags+=s9.tags;
 const luxDmg=s9.luxDmg; // 天輪割合ダメ（ボスHPに直接適用・maxDmg計上外）
-
-// 収束核
-if(player.hasCompressionCore&&player.compressionPower>0){
-const cpBig=BigInt(Math.round((1+player.compressionPower)*100000));
-fd=fd*cpBig/100000n;
-tags+=`<span style="color:#00ffcc;font-weight:bold;">【収束×${(1+player.compressionPower).toFixed(2)}】</span>`;
-}
 
 if(fd<1n)fd=1n;if(fd>BIG_CAP)fd=BIG_CAP; // BIG_CAP超えを確実にクランプ
 if(fd>player.maxDmg)player.maxDmg=fd;
