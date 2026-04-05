@@ -460,8 +460,13 @@ function _loadBig(str,def){try{const v=BigInt(str||def);return v>BIG_CAP?BIG_CAP
 player.baseAtk=_loadBig(p.baseAtk,"10");player.baseHP=_loadBig(p.baseHP,"100");player.maxDmg=_loadBig(p.maxDmg,"0");
 // v1.30未満のセーブ: 仕様変更に伴い最高ダメージをリセット
 if(!p.gameVersion||p.gameVersion<"1.30"){player.maxDmg=0n;}
-// v1.31未満のセーブ: 旧BIG_CAP(50600桁)汚染のmaxDmgをリセット
-if(!p.gameVersion||p.gameVersion<"1.31"){player.maxDmg=0n;}
+// v1.31未満のセーブ: 旧BIG_CAP(50600桁)汚染の蓄積値を全リセット
+if(!p.gameVersion||p.gameVersion<"1.31"){
+  player.maxDmg=0n;
+  player.compressedAtkBig="0";player.compressedHpBig="0";
+  player.compressedAtk=0;player.compressedHp=0;
+  player.omegaAtkBig="0";player.omegaHpBig="0";
+}
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
 // everOwned：旧セーブは inventory から復元（入手済み = 所持 or 圧縮済みで失った分を考慮不可のため inventory ベースで補完）
@@ -657,18 +662,26 @@ const gm=greedMult();
 const gmBig=BigInt(Math.round(gm*10000));
 atkBig=atkBig*cbBig*gmBig/10000n;
 hpBig=hpBig*cbBig*gmBig/10000n;
-// 圧縮蓄積分（BigInt保存）
-const cAtk=player.compressedAtkBig?BigInt(player.compressedAtkBig):safeBigInt(player.compressedAtk||0);
-const cHp=player.compressedHpBig?BigInt(player.compressedHpBig):safeBigInt(player.compressedHp||0);
+// 圧縮蓄積分（BigInt保存）乗算前にクランプ
+const _cAtkRaw=player.compressedAtkBig?BigInt(player.compressedAtkBig):safeBigInt(player.compressedAtk||0);
+const _cHpRaw=player.compressedHpBig?BigInt(player.compressedHpBig):safeBigInt(player.compressedHp||0);
+// cbBig*gmBig/10000で最大637倍になるため、乗算前にBIG_CAP/1000でクランプ
+const cAtk=_cAtkRaw>BIG_CAP/1000n?BIG_CAP/1000n:_cAtkRaw;
+const cHp=_cHpRaw>BIG_CAP/1000n?BIG_CAP/1000n:_cHpRaw;
 // キャップ
 if(atkBig>BIG_CAP)atkBig=BIG_CAP;if(hpBig>BIG_CAP)hpBig=BIG_CAP;
 // 圧縮蓄積分にもcomp倍率・greedMultを適用
 const cAtkBoosted=cAtk*cbBig*gmBig/10000n;
 const cHpBoosted=cHp*cbBig*gmBig/10000n;
-// オメガコア蓄積分（遺物として永続加算）
+// オメガコア蓄積分（乗算なし・そのまま加算）もクランプ
 const oAtk=player.omegaAtkBig?BigInt(player.omegaAtkBig):0n;
 const oHp=player.omegaHpBig?BigInt(player.omegaHpBig):0n;
-return{atk:atkBig+cAtkBoosted+oAtk,hp:hpBig+cHpBoosted+oHp,mult,compCount:comp,compBonus:cb};
+const oAtkC=oAtk>BIG_CAP?BIG_CAP:oAtk;
+const oHpC=oHp>BIG_CAP?BIG_CAP:oHp;
+// 合計もクランプ
+let retAtk=atkBig+cAtkBoosted+oAtkC;if(retAtk>BIG_CAP)retAtk=BIG_CAP;
+let retHp=hpBig+cHpBoosted+oHpC;if(retHp>BIG_CAP)retHp=BIG_CAP;
+return{atk:retAtk,hp:retHp,mult,compCount:comp,compBonus:cb};
 }
 function getCurrentDropRates(){if(player.hasDivineGuide)return DIVINE_DD;if(player.hasGreatHado)return GHADO_DD;if(player.hasHado)return HADO_DD;return BASE_DD;}
 
