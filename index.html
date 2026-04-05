@@ -1265,13 +1265,16 @@ saveGame();triggerUIUpdate();
 function handleBossDefeat(){
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 player.killCount++;enemyDisasterStarUsed=false;
-// 次の敵HP = 現在与ダメージ（lastDmg）の100000倍を上限に設定
-// 未計測時はATK×100000にフォールバック
+// 次の敵HP = max(前回HP×1.05, 現在与ダメ×100000) を採用
+// ただし与ダメ×100000が暴走しないよう前回HP×50倍を絶対上限とする
 const _refDmg=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
-const _dmgCap=_refDmg*100000n; // 与ダメージ×100000が上限
+const _dmgCap=_refDmg*100000n; // 与ダメージ×100000
 const _prevHP=safeBigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
-const _minHP=_prevHP*105n/100n; // 前回の×1.05を下限
-let newHPBig=_dmgCap>_minHP?_minHP:_dmgCap; // 上限と下限の小さい方
+const _minHP=_prevHP*105n/100n; // 前回の×1.05（下限）
+const _hardCap=_prevHP*50n; // 前回HP×50を絶対上限（急騰防止）
+// 下限(_minHP)と与ダメ上限(_dmgCap)の大きい方を採用し、絶対上限でクランプ
+let newHPBig=_dmgCap>_minHP?_dmgCap:_minHP;
+if(newHPBig>_hardCap)newHPBig=_hardCap;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
 if(newHPBig>BIG_CAP)newHPBig=BIG_CAP;
 player.bossMaxHP=newHPBig.toString();
