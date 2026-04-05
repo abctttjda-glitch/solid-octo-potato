@@ -734,6 +734,8 @@ let tags="";
 const hasMag=(player.inventory[908]||0)>0;
 const magFusion=player.hasFusionCore&&hasMag?1+fusionRate(player.residue.magmel,500)*3:1;
 const xtra=hasMag?1.5*magFusion:1.0;
+// 入力dmgを基準にした全体上限（★9全効果込みで元の×1000倍まで）
+const dmgCap=dmg*1000n>BIG_CAP?BIG_CAP:dmg*1000n;
 let pool=[];
 if((player.inventory[901]||0)>0){const e=eff_edel(dmg,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("edel");}
 if((player.inventory[902]||0)>0){const e=eff_neria(dmg,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("neria");}
@@ -742,12 +744,14 @@ if((player.inventory[904]||0)>0){const e=eff_lilith(dmg,xtra);dmg=e.d;tags+=e.t;
 if((player.inventory[905]||0)>0){const e=eff_valka(dmg,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("valka");}
 if((player.inventory[906]||0)>0){const e=eff_igna(dmg,bmaxHP,bcurHP,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("igna");}
 if((player.inventory[907]||0)>0){const e=eff_lux(dmg,bmaxHP,xtra);dmg=e.d;tags+=e.t;if(hasMag)pool.push("lux");}
+if(dmg>dmgCap)dmg=dmgCap; // 中間クランプ
 if(hasMag&&pool.length>0){
 for(let i=0;i<2;i++){
 const ch=pool[Math.floor(Math.random()*pool.length)];
 tags+=`<span class="c-magmel">【虹終:${ch}】</span>`;
 if(ch==="edel"){const e=eff_edel(dmg,1.5);dmg=e.d;}else if(ch==="neria"){const e=eff_neria(dmg,1.5);dmg=e.d;}else if(ch==="nox"){const e=eff_nox(dmg,1.5);dmg=e.d;}else if(ch==="lilith"){const e=eff_lilith(dmg,1.5);dmg=e.d;}else if(ch==="valka"){const e=eff_valka(dmg,1.5);dmg=e.d;}else if(ch==="igna"){const e=eff_igna(dmg,bmaxHP,bcurHP,1.5);dmg=e.d;}else if(ch==="lux"){const e=eff_lux(dmg,bmaxHP,1.5);dmg=e.d;}
 }
+if(dmg>dmgCap*2n)dmg=dmgCap*2n; // magmel追加2回後クランプ（全体上限×2000）
 }
 return{dmg,tags};
 }
@@ -776,58 +780,75 @@ const edelRate=player.hasFusionCore?0.5+fusionRate(player.residue.edel,1000)*0.5
 if(Math.random()<edelRate)erosionStack++;
 if(erosionStack>20)erosionStack=20; // 指数爆発防止：上限20
 if(erosionStack>0){
-const mBig=BigInt(Math.round(3.0*Math.pow(1.5,erosionStack-1)*xtra*100000));
+const rawMult=3.0*Math.pow(1.5,erosionStack-1)*xtra;
+const cappedMult=Math.min(rawMult,50); // 上限×50
+const mBig=BigInt(Math.round(cappedMult*100000));
 dmg=dmg*mBig/100000n;
-t+=`<span class="c-edel">【侵食×${(Number(mBig)/100000).toFixed(1)}(${erosionStack}重)】</span>`;
+t+=`<span class="c-edel">【侵食×${cappedMult.toFixed(1)}(${erosionStack}重)】</span>`;
 }
 return{d:dmg,t};
 }
 function eff_neria(dmg,xtra){
-// 流転スタック：攻撃ヒットごとに+1（最大50、ボス交代でリセット済み）
 if(waterAccumDmg<50n)waterAccumDmg+=1n;
 const stack=Number(waterAccumDmg);
 const fusBonus=player.hasFusionCore?Math.round(fusionRate(player.residue.neria,1000)*100):0;
-const pct=Math.min(200,stack*2+fusBonus); // 基礎：スタック×2% 最大100%→融合200%
-const multBig=BigInt(Math.round((1+pct/100)*xtra*100000));
+const pct=Math.min(200,stack*2+fusBonus);
+const rawMult=(1+pct/100)*xtra;
+const cappedMult=Math.min(rawMult,4); // 上限×4
+const multBig=BigInt(Math.round(cappedMult*100000));
 dmg=dmg*multBig/100000n;
-return{d:dmg,t:`<span class="c-neria">【流転Lv.${stack} ×${((1+pct/100)*xtra).toFixed(2)}】</span>`};
+return{d:dmg,t:`<span class="c-neria">【流転Lv.${stack} ×${cappedMult.toFixed(2)}】</span>`};
 }
 function eff_nox(dmg,xtra){
 const noxRate=player.hasFusionCore?0.25+fusionRate(player.residue.nox,1000)*0.75:0.25;
 if(Math.random()<noxRate){
-dmg=dmg*BigInt(Math.round(8*xtra*100))/100n;
-return{d:dmg,t:`<span class="c-nox">【歪界×${(8*xtra).toFixed(1)}】</span>`};
+// xtra乗算なし：×8固定（確率事象なのでxtra二重乗算を廃止）
+dmg=dmg*8n;
+return{d:dmg,t:`<span class="c-nox">【歪界×8】</span>`};
 }
 return{d:dmg,t:""};
 }
 function eff_lilith(dmg,xtra){
-let t="",chain=0,tot=dmg;
+let t="",chain=0;
+const baseDmg=dmg; // チェーン上限計算の基準
 const lilRate=player.hasFusionCore?0.2+fusionRate(player.residue.lilith,1000)*0.3:0.2;
 const lilMul=player.hasFusionCore?1.5+fusionRate(player.residue.lilith,1000)*3.5:1.5;
+let addTotal=0n;
 while(Math.random()<lilRate&&chain<10){
 chain++;
 const mBig=BigInt(Math.round(2*Math.pow(lilMul,chain-1)*xtra*100000));
-tot+=dmg*mBig/100000n;
+addTotal+=baseDmg*mBig/100000n;
 t+=`<span class="c-lilith">【連愛${chain}】</span>`;
 }
-return{d:chain>0?tot:dmg,t};
+if(chain>0){
+// チェーン合計加算をdmgの×20倍上限でクランプ
+const cap=baseDmg*20n;
+if(addTotal>cap)addTotal=cap;
+dmg=baseDmg+addTotal;
+}
+return{d:dmg,t};
 }
 function eff_valka(dmg,xtra){
 const valMul=player.hasFusionCore?2.5+fusionRate(player.residue.valka,1000)*2.5:2.5;
 const valAdd=player.hasFusionCore?0.75+fusionRate(player.residue.valka,1000)*4.25:0.75;
-let t=`<span class="c-valka">【2HIT×${(1+valMul*xtra).toFixed(2)}】</span>`;
-dmg+=dmg*BigInt(Math.round(valMul*xtra*100000))/100000n;
+// xtraは適用するが上限をキャップ：2HIT+追撃込みで元dmgの×15上限
+const hitMult=Math.min(valMul*xtra,14); // 2HIT分の加算上限
+let t=`<span class="c-valka">【2HIT×${(1+hitMult).toFixed(2)}】</span>`;
+const hitAdd=dmg*BigInt(Math.round(hitMult*100000))/100000n;
+dmg+=hitAdd;
+const cap15=dmg*15n/10n; // 追撃後の上限(元dmg×15)
 if(Math.random()<0.3){
-const add=dmg*BigInt(Math.round(valAdd*xtra*100000))/100000n;
-dmg+=add;t+=`<span class="c-valka">【追撃×${(1+valAdd*xtra).toFixed(2)}】</span>`;
+const addMult=Math.min(valAdd*xtra,4);
+const add=dmg*BigInt(Math.round(addMult*100000))/100000n;
+dmg+=add;t+=`<span class="c-valka">【追撃×${(1+addMult).toFixed(2)}】</span>`;
 }
+if(dmg>cap15)dmg=cap15;
 return{d:dmg,t};
 }
 function eff_igna(dmg,bmaxHP,bcurHP,xtra){
-// HP割合はBigInt同士で計算
 const ratio=bmaxHP>0n?Number(bcurHP*10000n/bmaxHP)/10000:0;
 const ignaCap=player.hasFusionCore?6+fusionRate(player.residue.igna,1000)*6:6;
-const m=Math.max(1,(1-ratio)*ignaCap*xtra);
+const m=Math.min(Math.max(1,(1-ratio)*ignaCap*xtra),12); // 上限×12
 dmg=dmg*BigInt(Math.round(m*100000))/100000n;
 const t=`<span class="c-igna">【焔核×${m.toFixed(1)}】</span>`;
 return{d:dmg,t};
@@ -838,7 +859,7 @@ const luxRate=player.hasFusionCore?0.1+fusionRate(player.residue.lux,1000)*0.9:0
 let lux=bmaxHP*BigInt(Math.round(luxRate*xtra*100000))/100000n;
 let t="";
 if(luxHitCounter%5===0){lux=lux*13n/10n;t+=`<span class="c-lux">【暴露+30%】</span>`;}
-t+=`<span class="c-lux">【天輪10%】</span>`;
+t+=`<span class="c-lux">【天輪】</span>`;
 return{d:dmg+lux,t};
 }
 
