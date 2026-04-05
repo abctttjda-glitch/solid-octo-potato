@@ -337,7 +337,7 @@ const RELIC_MASTER=[
 ];
 
 let player={
-inventory:{0:1},deathCount:0,hadoExpAccum:0,totalLevel:1,baseAtk:10n,baseHP:100n,maxDmg:0n,
+inventory:{0:1},everOwned:{0:true},deathCount:0,hadoExpAccum:0,totalLevel:1,baseAtk:10n,baseHP:100n,maxDmg:0n,
 storySeen:false,rebalanceSeen:false,hasHado:false,hasGreatHado:false,hasDivineGuide:false,
 hasWorldOrder:false,hasCrown:false,hasMeta:false,isUra:false,
 bossMaxHP:BOSS_MAX_HP_BASE.toString(),totalClicks:0,totalRelics:0,killCount:0,
@@ -461,6 +461,10 @@ player.baseAtk=_loadBig(p.baseAtk,"10");player.baseHP=_loadBig(p.baseHP,"100");p
 if(!p.gameVersion||p.gameVersion<"1.30"){player.maxDmg=0n;}
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
+// everOwned：旧セーブは inventory から復元（入手済み = 所持 or 圧縮済みで失った分を考慮不可のため inventory ベースで補完）
+player.everOwned=p.everOwned||{};
+// 現在 inventory にあるものは必ず入手済みとしてマーク
+Object.keys(player.inventory).forEach(id=>{if((player.inventory[id]||0)>0)player.everOwned[id]=true;});
 player.omegaCharge=0n; // 蓄積回数リセット（倍率を1回目×1.30から再スタート）
 player.kousaKillCount=p.kousaKillCount||0;
 player.omegaAtkBig=p.omegaAtkBig||"0";player.omegaHpBig=p.omegaHpBig||"0";
@@ -626,7 +630,7 @@ function getRelicBonus(){
 let atkBig=0n,hpBig=0n,mult=1;
 const hasReg=(player.inventory[603]||0)>0,hasZan=(player.inventory[804]||0)>0;
 let comp=0;
-for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at.length>0&&at.every(m=>(player.inventory[m.id]||0)>0))comp++;}
+for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at.length>0&&at.every(m=>player.everOwned[m.id]))comp++;}
 const cb=Math.pow(2,comp);
 const cbBig=BigInt(Math.round(cb));
 Object.entries(player.inventory).forEach(([id,c])=>{
@@ -825,8 +829,7 @@ const ratio=bmaxHP>0n?Number(bcurHP*10000n/bmaxHP)/10000:0;
 const ignaCap=player.hasFusionCore?6+fusionRate(player.residue.igna,1000)*6:6;
 const m=Math.max(1,(1-ratio)*ignaCap*xtra);
 dmg=dmg*BigInt(Math.round(m*100000))/100000n;
-let t=`<span class="c-igna">【焔核×${m.toFixed(1)}】</span>`;
-if(Math.random()<0.01){dmg+=bcurHP>1n?bcurHP-1n:0n;t+=`<span class="c-igna">【終焉確定】</span>`;}
+const t=`<span class="c-igna">【焔核×${m.toFixed(1)}】</span>`;
 return{d:dmg,t};
 }
 function eff_lux(dmg,bmaxHP,xtra){
@@ -920,7 +923,7 @@ function getGuaranteedDrop(){
 const lv=Math.min(10,player.totalLevel),hasZ=(player.inventory[404]||0)>0;
 const c2=RELIC_MASTER.filter(m=>m.star===2&&m.id!==117),c3=RELIC_MASTER.filter(m=>m.star===3);
 const n=Math.min(100,lv);let g={};
-for(let i=0;i<n;i++){const s=hasZ&&Math.random()<0.5?c3[Math.floor(Math.random()*c3.length)]:c2[Math.floor(Math.random()*c2.length)];player.inventory[s.id]=(player.inventory[s.id]||0)+1;g[s.id]=(g[s.id]||0)+1;}
+for(let i=0;i<n;i++){const s=hasZ&&Math.random()<0.5?c3[Math.floor(Math.random()*c3.length)]:c2[Math.floor(Math.random()*c2.length)];player.inventory[s.id]=(player.inventory[s.id]||0)+1;player.everOwned[s.id]=true;g[s.id]=(g[s.id]||0)+1;}
 player.totalRelics+=n;
 return`<div style="font-size:.82em;">【狼煙】${Object.entries(g).map(([id,c])=>{const m=RELIC_MASTER.find(x=>x.id==id);return`<span class="c${m.star}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`;}).join("、")}</div>`;
 }
@@ -932,7 +935,7 @@ let gainedAtk=0n,gainedHp=0n; // オメガコア用：今回ドロップ遺物�
 const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
 // オメガ集計用：コンプリート倍率・強欲倍率を事前計算
 let _omegaCompCount=0;
-for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at.length>0&&at.every(m=>(player.inventory[m.id]||0)>0))_omegaCompCount++;}
+for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at.length>0&&at.every(m=>player.everOwned[m.id]))_omegaCompCount++;}
 const _omegaCbBig=BigInt(Math.round(Math.pow(2,_omegaCompCount)));
 const _omegaGmBig=BigInt(Math.round(greedMult()*10000));
 for(let i=0;i<count;i++){
@@ -949,6 +952,7 @@ sel=cands[Math.floor(Math.random()*cands.length)];
 }
 if(sel.star>=6){if(!(player.inventory[sel.id]>0)){player.inventory[sel.id]=1;player.totalRelics++;sc[sel.star]++;sg[sel.star][sel.id]=1;showR=sel;}}
 else{player.inventory[sel.id]=(player.inventory[sel.id]||0)+1;player.totalRelics++;sc[star]++;sg[star][sel.id]=(sg[star][sel.id]||0)+1;if(sel.star>=4&&player.inventory[sel.id]===1)if(!showR||sel.star>showR.star)showR=sel;}
+player.everOwned[sel.id]=true; // 入手履歴を記録（圧縮で失ってもコンプに影響しない）
 // オメガコア用：ドロップ遺物のATK/HPを集計（各種強化倍率を適用）
 if((player.inventory[801]||0)>0&&count>=100&&sel.star<9&&sel.star!==999){
 let da=sel.atk||0,dh=sel.hp||0;
@@ -1448,7 +1452,7 @@ const b4disp=getRelicBonus();
 // 実際のATK/HP増加への貢献分 = bonus全体 - 在庫遺物のみのボーナス
 // 簡易的に cAtk*cb*gm を計算
 let compForDisp=0;
-for(let s=1;s<=8;s++){const at3=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at3.length>0&&at3.every(m=>(player.inventory[m.id]||0)>0))compForDisp++;}
+for(let s=1;s<=8;s++){const at3=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at3.length>0&&at3.every(m=>player.everOwned[m.id]))compForDisp++;}
 const cbDisp=BigInt(Math.round(Math.pow(2,compForDisp)));
 const gmDisp=BigInt(Math.round(greedMult()*10000));
 document.getElementById("comp-catk").textContent=fmtV(cAtk*cbDisp*gmDisp/10000n);
