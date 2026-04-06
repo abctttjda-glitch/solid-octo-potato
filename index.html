@@ -317,7 +317,7 @@ const STAR9=[
 {id:904,star:9,name:"契愛の呪印",fromBoss:"桃災のリリス",desc:"20%で攻撃を再発動（×2）。再発動は連鎖可能。連鎖ごとに最終ダメージ×1.5。"},
 {id:905,star:9,name:"過速の心臓",fromBoss:"橙災のヴァルカ",desc:"攻撃を2ヒット化。2ヒット目ダメージ×2.5。30%で追加ヒット（×1.5）。"},
 {id:906,star:9,name:"終焉の焔核",fromBoss:"赤災のイグナ",desc:"敵HPが減るほどダメージ増加（最大×12）。"},
-{id:907,star:9,name:"暴露の天輪",fromBoss:"黄災のルクス",desc:"攻撃時に敵最大HPの10%を直接削る（最大ダメージに計上されない）。5回に1回、+30%。"},
+{id:907,star:9,name:"暴露の天輪",fromBoss:"黄災のルクス",desc:"攻撃時1%の確率で発動。討伐数に応じて敵最大HPの5〜30%を直接削る（最大ダメージには反映されない）。"},
 {id:908,star:9,name:"虹終の統核",fromBoss:"虹災のマグメル",desc:"所持虹災遺物の全効果を同時適用。各効果×1.5。攻撃ごとにランダム効果2回追加発動。"}
 ];
 
@@ -826,13 +826,17 @@ pool.push("igna");
 }
 
 // 907 暴露の天輪（別枠luxDmg：totalMultに加算しない）
+// 1%の確率で発動。討伐数に応じて最大30%のHP直接削り。最大ダメージ非反映。
 if((player.inventory[907]||0)>0){
-luxHitCounter++;
-const luxRate=player.hasFusionCore?0.1+fusionRate(player.residue.lux,1000)*0.9:0.1;
-let lux=bmaxHP*BigInt(Math.round(luxRate*xtra*100000))/100000n;
-if(luxHitCounter%5===0){lux=lux*13n/10n;tags+=`<span class="c-lux">【暴露+30%】</span>`;}
-tags+=`<span class="c-lux">【天輪】</span>`;
+if(Math.random()<0.01){
+// 基礎割合：5%、討伐数ボーナス：log10(killCount+1)×5%、合計上限30%
+const killPct=Math.min(25,Math.log10((player.killCount||0)+1)*5);
+const luxPct=Math.min(30,5+killPct);
+const luxBig=BigInt(Math.round(luxPct*1000));
+let lux=bmaxHP*luxBig/100000n;
 luxDmg+=lux;
+tags+=`<span class="c-lux">【天輪${luxPct.toFixed(1)}%】</span>`;
+}
 pool.push("lux");
 }
 
@@ -847,7 +851,7 @@ else if(ch==="nox"){multBonus+=7;}
 else if(ch==="lilith"){const lR=player.hasFusionCore?0.2+fusionRate(player.residue.lilith,1000)*0.3:0.2;const lM=Math.min(player.hasFusionCore?1.5+fusionRate(player.residue.lilith,1000)*3.5:1.5,3);let cs2=0;let cc2=0;while(Math.random()<lR&&cc2<10){cc2++;cs2+=2*Math.pow(lM,cc2-1)*1.5;}multBonus+=Math.min(cs2,15);}
 else if(ch==="valka"){const vM=player.hasFusionCore?2.5+fusionRate(player.residue.valka,1000)*2.5:2.5;const vA=player.hasFusionCore?0.75+fusionRate(player.residue.valka,1000)*4.25:0.75;const hM=Math.min(vM*1.5,8);multBonus+=hM;if(Math.random()<0.3)multBonus+=Math.min(vA*1.5,3);}
 else if(ch==="igna"){const r2=bmaxHP>0n?Number(bcurHP*10000n/bmaxHP)/10000:0;multBonus+=Math.min(Math.max(1,(1-r2)*6*1.5),10)-1;}
-else if(ch==="lux"){luxHitCounter++;const lR2=player.hasFusionCore?0.1+fusionRate(player.residue.lux,1000)*0.9:0.1;let lux2=bmaxHP*BigInt(Math.round(lR2*1.5*100000))/100000n;if(luxHitCounter%5===0)lux2=lux2*13n/10n;luxDmg+=lux2;}
+else if(ch==="lux"){if(Math.random()<0.01){const kp=Math.min(25,Math.log10((player.killCount||0)+1)*5);const lp=Math.min(30,5+kp);luxDmg+=bmaxHP*BigInt(Math.round(lp*1000))/100000n;tags+=`<span class="c-lux">【天輪${lp.toFixed(1)}%】</span>`;}}
 }
 }
 
@@ -961,13 +965,14 @@ const t=`<span class="c-igna">【焔核×${m.toFixed(1)}】</span>`;
 return{d:dmg,t};
 }
 function eff_lux(dmg,bmaxHP,xtra){
-luxHitCounter++;
-const luxRate=player.hasFusionCore?0.1+fusionRate(player.residue.lux,1000)*0.9:0.1;
-let lux=bmaxHP*BigInt(Math.round(luxRate*xtra*100000))/100000n;
-let t="";
-if(luxHitCounter%5===0){lux=lux*13n/10n;t+=`<span class="c-lux">【暴露+30%】</span>`;}
-t+=`<span class="c-lux">【天輪】</span>`;
-// luxDmgはdmgに加算せずボスHPに直接適用（maxDmg計上対象外）
+// 新仕様：1%確率発動、討伐数込み最大30%の割合削り
+let lux=0n;let t="";
+if(Math.random()<0.01){
+const kp=Math.min(25,Math.log10((player.killCount||0)+1)*5);
+const lp=Math.min(30,5+kp);
+lux=bmaxHP*BigInt(Math.round(lp*1000))/100000n;
+t+=`<span class="c-lux">【天輪${lp.toFixed(1)}%】</span>`;
+}
 return{d:dmg,lux,t};
 }
 
@@ -1357,10 +1362,24 @@ if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
 }else{
 currentBossHP-=rescueFd;
 if(!isKousa&&currentBossHP<1n&&!player.isCleared){comboHit=0;currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;logH+=`<div><span style="color:#f00;font-weight:bold;">終末の回帰……！時が巻き戻る！！</span></div>`;}
-// 天輪（lux）割合ダメをrescueFd適用後に追加で削る（撃破の主因にしない）
+// 天輪（lux）割合ダメをrescueFd適用後に追加で削る（maxDmg非反映）
 if(luxDmg>0n&&currentBossHP>0n){
-  // luxDmgでHPが0以下になっても撃破扱いにしない（1で止める）
-  currentBossHP=currentBossHP>luxDmg?currentBossHP-luxDmg:1n;
+  if(luxDmg>=currentBossHP){
+    // luxDmgで撃破 → 撃破処理を呼ぶ
+    currentBossHP=0n;
+    comboHit=0;
+    if(isKousa){onKousaDefeat(logH);return;}
+    else if(player.isCleared){handleBossDefeat();}
+    else if((player.inventory[701]||0)>0){
+      player.killCount++;player.isCleared=true;enemyDisasterStarUsed=false;
+      player.hasCompressionCore=true;isModalOpen=true;
+      document.getElementById("clear-modal-title").innerText="神話の終焉";
+      document.getElementById("clear-modal-msg").innerHTML=`終末神アポカリス＝ティアは、あなたの放った一撃の前に霧散した。<br><br>しかし、その瞬間に所持していた<span style="color:var(--gold);font-weight:bold;">『パンドラの箱』</span>が激しく震え、蓋が跳ね上がる。<br><br>中から溢れ出したのは希望ではなく、底知れぬ混沌。<span style="color:#f44;font-weight:bold;">「溢れし災厄」</span>が今、世界を再び塗り潰そうとしている。<br><br><hr style="border:0;border-top:1px solid #444;margin:15px 0"><span style="color:var(--growth);">ここからはエンドレスモードです。遊んでくれてありがとうございます！</span>`;
+      document.getElementById("clear-modal").style.display="flex";
+    }else{currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;}
+  }else{
+    currentBossHP-=luxDmg;
+  }
 }
 }
 } // end !shieldBlocked
