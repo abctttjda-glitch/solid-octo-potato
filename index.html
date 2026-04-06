@@ -700,7 +700,9 @@ const mainHPBig=BigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
 // メインボスHPを別途保存（ジェネシスコード・虹災終了後の復元に使用）
 player.mainBossMaxHP=mainHPBig.toString();
 const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
-currentBossHP=mainHPBig*BigInt(Math.round(mul))/100n;
+// さらに±20%のばらつきを追加（同一ボス連続出現時もHP変化）
+const kousaHpRand=0.80+Math.random()*0.40;
+currentBossHP=mainHPBig*BigInt(Math.round(mul*kousaHpRand))/100n;
 // 虹災HPキャップ：実ATKベースで計算（maxDmgがBIG_CAPキャップ済みの場合も安全に）
 const _rawRef=lastDmg>0n?lastDmg:(player.maxDmg>0n&&player.maxDmg<BIG_CAP?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})());
 // ×5000000でBIG_CAPを超えないようBIG_CAP/5000001nを上限にクランプ
@@ -1455,7 +1457,9 @@ player.killCount++;enemyDisasterStarUsed=false;
 const _rawDmg=lastDmg>0n?lastDmg:(player.maxDmg>0n&&player.maxDmg<BIG_CAP?player.maxDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
 // ×100000でBIG_CAPを超えないようクランプ
 const _refDmg=_rawDmg>BIG_CAP/100001n?BIG_CAP/100001n:_rawDmg;
-let newHPBig=_refDmg*100000n;
+// ±15%の乱数ばらつき（85%〜115%）
+const _hpRandPct=BigInt(Math.round((85+Math.random()*30)*1000));
+let newHPBig=_refDmg*100000n*_hpRandPct/100000n;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
 if(newHPBig>BIG_CAP)newHPBig=BIG_CAP;
 player.bossMaxHP=newHPBig.toString();
