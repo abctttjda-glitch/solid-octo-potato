@@ -1257,22 +1257,27 @@ if(fd>player.maxDmg)player.maxDmg=fd;
 lastDmg=fd;
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
+// 救済の役割：「与ダメ保証」= ボスHPに対して最低限削れる量を保証する
 // 救済ダメージはmaxDmg・lastDmg・ボスHP決定の基準値には含まない
-// 虹災時はbossMaxHPが虹災用に膨らんでいるため、救済の閾値・計算にはメインボスHP基準を使う
+// 絶対に一撃撃破しない（currentBossHP-1を上限とする）
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
-// 救済の基準HP：メイン戦はbossMaxHP、虹災時はmainBossMaxHP（存在すれば）を使用
-const _rescueBaseHP=isKousa&&player.mainBossMaxHP
-  ?BigInt(player.mainBossMaxHP)
-  :bossMaxHP;
-const thr=_rescueBaseHP/10000n;
+// 救済閾値：ボスHPの0.01%未満なら発動
+const thr=currentBossHP/10000n;
 if(fd<thr){
-const smBig=BigInt(Math.round(Math.min(30,Math.log10(player.killCount+1)+1)*100000));
-// 救済実効値も同じ基準HPで計算し、虹災ボスHPを上限にクランプ
-rescueFd=_rescueBaseHP*2n/10000n*smBig/100000n;
-if(rescueFd>currentBossHP)rescueFd=currentBossHP; // ボスHPを超えないよう制限（一撃撃破防止）
+// 救済保証ダメージ：ATK（遺物込み）× (1 + log10(討伐数+1)) 上限ボスHP×0.02%
+// ボスHPに依存しないATKベース計算で、スケール無限大を防ぐ
+const killBonus=BigInt(Math.round(Math.min(10,1+Math.log10(player.killCount+1))*100000));
+const atkBasedRescue=RAW_ATK_BASE*killBonus/100000n;
+// 上限：ボスHP×0.02%（一撃撃破防止の絶対キャップ）
+const rescueCap=currentBossHP*2n/10000n;
+rescueFd=atkBasedRescue>rescueCap?rescueCap:atkBasedRescue;
+// 下限：元のfd（救済が元ダメより下回らない）
 if(rescueFd<fd)rescueFd=fd;
+// 絶対に一撃撃破しない：currentBossHP-1を超えない
+const oneHitPrev=currentBossHP>1n?currentBossHP-1n:1n;
+if(rescueFd>=currentBossHP)rescueFd=oneHitPrev;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
 }
