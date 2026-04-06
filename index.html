@@ -1214,6 +1214,8 @@ const RAW_ATK_BASE=tb.atk>0n?tb.atk:1n;
 const RAW_ATK_CAP=RAW_ATK_BASE*100n; // 通常ダメージの絶対上限
 
 // ===== 全乗算ボーナスをtotalMult1つに集約 → 最後に1回だけ適用 =====
+// isOvermatched: 格下判定フラグ（ブロック外でも参照するためブロック前に宣言）
+let isOvermatched=false;
 {
 let totalMult=1.0;
 
@@ -1254,7 +1256,7 @@ if((player.inventory[601]||0)>0){const hpCapped=tb.hp>1000000000000000n?10000000
 // 敵HPが与ダメ（fd）の100倍以上 = 格下状態 → キャップ適用
 // 敵HPが与ダメの100倍未満   = 格上・拮抗状態 → キャップなし（スキル自由発動）
 // ただし格上戦（キャップなし）のダメージはmaxDmg・lastDmgに記録しない
-const isOvermatched=currentBossHP>=fd*100n; // 格下判定（キャップ適用条件）
+isOvermatched=currentBossHP>=fd*100n; // 格下判定（キャップ適用条件）
 if(isOvermatched&&fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
