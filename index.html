@@ -1159,8 +1159,8 @@ else if(player.hasWorldOrder&&!player.hasCrown&&(player.inventory[117]||0)>=2000
 else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&player.hadoExpAccum>=30000000)openCosmicModal("meta");
 }
 
-// 星の記憶（メイン戦のみ・確定発動・100個必要・同一ボス1回）
-if(!isKousa&&!enemyDisasterStarUsed&&(player.inventory[803]||0)>0&&(player.inventory[311]||0)>=100&&bossMaxHP>(player.baseAtk+bonus.atk))activateDisasterStar(bonus);
+// 星の記憶（メイン戦のみ・確定発動・100個必要）
+if(!isKousa&&(player.inventory[803]||0)>0&&(player.inventory[311]||0)>=100&&bossMaxHP>(player.baseAtk+bonus.atk))activateDisasterStar(bonus);
 
 // ダメージ計算：全てBigInt演算でNumber()オーバーフロー回避
 // bonus.mult と skillM をスケール整数化してBigInt乗算
@@ -1250,9 +1250,10 @@ if((player.inventory[504]||0)>0&&Math.random()<0.01){fd+=tb.atk;tags+=`<span sty
 // ★6 還元 HP比例微加算（微量なのでキャップ無視）
 if((player.inventory[601]||0)>0){const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;}
 
-// ===== ATK×100倍 ハードキャップ（全スキル込みの最終絶対制限） =====
-// luxDmgは別枠（ボスHP直接削り）のため対象外
-if(fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
+// ===== ATK×100倍 ハードキャップ =====
+// 敵HPが与ダメ（fd）の100倍以上 = プレイヤーが格下の状態のときのみ適用
+// 敵HPが与ダメの100倍未満 = 十分戦えている状態なのでキャップなし
+if(currentBossHP>=fd*100n&&fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
 if(fd<1n)fd=1n;if(fd>BIG_CAP)fd=BIG_CAP;
@@ -1262,24 +1263,26 @@ if(fd>player.maxDmg)player.maxDmg=fd;
 lastDmg=fd;
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
-// 役割：「与ダメ最低保証」のみ。討伐数強化なし。一撃撃破は絶対にしない。
+// 役割：「与ダメ最低保証」のみ。一撃撃破は絶対にしない。
 // rescueFdはボスHPを削る実効値。maxDmg・lastDmg・次ボスHP決定には影響しない。
-// ※ luxDmgはこの時点でまだcurrentBossHPに適用していない（下のボスHP処理で適用）
+// ※ luxDmgはこの時点でまだcurrentBossHPに適用していない
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
-// 発動閾値：現在ボスHP（luxDmg未適用）の0.01%未満なら救済
-const thr=currentBossHP/10000n;
+// 発動閾値：fdがボスHPの1%未満 → 救済発動
+// （ATK×100キャップとボスHP差が大きい段階でも確実に発動するよう1%に設定）
+const thr=currentBossHP/100n;
 if(fd<thr){
-// 保証ダメージ = ATK（遺物込み、スキル乗算前）× 3 のみ
-// ボスHP・討伐数には一切依存しない純粋ATKベース
+// 保証ダメージ = ATK（遺物込み、スキル乗算前）× 3
+// ボスHP・討伐数に一切依存しない純粋ATKベース
 const atkRescue=RAW_ATK_BASE*3n;
-// 上限：currentBossHP（luxDmg未適用）の0.5%。一撃撃破を防ぐため必ず未満にする
-const rescueCap=currentBossHP/200n; // 0.5%
+// 上限：ボスHPの0.5%。一撃撃破防止。
+const rescueCap=currentBossHP/200n;
+// atkRescueとrescueCapの小さい方を採用
 rescueFd=atkRescue<rescueCap?atkRescue:rescueCap;
 // 下限：元のfd
 if(rescueFd<fd)rescueFd=fd;
-// 絶対一撃撃破防止（luxDmg未適用のcurrentBossHPの50%を超えない）
+// 最終安全弁：絶対にボスHPの50%を超えない
 const safeMax=currentBossHP/2n;
 if(rescueFd>safeMax)rescueFd=safeMax;
 if(rescueFd<1n)rescueFd=1n;
@@ -1402,7 +1405,7 @@ if(curHP>mitig){
 player.deathCount+=exp;logH+=`<div><span style="color:#28a745;font-weight:bold;">敵の反撃！${fmtV(mitig)} ダメージ。障壁展開！</span></div>`+getGuaranteedDrop();
 }else{
 let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
-let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,Number(player.deathCount||100))+1+player.totalLevel+(Math.min(50000,player.inventory[402]||0)*5)));
+let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,player.totalLevel*100)+1+player.totalLevel+(Math.min(50000,player.inventory[402]||0)*5)));
 player.baseHP+=upHP;player.deathCount+=exp;
 logH+=`<div><span style="color:#dc3545;">敵の反撃！${fmtV(mitig)} ダメージ。</span><span style="color:#07f;font-weight:bold;">再起の誓いによって新たなる力を得た</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}<span style="color:var(--growth);font-weight:bold;">(基礎HP+${fmtV(upHP)})</span></div>`;
 }
@@ -1426,7 +1429,7 @@ if(curHP>mitig){
 logH+=`<div><span style="color:${kousaBossData.colorVar};font-weight:bold;">${kousaBossData.name}の反撃！${fmtV(mitig)} ダメージ。障壁展開！</span></div>`+getGuaranteedDrop();
 }else{
 let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
-let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,Number(player.deathCount||100))+1+player.totalLevel+((player.inventory[402]||0)*5)));
+let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,player.totalLevel*100)+1+player.totalLevel+(Math.min(50000,player.inventory[402]||0)*5)));
 player.baseHP+=upHP;
 logH+=`<div><span style="color:${kousaBossData.colorVar};font-weight:bold;">${kousaBossData.name}の反撃！${fmtV(mitig)} ダメージ。</span><span style="color:#07f;font-weight:bold;">再起の誓いによって新たなる力を得た</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}<span style="color:var(--growth);font-weight:bold;">(基礎HP+${fmtV(upHP)})</span></div>`;
 }
@@ -1562,6 +1565,10 @@ if(ht){hb.style.display="block";document.getElementById("hado-status-text").text
 
 const tid=document.querySelector(".tab.active").id;
 if(tid==="vow")renderVow();else if(tid==="relic")renderRelics();else if(tid==="status")renderStatus();
+// コンプリート数は常時更新（タブ問わず）
+const _bForComp=b;
+document.getElementById("st-comp-count").textContent=_bForComp.compCount;
+document.getElementById("st-comp-bonus").textContent="x"+_bForComp.compBonus.toFixed(2);
 }
 
 function renderVow(){
