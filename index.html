@@ -1257,27 +1257,27 @@ if(fd>player.maxDmg)player.maxDmg=fd;
 lastDmg=fd;
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
-// 救済の役割：「与ダメ保証」= ボスHPに対して最低限削れる量を保証する
-// 救済ダメージはmaxDmg・lastDmg・ボスHP決定の基準値には含まない
-// 絶対に一撃撃破しない（currentBossHP-1を上限とする）
+// 役割：「与ダメ最低保証」のみ。討伐数強化なし。一撃撃破は絶対にしない。
+// rescueFdはボスHPを削る実効値。maxDmg・lastDmg・次ボスHP決定には影響しない。
+// ※ luxDmgはこの時点でまだcurrentBossHPに適用していない（下のボスHP処理で適用）
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
-// 救済閾値：ボスHPの0.01%未満なら発動
+// 発動閾値：現在ボスHP（luxDmg未適用）の0.01%未満なら救済
 const thr=currentBossHP/10000n;
 if(fd<thr){
-// 救済保証ダメージ：ATK（遺物込み）× (1 + log10(討伐数+1)) 上限ボスHP×0.02%
-// ボスHPに依存しないATKベース計算で、スケール無限大を防ぐ
-const killBonus=BigInt(Math.round(Math.min(10,1+Math.log10(player.killCount+1))*100000));
-const atkBasedRescue=RAW_ATK_BASE*killBonus/100000n;
-// 上限：ボスHP×0.02%（一撃撃破防止の絶対キャップ）
-const rescueCap=currentBossHP*2n/10000n;
-rescueFd=atkBasedRescue>rescueCap?rescueCap:atkBasedRescue;
-// 下限：元のfd（救済が元ダメより下回らない）
+// 保証ダメージ = ATK（遺物込み、スキル乗算前）× 3 のみ
+// ボスHP・討伐数には一切依存しない純粋ATKベース
+const atkRescue=RAW_ATK_BASE*3n;
+// 上限：currentBossHP（luxDmg未適用）の0.5%。一撃撃破を防ぐため必ず未満にする
+const rescueCap=currentBossHP/200n; // 0.5%
+rescueFd=atkRescue<rescueCap?atkRescue:rescueCap;
+// 下限：元のfd
 if(rescueFd<fd)rescueFd=fd;
-// 絶対に一撃撃破しない：currentBossHP-1を超えない
-const oneHitPrev=currentBossHP>1n?currentBossHP-1n:1n;
-if(rescueFd>=currentBossHP)rescueFd=oneHitPrev;
+// 絶対一撃撃破防止（luxDmg未適用のcurrentBossHPの50%を超えない）
+const safeMax=currentBossHP/2n;
+if(rescueFd>safeMax)rescueFd=safeMax;
+if(rescueFd<1n)rescueFd=1n;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
 }
@@ -1334,10 +1334,8 @@ logH+=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【オメ�
 
 // === ボスHP処理（シールド中はスキップ）===
 if(!shieldBlocked){
-// 天輪割合ダメをボスHPに直接適用（maxDmg計上外）
-if(luxDmg>0n&&currentBossHP>0n){
-  currentBossHP=currentBossHP>luxDmg?currentBossHP-luxDmg:0n;
-}
+// 撃破判定：luxDmg適用前のcurrentBossHPに対してrescueFdで判定
+// （luxDmgは非スキルの割合削りなので撃破の主因にしない）
 if(rescueFd>=currentBossHP){
 comboHit=0;
 if(isKousa){
@@ -1359,6 +1357,11 @@ if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
 }else{
 currentBossHP-=rescueFd;
 if(!isKousa&&currentBossHP<1n&&!player.isCleared){comboHit=0;currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;logH+=`<div><span style="color:#f00;font-weight:bold;">終末の回帰……！時が巻き戻る！！</span></div>`;}
+// 天輪（lux）割合ダメをrescueFd適用後に追加で削る（撃破の主因にしない）
+if(luxDmg>0n&&currentBossHP>0n){
+  // luxDmgでHPが0以下になっても撃破扱いにしない（1で止める）
+  currentBossHP=currentBossHP>luxDmg?currentBossHP-luxDmg:1n;
+}
 }
 } // end !shieldBlocked
 
