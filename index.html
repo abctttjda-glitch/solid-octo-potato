@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.33</title>
+<title>RELICORE - v1.31</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899)}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -250,7 +250,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 </div>
 <div id="status" class="tab">
 <div class="rank-display" id="st-rank-area"><div class="rank-lv" id="st-rank-lv">Lv.1</div><div class="rank-title" id="st-rank-title">初心者</div></div>
-<div class="st-box" id="st-lv100bonus" style="border-left-color:var(--gold);display:none;"></div><div class="st-box">総攻撃数: <span id="st-totalclicks">0</span><br>戦闘経験値: <span id="v-death">0</span><br>累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold;color:var(--relic-purple);">0</span><br>最高ダメージ: <span id="st-maxdmg">0</span><br>最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold;color:var(--primary);">x1.00</span><br>獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>コンプリート数: <span id="st-comp-count" style="font-weight:bold;color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold;color:var(--growth);">x1.00</span>)<br>溢れし討伐数: <span id="st-kill-count" style="font-weight:bold;color:var(--gold);">0</span><br>虹災討伐数: <span id="st-kousa-kill" style="font-weight:bold;color:var(--nox);">0</span></div>
+<div class="st-box" id="st-lv100bonus" style="border-left-color:var(--gold);display:none;"></div><div class="st-box">総攻撃数: <span id="st-totalclicks">0</span><br>戦闘経験値: <span id="v-death">0</span><br>累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold;color:var(--relic-purple);">0</span><br>最高ダメージ: <span id="st-maxdmg">0</span> <button onclick="resetMaxDmg()" style="font-size:.7em;padding:2px 8px;background:#dc3545;color:#fff;border:none;border-radius:8px;cursor:pointer;vertical-align:middle;">リセット</button><br>最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold;color:var(--primary);">x1.00</span><br>獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>コンプリート数: <span id="st-comp-count" style="font-weight:bold;color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold;color:var(--growth);">x1.00</span>)<br>溢れし討伐数: <span id="st-kill-count" style="font-weight:bold;color:var(--gold);">0</span><br>虹災討伐数: <span id="st-kousa-kill" style="font-weight:bold;color:var(--nox);">0</span></div>
 <div id="hado-box" class="st-box" style="display:none;border:none;border-left:4px solid gold;"><span id="hado-status-text" style="color:gold;font-weight:bold;"></span><br><span id="hado-status-desc"></span></div>
 <div class="st-box"><div class="st-title-flex"><span>遺物出現率</span><span id="st-collection" style="color:#666;font-size:.9em;">0/72</span></div><table style="width:100%;font-size:.9em;margin-top:5px;" id="prob-list"></table></div>
 <button class="btn-serial" onclick="openSerialModal()">シリアルコード入力</button>
@@ -258,7 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.33</div>
+<div class="ver-footer">RELICORE v1.31</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -447,7 +447,7 @@ omegaAtkBig:player.omegaAtkBig||"0",omegaHpBig:player.omegaHpBig||"0",
 erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
 compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
-gameVersion:"1.33"};
+gameVersion:"1.31"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -466,17 +466,6 @@ if(!p.gameVersion||p.gameVersion<"1.31"){
   player.compressedAtkBig="0";player.compressedHpBig="0";
   player.compressedAtk=0;player.compressedHp=0;
   player.omegaAtkBig="0";player.omegaHpBig="0";
-}
-// v1.32未満のセーブ: 乗算バグ修正に伴いmaxDmgとbossMaxHPをリセット
-if(!p.gameVersion||p.gameVersion<"1.32"){
-  player.maxDmg=0n;lastDmg=0n;
-  // bossMaxHPをBASEに戻す（amf時代のlastDmg×100000=BIG_CAPが保存されている可能性）
-  player.bossMaxHP=BOSS_MAX_HP_BASE.toString();
-  currentBossHP=BOSS_MAX_HP_BASE;
-}
-// v1.33未満のセーブ: ダメージキャップ再設計に伴いmaxDmgをリセット（ボスHPは引き継ぎ）
-if(!p.gameVersion||p.gameVersion<"1.33"){
-  player.maxDmg=0n;lastDmg=0n;
 }
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
@@ -1210,13 +1199,18 @@ if(fd>BIG_CAP)fd=BIG_CAP;
 let tags="";
 let luxDmg=0n;
 
+// ===== ダメージキャップ基準値：tb.atk（遺物込み総ATK、スキル乗算前）×100 =====
+// bonus.mult/skillM/804/802等はATKをスケールアップするが、
+// それらを含めた後でもtb.atk×100を超えないよう最終段でクランプする。
+// tb.atkが0の場合は安全のため1として計算。
+const RAW_ATK_BASE=tb.atk>0n?tb.atk:1n;
+const RAW_ATK_CAP=RAW_ATK_BASE*100n; // 通常ダメージの絶対上限
+
 // ===== 全乗算ボーナスをtotalMult1つに集約 → 最後に1回だけ適用 =====
-// 設計方針：乗算スキルは全て加算してから1回だけfdに適用。
-// ATKの100倍をハードキャップとして、最終ダメージが自ATKの100倍を超えないよう制限する。
 {
 let totalMult=1.0;
 
-// ★5 連撃 +0〜+20%（上限を30%→20%に抑制）
+// ★5 連撃 +0〜+20%
 if((player.inventory[501]||0)>0){totalMult+=Math.min(comboHit*0.0005,0.20);tags+=`<span style="color:#d4af37;font-weight:bold;">【連撃】</span>`;}
 // ★5 超越 1%で+50%
 if((player.inventory[503]||0)>0&&Math.random()<0.01){totalMult+=0.5;tags+=`<span style="color:var(--growth);font-weight:bold;">【超越】</span>`;}
@@ -1230,7 +1224,7 @@ if((player.inventory[602]||0)>0){kushiaCounter++;if(kushiaCounter>=100){totalMul
 if((player.inventory[604]||0)>0&&Math.random()<0.01){totalMult+=5.0;tags+=`<span style="color:#fd7e14;font-weight:bold;">【虚無】</span>`;}
 // ★7 福音 HP50%以下で+300%
 if((player.inventory[702]||0)>0&&currentBossHP*2n<=bossMaxHP){totalMult+=3.0;tags+=`<span style="color:#fc0;font-weight:bold;">【福音】</span>`;}
-// 収束核：上限+300%（旧500%→300%に抑制）
+// 収束核：上限+300%
 if(player.hasCompressionCore&&player.compressionPower>0){const cp=Math.min(player.compressionPower,3.0);totalMult+=cp;tags+=`<span style="color:#00ffcc;font-weight:bold;">【収束+${(cp*100).toFixed(0)}%】</span>`;}
 
 // ★9：全ボーナスをtotalMultへ加算
@@ -1239,48 +1233,44 @@ totalMult+=s9.multBonus;
 tags+=s9.tags;
 luxDmg=s9.luxDmg;
 
-// ===== totalMultハードキャップ =====
-// スキル合計倍率を最大×99（最終ダメージがATK×100倍を超えないよう）に制限
-// 基礎ダメージfd≒ATK×(randomFactor)なので、totalMult上限を99に設定
-const TOTAL_MULT_CAP=99.0;
-if(totalMult>TOTAL_MULT_CAP)totalMult=TOTAL_MULT_CAP;
-
 // totalMultを1回のみ適用
-if(fd>BIG_CAP/100001n)fd=BIG_CAP/100001n;
-const totalMultBig=BigInt(Math.round(totalMult*100000));
-fd=fd*(totalMultBig>0n?totalMultBig:100000n)/100000n;
-if(fd>BIG_CAP)fd=BIG_CAP;
-
-// ===== ATK×100倍 ハードキャップ（最終安全弁） =====
-// luxDmgは別枠のため対象外。通常ダメージのみ制限する。
-const dmgHardCap=atvBig*100n;
-if(dmgHardCap>0n&&fd>dmgHardCap)fd=dmgHardCap;
+const totalMultBig=BigInt(Math.round(Math.max(1,totalMult)*100000));
+fd=fd*totalMultBig/100000n;
 
 // 真の加算系（乗算後に適用）
-// ★5 破壊 1%でATK加算（加算後もキャップ適用）
-if((player.inventory[504]||0)>0&&Math.random()<0.01){
-  const breakAdd=atvBig;
-  fd+=breakAdd;
-  tags+=`<span style="color:#f00;font-weight:bold;">【破壊】</span>`;
-  if(dmgHardCap>0n&&fd>dmgHardCap)fd=dmgHardCap;
-}
-// ★6 還元 HP比例微加算
+// ★5 破壊 1%でATK加算
+if((player.inventory[504]||0)>0&&Math.random()<0.01){fd+=tb.atk;tags+=`<span style="color:#f00;font-weight:bold;">【破壊】</span>`;}
+// ★6 還元 HP比例微加算（微量なのでキャップ無視）
 if((player.inventory[601]||0)>0){const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;}
+
+// ===== ATK×100倍 ハードキャップ（全スキル込みの最終絶対制限） =====
+// luxDmgは別枠（ボスHP直接削り）のため対象外
+if(fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
-// 救済：スキル適用後もダメージが閾値未満なら発動（最後のフォールバック）
-if(!isKousa&&(player.inventory[999]||0)>0){
+if(fd<1n)fd=1n;if(fd>BIG_CAP)fd=BIG_CAP;
+
+// ===== maxDmg・lastDmg更新（救済前・スキル込みの実ダメージで記録） =====
+if(fd>player.maxDmg)player.maxDmg=fd;
+lastDmg=fd;
+
+// ===== 救済判定（メイン・虹災両方に適用） =====
+// 救済ダメージはmaxDmg・lastDmg・ボスHP決定の基準値には含まない
+// ボスHPを削るための実効値のみに使用する
+let rescueFd=fd;
+let isRescue=false;
+if((player.inventory[999]||0)>0){
 const thr=bossMaxHP/10000n;
 if(fd<thr){
 const smBig=BigInt(Math.round(Math.min(30,Math.log10(player.killCount+1)+1)*100000));
-fd=bossMaxHP*2n/10000n*smBig/100000n;
+rescueFd=bossMaxHP*2n/10000n*smBig/100000n;
+if(rescueFd<fd)rescueFd=fd;
 tags=`<span class="c-order">【救済】</span>`+tags;
+isRescue=true;
 }
 }
 
-if(fd<1n)fd=1n;if(fd>BIG_CAP)fd=BIG_CAP; // BIG_CAP超えを確実にクランプ
-if(fd>player.maxDmg)player.maxDmg=fd;
-lastDmg=fd; // 現在の与ダメを記録
+// maxDmg・lastDmgはすでに救済判定より前に更新済み
 
 // === Geminiシールド処理 ===
 let shieldBlocked=false;
@@ -1310,7 +1300,7 @@ if(shieldBlocked){
     const _shuffled=_allTagsArr.slice().sort(()=>Math.random()-.5);
     _dispTags=_shuffled.slice(0,5).join('')+`<span style="color:#888;font-size:.82em;">（他${_allTagsArr.length-5}スキル発動）</span>`;
   }
-  logH=`<div>${_dispTags}<span style="color:#07f;font-weight:bold;">攻撃！${fmtV(fd)} ダメージ！</span></div>`+_dropResult.log;
+  logH=`<div>${_dispTags}<span style="color:#07f;font-weight:bold;">攻撃！${fmtV(isRescue?rescueFd:fd)} ダメージ！</span>${isRescue?`<span style="font-size:.8em;color:#aaa;">（実効値：救済込み）</span>`:""}</div>`+_dropResult.log;
 }
 
 // オメガコア：獲得遺物のATK/HPを蓄積（メイン・虹災共通）
@@ -1335,7 +1325,7 @@ if(!shieldBlocked){
 if(luxDmg>0n&&currentBossHP>0n){
   currentBossHP=currentBossHP>luxDmg?currentBossHP-luxDmg:0n;
 }
-if(fd>=currentBossHP){
+if(rescueFd>=currentBossHP){
 comboHit=0;
 if(isKousa){
 // 虹災ボス撃破
@@ -1354,7 +1344,7 @@ if((player.inventory[701]||0)>0&&fd>=bossMaxHP){
 }else{handleBossDefeat();}
 }
 }else{
-currentBossHP-=fd;
+currentBossHP-=rescueFd;
 if(!isKousa&&currentBossHP<1n&&!player.isCleared){comboHit=0;currentBossHP=bossMaxHP;enemyDisasterStarUsed=false;logH+=`<div><span style="color:#f00;font-weight:bold;">終末の回帰……！時が巻き戻る！！</span></div>`;}
 }
 } // end !shieldBlocked
@@ -1700,6 +1690,10 @@ function addLog(html){const l=document.getElementById("log");const d=document.cr
 function updateLog(msg){addLog(`<div>${msg}</div>`);}
 function resetData(){if(confirm("全リセットしますか？")){localStorage.clear();location.reload();}}
 
+
+function resetMaxDmg(){if(confirm("最高ダメージをリセットしますか？\n（ボスHPはリセットされません）")){
+  player.maxDmg=0n;lastDmg=0n;
+  saveGame();triggerUIUpdate();}}
 
 loadGame();triggerUIUpdate();
 </script>
