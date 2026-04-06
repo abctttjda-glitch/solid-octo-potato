@@ -1258,14 +1258,20 @@ lastDmg=fd;
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
 // 救済ダメージはmaxDmg・lastDmg・ボスHP決定の基準値には含まない
-// ボスHPを削るための実効値のみに使用する
+// 虹災時はbossMaxHPが虹災用に膨らんでいるため、救済の閾値・計算にはメインボスHP基準を使う
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
-const thr=bossMaxHP/10000n;
+// 救済の基準HP：メイン戦はbossMaxHP、虹災時はmainBossMaxHP（存在すれば）を使用
+const _rescueBaseHP=isKousa&&player.mainBossMaxHP
+  ?BigInt(player.mainBossMaxHP)
+  :bossMaxHP;
+const thr=_rescueBaseHP/10000n;
 if(fd<thr){
 const smBig=BigInt(Math.round(Math.min(30,Math.log10(player.killCount+1)+1)*100000));
-rescueFd=bossMaxHP*2n/10000n*smBig/100000n;
+// 救済実効値も同じ基準HPで計算し、虹災ボスHPを上限にクランプ
+rescueFd=_rescueBaseHP*2n/10000n*smBig/100000n;
+if(rescueFd>currentBossHP)rescueFd=currentBossHP; // ボスHPを超えないよう制限（一撃撃破防止）
 if(rescueFd<fd)rescueFd=fd;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
