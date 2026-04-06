@@ -188,6 +188,21 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div id="clear-modal" class="modal-overlay"><div class="modal-content"><h3 id="clear-modal-title" style="color:var(--gold);font-size:1.6em;letter-spacing:3px;">神話の終焉</h3><div id="clear-modal-msg" class="clear-main-msg"></div><button class="story-btn" onclick="closeClearModal()">災厄に立ち向かう</button></div></div>
 <div id="order-awaken-modal" class="modal-overlay"><div class="order-content"><div class="rank-up-title" style="color:#fff;">秩序の覚醒</div><div class="clear-main-msg" style="text-align:center;">混沌を制し、神を討ちし者へ。世界を再構築する理が、今あなたの魂に刻まれた。<br><br><span class="unique-relic-text" style="font-size:1.4em;">秩序のリバランス</span><br><br><span style="color:#aaa;font-size:.85em;">「すべてを平らにならし、あるべき姿へ」</span></div><button class="story-btn" style="border-color:#fff;color:#fff;" onclick="closeOrderAwakenModal()">理を受け入れる</button></div></div>
 
+<!-- 宝玉解放モーダル -->
+<div id="gem-unlock-modal" class="modal-overlay" style="z-index:58000;">
+<div class="hado-content" style="border-color:#22d3ee;max-width:460px;">
+<div class="hado-title" style="color:#22d3ee;font-size:1.5em;letter-spacing:3px;">✦ 宝玉の目覚め ✦</div>
+<div class="hado-msg" style="text-align:center;">
+<span style="color:#fff;font-size:1.05em;">72種の遺物をすべて蒐集した——<br>その果てに、新たな輝きが生まれた。</span><br><br>
+<span style="color:#22d3ee;font-weight:bold;font-size:1.1em;">累積宝玉（★6）</span><br>
+<span style="color:#c084fc;font-weight:bold;font-size:1.1em;">原初宝玉（★7）</span><br>
+<span style="color:#ffd700;font-weight:bold;font-size:1.1em;">神格宝玉（★8）</span><br><br>
+<span style="color:#aaa;font-size:.9em;">これらは高レアリティ遺物のドロップに紐付いて出現する。<br>収集数に応じてATK・HPを永続強化する。上限はない。</span>
+</div>
+<button class="story-btn" style="border-color:#22d3ee;color:#22d3ee;" onclick="closeGemUnlockModal()">蒐集を続ける</button>
+</div>
+</div>
+
 <!-- ★9遺物ドロップモーダル -->
 
 <div id="kousa-relic-modal" class="modal-overlay" onclick="closeKousaRelicModal()">
@@ -250,8 +265,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 </div>
 <div id="status" class="tab">
 <div class="rank-display" id="st-rank-area"><div class="rank-lv" id="st-rank-lv">Lv.1</div><div class="rank-title" id="st-rank-title">初心者</div></div>
-<div class="st-box" id="st-lv100bonus" style="border-left-color:var(--gold);display:none;"></div><div class="st-box">総攻撃数: <span id="st-totalclicks">0</span><br>戦闘経験値: <span id="v-death">0</span><br>累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold;color:var(--relic-purple);">0</span><br>最高ダメージ: <span id="st-maxdmg">0</span> <button onclick="resetMaxDmg()" style="font-size:.7em;padding:2px 8px;background:#dc3545;color:#fff;border:none;border-radius:8px;cursor:pointer;vertical-align:middle;">リセット</button><br>最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold;color:var(--primary);">x1.00</span><br>獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>コンプリート数: <span id="st-comp-count" style="font-weight:bold;color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold;color:var(--growth);">x1.00</span>)<br>溢れし討伐数: <span id="st-kill-count" style="font-weight:bold;color:var(--gold);">0</span><br>虹災討伐数: <span id="st-kousa-kill" style="font-weight:bold;color:var(--nox);">0</span></div>
+<div class="st-box" id="st-lv100bonus" style="border-left-color:var(--gold);display:none;"></div><div class="st-box">総攻撃数: <span id="st-totalclicks">0</span><br>戦闘経験値: <span id="v-death">0</span><br>累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold;color:var(--relic-purple);">0</span><br>最高ダメージ: <span id="st-maxdmg">0</span> <button onclick="resetMaxDmg()" style="font-size:.7em;padding:2px 8px;background:#dc3545;color:#fff;border:none;border-radius:8px;cursor:pointer;vertical-align:middle;">リセット</button><br>最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold;color:var(--primary);">x1.00</span><br>獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>コンプリート数: <span id="st-comp-count" style="font-weight:bold;color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold;color:var(--growth);">x1.00</span>)<br><span id="kill-count-box" style="display:none;">溢れし討伐数: <span id="st-kill-count" style="font-weight:bold;color:var(--gold);">0</span><br>虹災討伐数: <span id="st-kousa-kill" style="font-weight:bold;color:var(--nox);">0</span></span></div>
 <div id="hado-box" class="st-box" style="display:none;border:none;border-left:4px solid gold;"><span id="hado-status-text" style="color:gold;font-weight:bold;"></span><br><span id="hado-status-desc"></span></div>
+<div class="st-box" id="gem-box" style="display:none;border-left-color:#22d3ee;"><div class="st-title-flex"><span style="color:#22d3ee;font-weight:bold;">✦ 宝玉シリーズ</span></div><div id="gem-status" style="font-size:.85em;line-height:1.8;margin-top:4px;"></div></div>
 <div class="st-box"><div class="st-title-flex"><span>遺物出現率</span><span id="st-collection" style="color:#666;font-size:.9em;">0/72</span></div><table style="width:100%;font-size:.9em;margin-top:5px;" id="prob-list"></table></div>
 <button class="btn-serial" onclick="openSerialModal()">シリアルコード入力</button>
 <button class="btn-reset" onclick="resetData()">全データリセット</button>
@@ -323,7 +339,7 @@ const STAR9=[
 
 const RELIC_MASTER=[
 {id:0,star:999,name:"再起の誓い",atk:0,hp:0,desc:"不屈の魂に刻まれた、再誕の原点。"},
-{id:999,star:999,name:"秩序のリバランス",atk:0,hp:0,desc:"【救済】低ダメージを敵最大HP割合の絶対ダメージに変換。討伐数に応じて威力が上昇。"},
+{id:999,star:999,name:"秩序のリバランス",atk:0,hp:0,desc:"【救済】攻撃のたびに最低でも敵HPの0.2%（1/500）のダメージを保証。500撃以内での撃破を約束する。このダメージは最大ダメージ・次ボスHP計算には反映されない。"},
 {id:101,star:1,name:"剣士の欠片",atk:7.4,hp:0},{id:102,star:1,name:"狩人の欠片",atk:8.1,hp:0},{id:103,star:1,name:"暗殺者の欠片",atk:9.6,hp:0},{id:104,star:1,name:"狂戦士の欠片",atk:10.3,hp:0},{id:105,star:1,name:"武闘家の欠片",atk:6.7,hp:0},{id:106,star:1,name:"衛兵の欠片",atk:0,hp:45.2},{id:107,star:1,name:"騎士の欠片",atk:0,hp:55.9},{id:108,star:1,name:"重装兵の欠片",atk:0,hp:65.4},{id:109,star:1,name:"修道士の欠片",atk:0,hp:40.3},{id:110,star:1,name:"盾持ちの欠片",atk:0,hp:50.8},{id:111,star:1,name:"魔法使いの欠片",atk:4.2,hp:35.7},{id:112,star:1,name:"斥候の欠片",atk:3.9,hp:48.1},{id:113,star:1,name:"冒険者の欠片",atk:5.4,hp:42.6},{id:114,star:1,name:"見習いの欠片",atk:2.1,hp:30.5},{id:115,star:1,name:"放浪者の欠片",atk:4.7,hp:44.2},{id:116,star:1,name:"メモリーダスト",atk:1.3,hp:10.9},
 {id:117,star:2,name:"メモリースターダスト",atk:111,hp:1111},
 {id:311,star:3,name:"メモリークリスタル",atk:111111,hp:1111111,desc:"記憶の力が限界まで詰まった結晶"},
@@ -332,8 +348,11 @@ const RELIC_MASTER=[
 {id:401,star:4,name:"【不退転】武神の魂",atk:65000,hp:180000,desc:"再起スキルの不退転の力を強化する。"},{id:402,star:4,name:"【刹那】聖者の遺志",atk:50000,hp:250000,desc:"HP増加時の増加幅を+5。"},{id:403,star:4,name:"【因果】魔導王の記憶",atk:75000,hp:150000,desc:"攻撃無効化率の下限を底上げ。(上限10%)"},{id:404,star:4,name:"【反撃】勇者の残光",atk:90000,hp:120000,desc:"反撃の狼煙で★3遺物も獲得。"},{id:405,star:4,name:"【魂研】賢者の叡智",atk:55000,hp:220000,desc:"獲得戦闘経験値が向上。"},{id:406,star:4,name:"【死刻】死神の鎌",atk:110000,hp:80000,desc:"最終ダメージ倍率を固定で+0.004%加算する。"},
 {id:501,star:5,name:"連撃の権能",atk:382660,hp:916330,desc:"攻撃回数に応じてダメージが増加する。1HITごとに+0.05%、最大+30%。撃破でリセット。"},{id:502,star:5,name:"強欲の権能",atk:649800,hp:812400,desc:"パッシブ：総遺物数に応じてATK/HPが倍率強化される。"},{id:503,star:5,name:"超越の権能",atk:524180,hp:689450,desc:"1%の確率で、その一撃のダメージを1.5倍にする。"},{id:504,star:5,name:"破壊の権能",atk:999999,hp:0,desc:"1%の確率で、総ATK分のダメージを最終ダメージに直接加算する。"},{id:505,star:5,name:"再生の権能",atk:222222,hp:1528931,desc:"被弾時10%の確率でHP増加(再起)が2回発生。(重複不可)"},{id:506,star:5,name:"双刃の権能",atk:454649,hp:519700,desc:"150回攻撃ごとに次の一撃のダメージ+100%。(重複不可)"},
 {id:601,star:6,name:"絶対統率レリック・オーバーロード",atk:1500000,hp:4500000,desc:"敵HPが自身のATKの100倍以上の時、与ダメージ+80%。【還元】現在のHPに応じてATKが微増。"},{id:602,star:6,name:"魂律解放レリ・クシア",atk:2500000,hp:3500000,desc:"100回攻撃ごとに次の一撃の最終ダメージ+200%。"},{id:603,star:6,name:"原初核冠レリコア・レガリア",atk:2000000,hp:4000000,desc:"★1〜6遺物のステータス上昇効果を50%増加させる。"},{id:604,star:6,name:"虚無終焉レリ・ノヴァ",atk:5555555,hp:0,desc:"攻撃時1%の確率で与ダメージ+500%。"},{id:605,star:6,name:"戦碑累功レリ・エンス",atk:3000000,hp:3000000,desc:"獲得経験値に討伐数ボーナスを乗算。(溢れ＋虹災合計, 1万討伐で×5, 対数成長)"},
+{id:611,star:6,name:"累積宝玉",atk:0,hp:0,gem:true,gemBase:0.10,desc:"所持数に応じてATK・HPを倍率強化。倍率＝1＋0.10×(所持数^0.6)。収集数上限なし。"},
 {id:701,star:7,name:"パンドラの箱",atk:0,hp:0,desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"},{id:702,star:7,name:"終焉の福音",atk:0,hp:0,desc:"敵HPが50%以下のとき、与ダメージ+400%。(重複不可)"},{id:703,star:7,name:"神滅のアカシックレコード",atk:0,hp:0,desc:"与ダメージの最終倍率にさらに+400%。(重複不可)"},
+{id:711,star:7,name:"原初宝玉",atk:0,hp:0,gem:true,gemBase:0.25,desc:"所持数に応じてATK・HPを倍率強化。倍率＝1＋0.25×(所持数^0.6)。収集数上限なし。"},
 {id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPが自ATKの100倍以上の時、差分比に応じた乗算（最大×8）で火力を補正。Stack蓄積でさらに底上げ。攻撃のたびにbaseATK/HP永続成長（0.001%/回）。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"敵最大HPが自ATKを上回る時、メモリークリスタル100個消費で「星の記憶」確定発動。ATK+10%・HP+50%を永続加算。（同一の敵には1度のみ発動）"},
+{id:811,star:8,name:"神格宝玉",atk:0,hp:0,gem:true,gemBase:0.50,desc:"所持数に応じてATK・HPを倍率強化。倍率＝1＋0.50×(所持数^0.6)。収集数上限なし。"},
 ...STAR9
 ];
 
@@ -350,6 +369,7 @@ omegaAtkBig:"0",omegaHpBig:"0",
 residue:{total:0,edel:0,neria:0,nox:0,lilith:0,valka:0,igna:0,lux:0,magmel:0},
 hasFusionCore:false,
 mainBossMaxHP:null,
+gemUnlocked:false,
 lv100AtkBonus:"0",lv100HpBonus:"0",lv100ExpBonus:0,lv100MilestonesApplied:0
 };
 
@@ -487,6 +507,7 @@ player.autoSpeed=p.autoSpeed||1;
 player.residue=p.residue||{total:0,edel:0,neria:0,nox:0,lilith:0,valka:0,igna:0,lux:0,magmel:0};
 player.hasFusionCore=p.hasFusionCore||false;
 player.mainBossMaxHP=p.mainBossMaxHP||null;
+player.gemUnlocked=p.gemUnlocked||false;
 player.lv100AtkBonus=p.lv100AtkBonus||"0";
 player.lv100HpBonus=p.lv100HpBonus||"0";
 player.lv100ExpBonus=p.lv100ExpBonus||0;
@@ -514,7 +535,7 @@ if(p.currentBossHP){
 }else{currentBossHP=BigInt(player.bossMaxHP);}
 Object.keys(player.inventory).forEach(id=>{
 const r=RELIC_MASTER.find(m=>m.id==id);
-if(r&&(r.star>=6||r.star===9)&&player.inventory[id]>1)player.inventory[id]=1;
+if(r&&(r.star>=6||r.star===9)&&!r.gem&&player.inventory[id]>1)player.inventory[id]=1;
 });
 if(player.isCleared&&!player.rebalanceSeen)showClearStartMsg();
 if(player.isCleared)player.hasCompressionCore=true;
@@ -681,7 +702,19 @@ const oHpC=oHp>BIG_CAP?BIG_CAP:oHp;
 // 合計もクランプ
 let retAtk=atkBig+cAtkBoosted+oAtkC;if(retAtk>BIG_CAP)retAtk=BIG_CAP;
 let retHp=hpBig+cHpBoosted+oHpC;if(retHp>BIG_CAP)retHp=BIG_CAP;
-return{atk:retAtk,hp:retHp,mult,compCount:comp,compBonus:cb};
+// ===== 宝玉シリーズ倍率 =====
+// 倍率 = 1 + base × (所持数 ^ 0.6) の乗算をATK・HP両方に適用
+let gemMult=1.0;
+[{id:611,base:0.10},{id:711,base:0.25},{id:811,base:0.50}].forEach(({id,base})=>{
+const cnt=player.inventory[id]||0;
+if(cnt>0)gemMult*=(1+base*Math.pow(cnt,0.6));
+});
+if(gemMult>1.0){
+const gemBig=BigInt(Math.round(gemMult*100000));
+retAtk=retAtk*gemBig/100000n;if(retAtk>BIG_CAP)retAtk=BIG_CAP;
+retHp=retHp*gemBig/100000n;if(retHp>BIG_CAP)retHp=BIG_CAP;
+}
+return{atk:retAtk,hp:retHp,mult,compCount:comp,compBonus:cb,gemMult};
 }
 function getCurrentDropRates(){if(player.hasDivineGuide)return DIVINE_DD;if(player.hasGreatHado)return GHADO_DD;if(player.hasHado)return HADO_DD;return BASE_DD;}
 
@@ -980,6 +1013,27 @@ return{d:dmg,lux,t};
 function ensureOrderRelic(){if(player.isCleared&&!(player.inventory[999]>0))showOrderAwakenModal();}
 function showOrderAwakenModal(){isModalOpen=true;document.getElementById("order-awaken-modal").style.display="flex";}
 function closeOrderAwakenModal(){player.inventory[999]=1;player.rebalanceSeen=true;document.getElementById("order-awaken-modal").style.display="none";isModalOpen=false;saveGame();triggerUIUpdate();}
+
+// ===== 宝玉解放チェック（72種コンプリート時に1度だけ発動） =====
+const GEM_IDS=[611,711,811];
+// 通常遺物72種（宝玉・特殊を除く）の定義
+function getNormal72(){
+return RELIC_MASTER.filter(m=>!m.gem&&m.star!==999&&m.star!==9&&![0].includes(m.id));
+}
+function checkGemUnlock(){
+if(player.gemUnlocked)return;
+const normal72=getNormal72();
+const allOwned=normal72.every(m=>player.everOwned[m.id]);
+if(allOwned){
+player.gemUnlocked=true;
+// 宝玉を各1個付与
+GEM_IDS.forEach(id=>{player.inventory[id]=(player.inventory[id]||0)+1;player.totalRelics++;player.everOwned[id]=true;});
+saveGame();
+isModalOpen=true;
+document.getElementById("gem-unlock-modal").style.display="flex";
+}
+}
+function closeGemUnlockModal(){document.getElementById("gem-unlock-modal").style.display="none";isModalOpen=false;triggerUIUpdate();}
 function openRankUpModal(lv){
 isModalOpen=true;
 const starHTML=getStarHTML();
@@ -1084,9 +1138,24 @@ if(star===3)cands.push(RELIC_MASTER.find(m=>m.id===311));
 if(!cands.length)cands=RELIC_MASTER.filter(m=>m.star===1);
 sel=cands[Math.floor(Math.random()*cands.length)];
 }
-if(sel.star>=6){if(!(player.inventory[sel.id]>0)){player.inventory[sel.id]=1;player.totalRelics++;sc[sel.star]++;sg[sel.star][sel.id]=1;showR=sel;}}
-else{player.inventory[sel.id]=(player.inventory[sel.id]||0)+1;player.totalRelics++;sc[star]++;sg[star][sel.id]=(sg[star][sel.id]||0)+1;if(sel.star>=4&&player.inventory[sel.id]===1)if(!showR||sel.star>showR.star)showR=sel;}
-player.everOwned[sel.id]=true; // 入手履歴を記録（圧縮で失ってもコンプに影響しない）
+if(sel.star>=6&&!sel.gem){if(!(player.inventory[sel.id]>0)){player.inventory[sel.id]=1;player.totalRelics++;sc[sel.star]++;sg[sel.star][sel.id]=1;showR=sel;}}
+else if(!sel.gem){player.inventory[sel.id]=(player.inventory[sel.id]||0)+1;player.totalRelics++;sc[star]++;sg[star][sel.id]=(sg[star][sel.id]||0)+1;if(sel.star>=4&&player.inventory[sel.id]===1)if(!showR||sel.star>showR.star)showR=sel;}
+player.everOwned[sel.id]=true;
+// ===== 宝玉ドロップ抽選（72種コンプリート後のみ） =====
+// ★6ドロップ時0.5%で累積宝玉、★7で0.3%で原初宝玉、★8で0.1%で神格宝玉
+if(player.gemUnlocked){
+const gemChance=star===8?0.001:star===7?0.003:star===6?0.005:0;
+if(gemChance>0&&Math.random()<gemChance){
+const gemId=star===8?811:star===7?711:611;
+player.inventory[gemId]=(player.inventory[gemId]||0)+1;
+player.totalRelics++;
+const gm=RELIC_MASTER.find(m=>m.id===gemId);
+sc[gm.star]=(sc[gm.star]||0)+1;
+sg[gm.star][gemId]=(sg[gm.star][gemId]||0)+1;
+if(!showR||gm.star>showR.star)showR=gm;
+player.everOwned[gemId]=true;
+}
+}
 // オメガコア用：ドロップ遺物のATK/HPを集計（各種強化倍率を適用）
 if((player.inventory[801]||0)>0&&count>=100&&sel.star<9&&sel.star!==999){
 let da=sel.atk||0,dh=sel.hp||0;
@@ -1099,6 +1168,8 @@ gainedHp+=safeBigInt(dh)*_omegaCbBig*_omegaGmBig/10000n;
 }
 }
 if(showR)openRareModal(showR);
+// 72種コンプリートチェック（未解放時のみ）
+if(!player.gemUnlocked)checkGemUnlock();
 let fe=[];for(let s=1;s<=8;s++){if(!sc[s])continue;if(sc[s]>20)fe.push(`<span class="c${s}">★${s}遺物 合計${sc[s]}個</span>`);else Object.entries(sg[s]).forEach(([id,c])=>{const m=RELIC_MASTER.find(x=>x.id==id);fe.push(`<span class="c${m.star}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`);});}
 return{log:fe.length?`<div style="font-size:.82em;">獲得：${fe.join("、")}</div>`:"",gainedAtk,gainedHp};
 }
@@ -1274,32 +1345,19 @@ lastDmg=fd;
 }
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
-// 役割：「与ダメ最低保証」のみ。一撃撃破は絶対にしない。
-// rescueFdはボスHPを削る実効値。maxDmg・lastDmg・次ボスHP決定には影響しない。
-// ※ luxDmgはこの時点でまだcurrentBossHPに適用していない
+// 役割：「与ダメ最低保証」= どんな状況でも必ずボスHP×0.2%は削れる攻撃回数保証
+// rescueFdはボスHPを削る実効値のみ。maxDmg・lastDmg・次ボスHP決定には一切影響しない。
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
-// 発動閾値：fdがボスHPの1%未満 → 救済発動
-// （ATK×100キャップとボスHP差が大きい段階でも確実に発動するよう1%に設定）
-const thr=currentBossHP/100n;
-if(fd<thr){
-// 保証ダメージ = ATK（遺物込み、スキル乗算前）× 3
-// ボスHP・討伐数に一切依存しない純粋ATKベース
-const atkRescue=RAW_ATK_BASE*3n;
-// 上限：ボスHPの0.5%。一撃撃破防止。
-const rescueCap=currentBossHP/200n;
-// atkRescueとrescueCapの小さい方を採用
-rescueFd=atkRescue<rescueCap?atkRescue:rescueCap;
-// 下限：元のfd
-if(rescueFd<fd)rescueFd=fd;
-// 最終安全弁：絶対にボスHPの50%を超えない
-const safeMax=currentBossHP/2n;
-if(rescueFd>safeMax)rescueFd=safeMax;
-if(rescueFd<1n)rescueFd=1n;
+// 保証ダメージ = 現在ボスHPの0.2%（500撃で必ず倒せる水準）
+const guaranteedDmg=currentBossHP/500n>0n?currentBossHP/500n:1n;
+if(fd<guaranteedDmg){
+rescueFd=guaranteedDmg;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
 }
+// fdが保証値以上でも救済フラグは立てない（表示のみ変わる）
 }
 
 // maxDmg・lastDmgはすでに救済判定より前に更新済み
@@ -1599,7 +1657,8 @@ const total=Math.floor((Number(player.totalClicks)+player.totalLevel+km*100000+p
 return`<span class="vow-tag">経験値：+${rlv+km*100000}</span><span class="vow-tag">【賢者：+${km*100000}】</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${(player.attackExpBonus||0).toLocaleString()}】</span><span class="vow-tag" style="color:#00d4ff;">【核Lv×100：+${nbBonus}/回】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span><span class="vow-tag" style="color:#f97316;">【レリ・エンス×${ens.toFixed(2)}】</span>`;
 })()},
 {name:"死を刻む",capLv10:false,desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004;const lvB=Math.log10((player.totalLevel||1)+1)*0.01;const total=calcFinalDmgMult()*_vowBonus.mult;return`<span class="vow-tag">最終ダメ倍率：x${total.toFixed(4)}</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
-,{name:"共鳴＝災核融合",capLv10:false,fusion:true,desc:"溢れし災厄の討伐により解放。各災厄の残滓を蓄積・融合し、★1〜6遺物とオメガコアに圧倒的補正を付与する。",
+// 共鳴＝災核融合はクリア後のみ表示
+,...(player.isCleared?[{name:"共鳴＝災核融合",capLv10:false,fusion:true,desc:"溢れし災厄の討伐により解放。各災厄の残滓を蓄積・融合し、★1〜6遺物とオメガコアに圧倒的補正を付与する。",
 hl:(()=>{
 if(!player.hasFusionCore)return`<span class="vow-tag" style="color:#888;">【溢れし災厄を初討伐で解放】</span>`;
 const r=player.residue;
@@ -1617,6 +1676,7 @@ const labels=[
 return`<span class="vow-tag" style="color:#ff9500;font-weight:bold;font-size:1.05em;">基礎共鳴：×${br.toFixed(2)}</span><span class="vow-tag" style="color:#aaa;">総残滓：${r.total}</span><br>`
 +labels.map(([id,col,val,lbl])=>`<span class="vow-tag" style="font-size:.9em;"><span class="c-${id}">${col}</span> ${lbl}：${val} (${r[id]})</span>`).join('');
 })()}
+]:[])
 ];
 document.getElementById("vow-list").innerHTML=skills.map(s=>{
 const lvLabel=s.fusion
@@ -1701,6 +1761,15 @@ c.innerHTML=sorted.map(([id,cnt])=>{
 const m=RELIC_MASTER.find(x=>x.id==id);if(!m)return"";
 if(m.star===999)return`<div class="relic-card relic-unique"><div class="relic-name"><span class="unique-relic-text">${m.name}</span></div><div class="relic-effect-box">${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}</div></div>`;
 if(m.star===9)return`<div class="relic-card relic-rainbow"><div class="relic-name"><span class="rainbow-relic-text">★9 ${m.name}</span></div><div class="relic-effect-box"><span style="color:#aaa;font-size:.85em;">【${m.fromBoss}より】</span><span class="relic-desc-line" style="color:#ccc;">${m.desc}</span></div></div>`;
+// 宝玉シリーズ専用表示
+if(m.gem){
+const gemMult=(1+m.gemBase*Math.pow(cnt,0.6));
+const nextMult=(1+m.gemBase*Math.pow(cnt+1,0.6));
+const gain=nextMult-gemMult;
+const gemColor=m.star===8?"#ffd700":m.star===7?"#c084fc":"#22d3ee";
+const cl2=m.star>=8?"star-ultimate":"star-high";
+return`<div class="relic-card ${cl2}" style="border-color:${gemColor};"><div class="relic-name"><span style="color:${gemColor};font-weight:bold;">★${m.star} ${m.name} ×${cnt.toLocaleString()}</span></div><div class="relic-effect-box"><span style="color:${gemColor};font-weight:bold;font-size:1.1em;">倍率 ×${gemMult.toFixed(3)}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で +${gain.toFixed(4)} → ×${nextMult.toFixed(3)}</span><span class="relic-desc-line">${m.desc}</span></div></div>`;
+}
 let a=m.atk||0,h=m.hp||0;
 if(m.star===1&&player.hasHado){a*=100;h*=100;}else if(m.star===2&&player.hasGreatHado){a*=100;h*=100;}else if(m.star===3&&player.hasDivineGuide){a*=100;h*=100;}
 if(m.star===4&&player.hasWorldOrder){a*=100;h*=100;}if(m.star===5&&player.hasCrown){a*=100;h*=100;}if(m.star===6&&player.hasMeta){a*=100;h*=100;}
@@ -1722,10 +1791,17 @@ document.getElementById("st-maxdmg").textContent=fmtMD(player.maxDmg);
 document.getElementById("st-dmgmult").textContent="x"+(calcFinalDmgMult()*b.mult).toFixed(4);
 const rates=getCurrentDropRates();let mx=1;for(let s in rates)if(player.maxDmg>=rates[s].cond)mx=Math.max(mx,parseInt(s));
 document.getElementById("st-rank").textContent=`★${mx}まで`;
-document.getElementById("st-collection").textContent=`${Object.keys(player.inventory).length}/72`;
+const _normal72cnt=getNormal72().filter(m=>(player.inventory[m.id]||0)>0).length;
+const _gemCnt=GEM_IDS.filter(id=>(player.inventory[id]||0)>0).length;
+const _totalOwned=player.gemUnlocked?_normal72cnt+_gemCnt:_normal72cnt;
+const _totalMax=player.gemUnlocked?75:72;
+document.getElementById("st-collection").textContent=`${_totalOwned}/${_totalMax}`;
 document.getElementById("st-comp-count").textContent=b.compCount;
 document.getElementById("st-comp-bonus").textContent="x"+b.compBonus.toFixed(2);
 document.getElementById("st-kousa-kill").textContent=fmtV(player.kousaKillCount||0);
+// 溢れし討伐数・虹災討伐数はクリア後のみ表示（ネタバレ防止）
+const killCountEl=document.getElementById("kill-count-box");
+if(killCountEl){killCountEl.style.display=player.isCleared?"":"none";}
 // Lv100ボーナス表示（st-boxがなければスキップ）
 const lv100el=document.getElementById("st-lv100bonus");
 if(lv100el){
@@ -1734,6 +1810,20 @@ const lh=BigInt(player.lv100HpBonus||"0");
 lv100el.innerHTML=`覚醒ボーナス: ATK累積 <b>+${fmtV(la)}</b> / HP累積 <b>+${fmtV(lh)}</b><br>経験値ボーナス: <b>×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</b>`;
 }
 document.getElementById("st-kill-count").textContent=fmtV(player.killCount||0);
+// 宝玉シリーズ表示
+const gemBox=document.getElementById("gem-box");
+const gemIds=[{id:611,name:"累積宝玉",base:0.10,color:"#22d3ee"},{id:711,name:"原初宝玉",base:0.25,color:"#c084fc"},{id:811,name:"神格宝玉",base:0.50,color:"#ffd700"}];
+const ownedGems=gemIds.filter(g=>(player.inventory[g.id]||0)>0);
+if(ownedGems.length>0){
+gemBox.style.display="block";
+document.getElementById("gem-status").innerHTML=gemIds.map(g=>{
+const cnt=player.inventory[g.id]||0;
+if(cnt===0)return`<span style="color:#555;">★${g.id===611?6:g.id===711?7:8} ${g.name}：未所持</span>`;
+const mult=1+g.base*Math.pow(cnt,0.6);
+const next=1+g.base*Math.pow(cnt+1,0.6);
+return`<span style="color:${g.color};font-weight:bold;">★${g.id===611?6:g.id===711?7:8} ${g.name} ×${cnt.toLocaleString()} → <b>×${mult.toFixed(3)}</b></span> <span style="color:#888;font-size:.85em;">次+${(next-mult).toFixed(4)}</span>`;
+}).join("<br>");
+}else{gemBox.style.display="none";}
 const lv100box=document.getElementById("st-lv100bonus");
 if(lv100box)(player.lv100ExpBonus||0)>0?lv100box.style.display="block":lv100box.style.display="none";
 document.getElementById("prob-list").innerHTML=Object.entries(rates).map(([s,d])=>`<tr><td class="c${s}">★${s}</td><td style="text-align:right;">${d.p.toFixed(7)}%</td></tr>`).join("");
