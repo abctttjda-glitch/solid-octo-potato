@@ -1251,16 +1251,25 @@ if((player.inventory[504]||0)>0&&Math.random()<0.01){fd+=tb.atk;tags+=`<span sty
 if((player.inventory[601]||0)>0){const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;}
 
 // ===== ATK×100倍 ハードキャップ =====
-// 敵HPが与ダメ（fd）の100倍以上 = プレイヤーが格下の状態のときのみ適用
-// 敵HPが与ダメの100倍未満 = 十分戦えている状態なのでキャップなし
-if(currentBossHP>=fd*100n&&fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
+// 敵HPが与ダメ（fd）の100倍以上 = 格下状態 → キャップ適用
+// 敵HPが与ダメの100倍未満   = 格上・拮抗状態 → キャップなし（スキル自由発動）
+// ただし格上戦（キャップなし）のダメージはmaxDmg・lastDmgに記録しない
+const isOvermatched=currentBossHP>=fd*100n; // 格下判定（キャップ適用条件）
+if(isOvermatched&&fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
 if(fd<1n)fd=1n;if(fd>BIG_CAP)fd=BIG_CAP;
 
-// ===== maxDmg・lastDmg更新（救済前・スキル込みの実ダメージで記録） =====
+// ===== maxDmg・lastDmg更新 =====
+// 格上戦（キャップなし・isOvermatched=false）のダメージは記録しない
+// → 次ボスHP計算・ドロップ資格判定に影響させないため
+if(!isOvermatched){
+// 格上戦：ダメージは記録せず、lastDmgも更新しない
+// （ボスHPは削れるが戦力評価には使わない）
+}else{
 if(fd>player.maxDmg)player.maxDmg=fd;
 lastDmg=fd;
+}
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
 // 役割：「与ダメ最低保証」のみ。一撃撃破は絶対にしない。
