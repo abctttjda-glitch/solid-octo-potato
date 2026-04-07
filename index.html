@@ -659,7 +659,7 @@ function getRelicBonus(){
 let atkBig=0n,hpBig=0n,mult=1;
 const hasReg=(player.inventory[603]||0)>0,hasZan=(player.inventory[804]||0)>0;
 let comp=0;
-for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at.length>0&&at.every(m=>player.everOwned[m.id]))comp++;}
+for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9&&!m.gem);if(at.length>0&&at.every(m=>player.everOwned[m.id]))comp++;}
 const cb=Math.pow(2,comp);
 const cbBig=BigInt(Math.round(cb));
 Object.entries(player.inventory).forEach(([id,c])=>{
@@ -1122,7 +1122,7 @@ let gainedAtk=0n,gainedHp=0n; // オメガコア用：今回ドロップ遺物�
 const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
 // オメガ集計用：コンプリート倍率・強欲倍率を事前計算
 let _omegaCompCount=0;
-for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at.length>0&&at.every(m=>player.everOwned[m.id]))_omegaCompCount++;}
+for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9&&!m.gem);if(at.length>0&&at.every(m=>player.everOwned[m.id]))_omegaCompCount++;}
 const _omegaCbBig=BigInt(Math.round(Math.pow(2,_omegaCompCount)));
 const _omegaGmBig=BigInt(Math.round(greedMult()*10000));
 for(let i=0;i<count;i++){
@@ -1733,7 +1733,7 @@ const b4disp=getRelicBonus();
 // 実際のATK/HP増加への貢献分 = bonus全体 - 在庫遺物のみのボーナス
 // 簡易的に cAtk*cb*gm を計算
 let compForDisp=0;
-for(let s=1;s<=8;s++){const at3=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9);if(at3.length>0&&at3.every(m=>player.everOwned[m.id]))compForDisp++;}
+for(let s=1;s<=8;s++){const at3=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9&&!m.gem);if(at3.length>0&&at3.every(m=>player.everOwned[m.id]))compForDisp++;}
 const cbDisp=BigInt(Math.round(Math.pow(2,compForDisp)));
 const gmDisp=BigInt(Math.round(greedMult()*10000));
 document.getElementById("comp-catk").textContent=fmtV(cAtk*cbDisp*gmDisp/10000n);
