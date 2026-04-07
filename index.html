@@ -197,7 +197,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <span style="color:#22d3ee;font-weight:bold;font-size:1.1em;">累積宝玉（★6）</span><br>
 <span style="color:#c084fc;font-weight:bold;font-size:1.1em;">原初宝玉（★7）</span><br>
 <span style="color:#ffd700;font-weight:bold;font-size:1.1em;">神格宝玉（★8）</span><br><br>
-<span style="color:#aaa;font-size:.9em;">これらは高レアリティ遺物のドロップに紐付いて出現する。<br>収集数に応じてATK・HPを永続強化する。上限はない。</span>
+<span style="color:#aaa;font-size:.9em;">これらは高レアリティ遺物のドロップに紐付いて出現する。<br>収集数に応じてATK・HPを永続強化する。上限はない。<br>コレクション上限が72→75に拡張された。</span>
 </div>
 <button class="story-btn" style="border-color:#22d3ee;color:#22d3ee;" onclick="closeGemUnlockModal()">蒐集を続ける</button>
 </div>
@@ -1016,18 +1016,17 @@ function closeOrderAwakenModal(){player.inventory[999]=1;player.rebalanceSeen=tr
 
 // ===== 宝玉解放チェック（72種コンプリート時に1度だけ発動） =====
 const GEM_IDS=[611,711,811];
-// 通常遺物72種（宝玉・特殊を除く）の定義
-function getNormal72(){
-return RELIC_MASTER.filter(m=>!m.gem&&m.star!==999&&m.star!==9&&![0].includes(m.id));
+// コレクション対象遺物（宝玉除く）= ★1〜★9 + 特殊(再起の誓い/秩序のリバランス) = 72種
+function getNormalRelics(){
+return RELIC_MASTER.filter(m=>!m.gem);
 }
 function checkGemUnlock(){
 if(player.gemUnlocked)return;
-const normal72=getNormal72();
-const allOwned=normal72.every(m=>player.everOwned[m.id]);
+const normal=getNormalRelics();
+const allOwned=normal.every(m=>player.everOwned[m.id]);
 if(allOwned){
 player.gemUnlocked=true;
-// 宝玉を各1個付与
-GEM_IDS.forEach(id=>{player.inventory[id]=(player.inventory[id]||0)+1;player.totalRelics++;player.everOwned[id]=true;});
+// 宝玉はドロップテーブルに追加されるだけ。初期付与はしない。
 saveGame();
 isModalOpen=true;
 document.getElementById("gem-unlock-modal").style.display="flex";
@@ -1791,9 +1790,10 @@ document.getElementById("st-maxdmg").textContent=fmtMD(player.maxDmg);
 document.getElementById("st-dmgmult").textContent="x"+(calcFinalDmgMult()*b.mult).toFixed(4);
 const rates=getCurrentDropRates();let mx=1;for(let s in rates)if(player.maxDmg>=rates[s].cond)mx=Math.max(mx,parseInt(s));
 document.getElementById("st-rank").textContent=`★${mx}まで`;
-const _normal72cnt=getNormal72().filter(m=>(player.inventory[m.id]||0)>0).length;
+const _normalRelics=getNormalRelics();
+const _normalCnt=_normalRelics.filter(m=>(player.inventory[m.id]||0)>0).length;
 const _gemCnt=GEM_IDS.filter(id=>(player.inventory[id]||0)>0).length;
-const _totalOwned=player.gemUnlocked?_normal72cnt+_gemCnt:_normal72cnt;
+const _totalOwned=player.gemUnlocked?_normalCnt+_gemCnt:_normalCnt;
 const _totalMax=player.gemUnlocked?75:72;
 document.getElementById("st-collection").textContent=`${_totalOwned}/${_totalMax}`;
 document.getElementById("st-comp-count").textContent=b.compCount;
