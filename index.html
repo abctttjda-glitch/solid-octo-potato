@@ -108,7 +108,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .hpfill-valka{background:linear-gradient(90deg,#c2410c,var(--valka))!important}
 .hpfill-igna{background:linear-gradient(90deg,#b91c1c,var(--igna))!important}
 .hpfill-lux{background:linear-gradient(90deg,#a16207,var(--lux))!important}
-.hpfill-magmel{background:(--magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
+.hpfill-magmel{background:var(--magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
 .hpfill-gemini{background:linear-gradient(90deg,#2d0057,var(--gemini))!important}
 .status-box{display:flex;gap:8px;margin-top:10px}
 .stat-card{flex:1;background:rgba(255,255,255,.08);padding:5px 10px;border-radius:6px;border-left:3px solid var(--primary);display:flex;flex-direction:column;overflow:hidden}
@@ -307,7 +307,7 @@ const MAX_LEVEL=9999999999;
 const BASE_DD={1:{p:98.9888889,cond:0n},2:{p:1.0,cond:0n},3:{p:0.01,cond:0n},4:{p:0.001,cond:100000n},5:{p:0.0001,cond:1000000n},6:{p:0.00001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
 const HADO_DD={1:{p:88.9888989,cond:0n},2:{p:10.0,cond:0n},3:{p:1.0,cond:0n},4:{p:0.01,cond:100000n},5:{p:0.001,cond:1000000n},6:{p:0.0001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
 const GHADO_DD={1:{p:78.9888989,cond:0n},2:{p:18.0,cond:0n},3:{p:3.0,cond:0n},4:{p:0.01,cond:100000n},5:{p:0.001,cond:1000000n},6:{p:0.0001,cond:10000000n},7:{p:0.000001,cond:100000000n},8:{p:0.0000001,cond:1000000000n}};
-const DIVINE_DD={1:{p:58.899889,cond:0n},2:{p:30.0,cond:0n},3:{p:10.0,cond:0n},4:{p:1.0,cond:100000n},5:{p:0.1,cond:1000000n},6:{p:0.0001,cond:10000000n},7:{p:0.00001,cond:100000000n},8:{p:0.000001,cond:1000000000n}};
+const DIVINE_DD = {1:{p:58.8889,cond:0n},2:{p:30.0,cond:0n},3:{p:10.0,cond:0n},4:{p:1.0,cond:100000n},5:{p:0.1,cond:1000000n},6:{p:0.01,cond:10000000n},7:{p:0.001,cond:100000000n},8:{p:0.0001,cond:1000000000n}};
 // ============ 虹災ボス定義 ============
 const KOUSA_BOSSES=[
 {id:"gemini",name:"構文破壊機工:Gemini",hpMulMin:800,hpMulMax:1200,relicId:null,colorVar:"var(--gemini)",hpClass:"hpfill-gemini",btnClass:"attack-kousa-gemini",intro:"EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが割り込みました。"},
@@ -998,9 +998,11 @@ const t=`<span class="c-igna">【焔核×${m.toFixed(1)}】</span>`;
 return{d:dmg,t};
 }
 function eff_lux(dmg,bmaxHP,xtra){
-// 新仕様：1%確率発動、討伐数込み最大30%の割合削り
+// 新仕様：討伐数込み最大30%の割合削り
+// 融合コアあり：残滓に応じて発動確率が0.1%〜1.0%にスケール（UIと一致）
 let lux=0n;let t="";
-if(Math.random()<0.01){
+const luxRate=player.hasFusionCore?0.001+fusionRate(player.residue.lux,1000)*0.009:0.01;
+if(Math.random()<luxRate){
 const kp=Math.min(25,Math.log10((player.killCount||0)+1)*5);
 const lp=Math.min(30,5+kp);
 lux=bmaxHP*BigInt(Math.round(lp*1000))/100000n;
@@ -1245,8 +1247,8 @@ const killMult=BigInt(Math.round(Math.min(50, 1+Math.log10(player.killCount+1)*0
 atvBig=atvBig*killMult/100000n;
 }
 // 802 ジェネシスコード：敵HPと自ATKの差が大きい場合、差分乗算で追いつく
-// 虹災中は bossMaxHP が汚染されるため発動禁止
-if((player.inventory[802]||0)>0&&!isKousa&&bossMaxHP>atvBig*100n){
+// ※v1.31でmainBossMaxHPによる汚染対策が実装済みのため、虹災中も発動可能
+if((player.inventory[802]||0)>0&&bossMaxHP>atvBig*100n){
 player.evolutionStack++;
 // ① 差分乗算強化：ratio=敵HP/現在ATK に応じた乗算をかける
 // ratio が大きいほど倍率が上がる（log10スケール、上限×8）
