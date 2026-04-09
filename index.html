@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.31</title>
+<title>RELICORE - v1.32</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899)}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -39,8 +39,8 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 #serial-modal{background:rgba(0,0,0,.9);z-index:70000}
 #kousa-relic-modal{background:rgba(0,0,0,.92);z-index:46000}
 
-.rank-up-content{background:#000;border:2px solid var(--growth);border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%;animation:heartbeat-pulse 2s infinite}
-.rank-up-title{color:var(--growth);font-size:1.6em;font-weight:bold;margin-bottom:20px;letter-spacing:4px}
+.rank-up-content{background:#000;border:2px solid var(–growth);border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%;animation:heartbeat-pulse 2s infinite}
+.rank-up-title{color:var(–growth);font-size:1.6em;font-weight:bold;margin-bottom:20px;letter-spacing:4px}
 .rank-up-msg{font-size:1.1em;line-height:1.8;margin-bottom:30px;color:#fff}
 .rank-up-sub{font-size:.85em;color:#aaa;margin-top:10px}
 .rare-card{background:#fff;padding:30px;border-radius:15px;width:85%;max-width:320px;text-align:center}
@@ -52,76 +52,76 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .glow-6{border:3px solid #fd7e14;box-shadow:0 0 25px rgba(253,126,20,.6)}
 .glow-7{border:3px solid #f00;box-shadow:0 0 30px rgba(255,0,0,.7);animation:rare-pulse 1s infinite alternate}
 .glow-8{border:3px solid #fff;background:linear-gradient(135deg,#1a1a1a,#000);box-shadow:0 0 30px rgba(255,255,255,.6);animation:rare-pulse .8s infinite alternate}
-.glow-9{border:3px solid transparent;background:linear-gradient(#1a0a2e,#1a0a2e) padding-box,var(--magmel) border-box;box-shadow:0 0 40px rgba(168,85,247,.7);animation:rainbow-pulse 1.2s infinite alternate}
-.hado-content{background:#000;border:3px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%;animation:awaken-glow 3s infinite alternate}
-.hado-title{color:var(--gold);font-size:1.8em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 15px var(--gold)}
+.glow-9{border:3px solid transparent;background:linear-gradient(#1a0a2e,#1a0a2e) padding-box,var(–magmel) border-box;box-shadow:0 0 40px rgba(168,85,247,.7);animation:rainbow-pulse 1.2s infinite alternate}
+.hado-content{background:#000;border:3px solid var(–gold);border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%;animation:awaken-glow 3s infinite alternate}
+.hado-title{color:var(–gold);font-size:1.8em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 15px var(–gold)}
 .hado-msg{font-size:1em;line-height:2;margin-bottom:35px;color:#eee;text-align:left;background:rgba(255,255,255,.05);padding:20px;border-radius:10px}
-.cosmic-content{background:rgba(0,0,0,.8);border:2px solid var(--cosmic-blue);border-radius:30px;padding:40px 20px;text-align:center;color:#fff;max-width:480px;width:95%;animation:cosmic-pulse 4s infinite}
-.cosmic-title{color:#fff;font-size:2em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 20px var(--cosmic-blue);letter-spacing:6px}
+.cosmic-content{background:rgba(0,0,0,.8);border:2px solid var(–cosmic-blue);border-radius:30px;padding:40px 20px;text-align:center;color:#fff;max-width:480px;width:95%;animation:cosmic-pulse 4s infinite}
+.cosmic-title{color:#fff;font-size:2em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 20px var(–cosmic-blue);letter-spacing:6px}
 .cosmic-msg{font-size:1.1em;line-height:2.2;margin-bottom:35px;color:#e0f7ff}
-.cosmic-btn{background:none;border:1px solid var(--cosmic-blue);color:var(--cosmic-blue);padding:12px 50px;font-size:1.1em;cursor:pointer;transition:.5s;border-radius:50px}
+.cosmic-btn{background:none;border:1px solid var(–cosmic-blue);color:var(–cosmic-blue);padding:12px 50px;font-size:1.1em;cursor:pointer;transition:.5s;border-radius:50px}
 .story-content{max-width:500px;color:#fff;text-align:center;line-height:2.2}
 .story-text{margin-bottom:35px;font-size:1.05em;text-align:left;letter-spacing:.08em}
 .story-vow{color:gold;font-weight:bold;display:inline-block;animation:heart-beat 1.5s infinite;text-shadow:0 0 10px rgba(212,175,55,.8)}
 .story-btn{background:none;border:1px solid gold;color:gold;padding:12px 40px;font-size:1em;cursor:pointer;transition:.3s}
-.modal-content{background:#000;border:2px solid var(--gold);border-radius:20px;padding:35px 25px;text-align:center;color:#fff;max-width:450px;width:95%}
+.modal-content{background:#000;border:2px solid var(–gold);border-radius:20px;padding:35px 25px;text-align:center;color:#fff;max-width:450px;width:95%}
 .clear-main-msg{font-size:1.05em;line-height:1.8;margin:20px 0;color:#eee;text-align:left}
 .order-content{background:#000;border:2px solid #fff;border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%}
 .policy-content{background:#fff;border-radius:15px;padding:25px;color:#333;max-width:500px;width:95%;max-height:85vh;overflow-y:auto;text-align:left}
 .policy-title{font-weight:bold;font-size:1.2em;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:8px;text-align:center}
 .policy-text{font-size:.82em;line-height:1.7;color:#444}
 .policy-footer{font-size:.75em;color:#777;text-align:right;margin-top:20px}
-#serial-input-box{background:#1a1a1a;border:1px solid var(--gold);color:#fff;padding:10px;width:100%;text-align:center;font-size:1.2em;letter-spacing:2px;margin-bottom:20px;border-radius:5px}
+#serial-input-box{background:#1a1a1a;border:1px solid var(–gold);color:#fff;padding:10px;width:100%;text-align:center;font-size:1.2em;letter-spacing:2px;margin-bottom:20px;border-radius:5px}
 
 /* ★9ドロップモーダル */
 .kousa-relic-content{background:#1a0a2e;border:3px solid transparent;background-clip:padding-box;border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:420px;width:95%;box-shadow:0 0 50px rgba(168,85,247,.5);animation:rainbow-pulse 2s infinite}
 .star9-label{font-size:2em;margin-bottom:10px}
-.star9-name{font-size:1.5em;font-weight:bold;margin-bottom:20px;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.star9-name{font-size:1.5em;font-weight:bold;margin-bottom:20px;background:var(–magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .star9-desc{font-size:.9em;color:#ddd;line-height:1.7;margin-bottom:25px;text-align:left}
 
 /* カラークラス */
 .c1{color:#888;font-weight:bold}.c2{color:#28a745;font-weight:bold}.c3{color:#007bff;font-weight:bold}.c4{color:#6610f2;font-weight:bold}.c5{color:#e83e8c;font-weight:bold}.c6{color:#fd7e14;font-weight:bold}.c7{color:#f00;font-weight:bold}.c8{color:#ffd700;font-weight:bold}
-.c9{font-weight:bold;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.c-order{color:#ffd700;font-weight:bold}.c-gemini{color:var(--gemini);font-weight:bold}
-.c-edel{color:var(--edel);font-weight:bold}.c-neria{color:var(--neria);font-weight:bold}.c-nox{color:var(--nox);font-weight:bold}.c-lilith{color:var(--lilith);font-weight:bold}.c-valka{color:var(--valka);font-weight:bold}.c-igna{color:var(--igna);font-weight:bold}.c-lux{color:var(--lux);font-weight:bold}
-.c-magmel{background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold}
+.c9{font-weight:bold;background:var(–magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.c-order{color:#ffd700;font-weight:bold}.c-gemini{color:var(–gemini);font-weight:bold}
+.c-edel{color:var(–edel);font-weight:bold}.c-neria{color:var(–neria);font-weight:bold}.c-nox{color:var(–nox);font-weight:bold}.c-lilith{color:var(–lilith);font-weight:bold}.c-valka{color:var(–valka);font-weight:bold}.c-igna{color:var(–igna);font-weight:bold}.c-lux{color:var(–lux);font-weight:bold}
+.c-magmel{background:var(–magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold}
 .unique-relic-text{font-weight:bold;background:linear-gradient(to right,#d4af37,#fff,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.rainbow-relic-text{font-weight:bold;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.rainbow-relic-text{font-weight:bold;background:var(–magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
 /* ヘッダー */
-#header{background:var(--dark);color:#fff;padding:12px 10px;border-bottom:2px solid #000;flex-shrink:0;transition:border-color .4s}
+#header{background:var(–dark);color:#fff;padding:12px 10px;border-bottom:2px solid #000;flex-shrink:0;transition:border-color .4s}
 .boss-area{text-align:center;width:100%}
 .boss-name{font-size:1em;font-weight:bold;color:#888;letter-spacing:2px;margin-bottom:4px;transition:color .3s}
 /* ボス種別バッジ */
 .boss-type-badge{display:inline-block;font-size:.65em;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:bold;vertical-align:middle}
 .badge-main{background:#333;color:#aaa}
-.badge-kousa{background:rgba(168,85,247,.3);color:var(--nox);border:1px solid var(--nox)}
-.badge-gemini{background:rgba(75,0,130,.3);color:#c084fc;border:1px solid var(--gemini)}
+.badge-kousa{background:rgba(168,85,247,.3);color:var(–nox);border:1px solid var(–nox)}
+.badge-gemini{background:rgba(75,0,130,.3);color:#c084fc;border:1px solid var(–gemini)}
 .hp-bar-container{background:#333;height:10px;border-radius:5px;overflow:hidden;margin:0 auto 8px auto;width:100%}
 #hp-bar-fill{height:100%;background:linear-gradient(90deg,#b02a37,#dc3545);width:100%;transition:width .1s ease-out,background .4s}
 .hp-val-display{font-size:1.45em;font-weight:bold;color:#ff6b6b;font-family:‘Courier New’,monospace;word-break:break-all;line-height:1.2;letter-spacing:-1px}
 /* 虹災ボス種別によるHP色 */
-.hpfill-edel{background:linear-gradient(90deg,#15803d,var(--edel))!important}
-.hpfill-neria{background:linear-gradient(90deg,#1d4ed8,var(--neria))!important}
-.hpfill-nox{background:linear-gradient(90deg,#7e22ce,var(--nox))!important}
-.hpfill-lilith{background:linear-gradient(90deg,#be185d,var(--lilith))!important}
-.hpfill-valka{background:linear-gradient(90deg,#c2410c,var(--valka))!important}
-.hpfill-igna{background:linear-gradient(90deg,#b91c1c,var(--igna))!important}
-.hpfill-lux{background:linear-gradient(90deg,#a16207,var(--lux))!important}
-.hpfill-magmel{background:var(--magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
-.hpfill-gemini{background:linear-gradient(90deg,#2d0057,var(--gemini))!important}
+.hpfill-edel{background:linear-gradient(90deg,#15803d,var(–edel))!important}
+.hpfill-neria{background:linear-gradient(90deg,#1d4ed8,var(–neria))!important}
+.hpfill-nox{background:linear-gradient(90deg,#7e22ce,var(–nox))!important}
+.hpfill-lilith{background:linear-gradient(90deg,#be185d,var(–lilith))!important}
+.hpfill-valka{background:linear-gradient(90deg,#c2410c,var(–valka))!important}
+.hpfill-igna{background:linear-gradient(90deg,#b91c1c,var(–igna))!important}
+.hpfill-lux{background:linear-gradient(90deg,#a16207,var(–lux))!important}
+.hpfill-magmel{background:(–magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
+.hpfill-gemini{background:linear-gradient(90deg,#2d0057,var(–gemini))!important}
 .status-box{display:flex;gap:8px;margin-top:10px}
-.stat-card{flex:1;background:rgba(255,255,255,.08);padding:5px 10px;border-radius:6px;border-left:3px solid var(--primary);display:flex;flex-direction:column;overflow:hidden}
-.stat-card.hp-card{border-left-color:var(--hp)}
+.stat-card{flex:1;background:rgba(255,255,255,.08);padding:5px 10px;border-radius:6px;border-left:3px solid var(–primary);display:flex;flex-direction:column;overflow:hidden}
+.stat-card.hp-card{border-left-color:var(–hp)}
 .stat-label{font-size:.65em;color:#aaa;text-transform:uppercase;margin-bottom:1px}
 .stat-val{font-size:.95em;font-weight:bold;font-family:monospace;color:#fff;overflow-x:auto;white-space:nowrap}
-.nav{display:flex;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
+.nav{display:flex;background:var(–panel);border-bottom:1px solid var(–border);flex-shrink:0}
 .nav button{flex:1;padding:12px 0;border:none;background:none;color:#6c757d;font-weight:bold;font-size:.8em}
-.nav button.active{color:var(--primary);border-bottom:3px solid var(--primary);background:#fff}
+.nav button.active{color:var(–primary);border-bottom:3px solid var(–primary);background:#fff}
 #content-area{flex-grow:1;overflow:hidden;background:#fff}
 .tab{display:none;padding:10px 10px 150px 10px;height:100%;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .tab.active{display:block}
-.btn-attack{width:100%;padding:16px;background:var(--primary);color:#fff;font-size:1.3em;font-weight:bold;border:none;border-radius:12px;margin-bottom:10px;box-shadow:0 4px 0 #0056b3;-webkit-user-select:none;user-select:none;transition:background .3s}
+.btn-attack{width:100%;padding:16px;background:var(–primary);color:#fff;font-size:1.3em;font-weight:bold;border:none;border-radius:12px;margin-bottom:10px;box-shadow:0 4px 0 #0056b3;-webkit-user-select:none;user-select:none;transition:background .3s}
 /* ボス種別ごとの攻撃ボタン色 */
 .attack-kousa-edel{background:#15803d!important;box-shadow:0 4px 0 #14532d!important}
 .attack-kousa-neria{background:#1d4ed8!important;box-shadow:0 4px 0 #1e3a8a!important}
@@ -132,29 +132,29 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .attack-kousa-lux{background:#a16207!important;box-shadow:0 4px 0 #92400e!important}
 .attack-kousa-magmel{background:linear-gradient(90deg,#ef4444,#a855f7)!important;box-shadow:0 4px 0 #581c87!important}
 .attack-kousa-gemini{background:#4b0082!important;box-shadow:0 4px 0 #2e0057!important}
-#log{height:400px;font-size:.82em;background:#fafafa;border:1px solid var(--border);padding:10px;overflow-y:auto;border-radius:8px;line-height:1.4}
+#log{height:400px;font-size:.82em;background:#fafafa;border:1px solid var(–border);padding:10px;overflow-y:auto;border-radius:8px;line-height:1.4}
 .log-set{border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:8px}
 .vow-list-container{display:grid;grid-template-columns:1fr;gap:10px}
 @media(min-width:600px){.vow-list-container{grid-template-columns:1fr 1fr}}
-.vow-item{position:relative;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 10px 10px 16px;box-shadow:0 2px 4px rgba(0,0,0,.05);display:flex;flex-direction:column;min-height:100px}
+.vow-item{position:relative;background:#fff;border:1px solid var(–border);border-radius:8px;padding:10px 10px 10px 16px;box-shadow:0 2px 4px rgba(0,0,0,.05);display:flex;flex-direction:column;min-height:100px}
 .vow-item::before{content:””;position:absolute;left:0;top:0;bottom:0;width:4px;background:gold;border-radius:8px 0 0 8px}
 .vow-header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #f0f0f0;margin-bottom:6px;padding-bottom:4px}
 .vow-name{font-weight:bold;font-size:.9em;color:#333}
 .vow-lv{font-size:.75em;font-weight:bold;color:#888}
-.vow-lv.max{color:var(--gold)}
-.vow-highlight{font-weight:bold;font-size:.82em;display:block;line-height:1.5;color:var(--primary);background:#f0f7ff;padding:6px;border-radius:4px;margin-bottom:6px}
+.vow-lv.max{color:var(–gold)}
+.vow-highlight{font-weight:bold;font-size:.82em;display:block;line-height:1.5;color:var(–primary);background:#f0f7ff;padding:6px;border-radius:4px;margin-bottom:6px}
 .vow-tag{display:inline-block;white-space:nowrap;margin-right:4px}
 .vow-sub{font-size:.72em;color:#666;display:block;line-height:1.4}
 .relic-list-container{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.relic-card{position:relative;border:1px solid #e0d5f0;padding:6px 6px 6px 10px;border-radius:6px;background:var(--relic-bg);display:flex;flex-direction:column;min-height:70px}
+.relic-card{position:relative;border:1px solid #e0d5f0;padding:6px 6px 6px 10px;border-radius:6px;background:var(–relic-bg);display:flex;flex-direction:column;min-height:70px}
 .relic-card.star-low{grid-column:span 2}
 .relic-card.star-high{grid-column:span 3;border-width:2px;background:#fff}
 .relic-card.star-ultimate{grid-column:span 6;border:2px solid #d4af37;background:#1a1a1a;color:#fff}
 .relic-card.relic-unique{grid-column:span 6;border:2px solid #d4af37;background:#000;color:#fff;box-shadow:0 0 15px rgba(212,175,55,.4)}
-.relic-card.relic-rainbow{grid-column:span 6;border:2px solid transparent;background:linear-gradient(#0a0015,#0a0015) padding-box,var(--magmel) border-box;color:#fff;box-shadow:0 0 20px rgba(168,85,247,.4)}
-.relic-card::before{content:””;position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--relic-purple);border-radius:6px 0 0 6px}
-.relic-card.star-ultimate::before,.relic-card.relic-unique::before{background:var(--gold)}
-.relic-card.relic-rainbow::before{background:var(--nox)}
+.relic-card.relic-rainbow{grid-column:span 6;border:2px solid transparent;background:linear-gradient(#0a0015,#0a0015) padding-box,var(–magmel) border-box;color:#fff;box-shadow:0 0 20px rgba(168,85,247,.4)}
+.relic-card::before{content:””;position:absolute;left:0;top:0;bottom:0;width:3px;background:var(–relic-purple);border-radius:6px 0 0 6px}
+.relic-card.star-ultimate::before,.relic-card.relic-unique::before{background:var(–gold)}
+.relic-card.relic-rainbow::before{background:var(–nox)}
 .relic-name{font-weight:bold;font-size:.65em;min-height:2.4em;line-height:1.2}
 .relic-card.star-ultimate .relic-name,.relic-card.relic-unique .relic-name,.relic-card.relic-rainbow .relic-name{font-size:.8em}
 .relic-effect-box{font-size:.6em;color:#444;margin-top:2px;line-height:1.3}
@@ -162,12 +162,12 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .relic-desc-line{color:#666;font-style:italic;display:block;margin-top:4px;border-top:1px solid #f0f0f0;padding-top:2px}
 .relic-card.star-ultimate .relic-desc-line,.relic-card.relic-unique .relic-desc-line{color:#aaa;border-top-color:#333}
 .relic-card.relic-rainbow .relic-desc-line{color:#bbb;border-top-color:#333}
-.relic-countdown{font-size:.9em;color:var(--growth);font-weight:bold;margin-top:4px;border-top:1px dashed #ddd;padding-top:2px;display:block}
+.relic-countdown{font-size:.9em;color:var(–growth);font-weight:bold;margin-top:4px;border-top:1px dashed #ddd;padding-top:2px;display:block}
 .st-box{background:#fff;border:none;border-left:4px solid #28a745;border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:.82em;line-height:1.5;box-shadow:0 2px 4px rgba(0,0,0,.05)}
-.clickable-stat{display:inline-block;color:var(--primary);border:1px solid var(--primary);padding:2px 8px;border-radius:12px;font-size:.85em;cursor:pointer;background:#f0f7ff}
+.clickable-stat{display:inline-block;color:var(–primary);border:1px solid var(–primary);padding:2px 8px;border-radius:12px;font-size:.85em;cursor:pointer;background:#f0f7ff}
 .st-title-flex{display:flex;justify-content:space-between;align-items:baseline;font-weight:bold}
 .btn-reset{width:100%;padding:12px;background:#dc3545;color:#fff;border:none;border-radius:8px;font-weight:bold;margin-bottom:10px}
-.btn-serial{width:100%;padding:12px;background:#212529;color:var(--gold);border:1px solid var(--gold);border-radius:8px;font-weight:bold;margin-bottom:10px;cursor:pointer}
+.btn-serial{width:100%;padding:12px;background:#212529;color:var(–gold);border:1px solid var(–gold);border-radius:8px;font-weight:bold;margin-bottom:10px;cursor:pointer}
 .privacy-link{display:block;text-align:center;font-size:.75em;color:#888;text-decoration:underline;cursor:pointer;padding:10px}
 .ver-footer{position:fixed;bottom:4px;right:4px;color:#bbb;font-size:.65em;pointer-events:none;z-index:50}
 .btn-auto{width:100%;padding:11px;font-size:1em;font-weight:bold;border:none;border-radius:10px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;transition:background .2s,box-shadow .2s;letter-spacing:2px}
@@ -189,6 +189,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div id="order-awaken-modal" class="modal-overlay"><div class="order-content"><div class="rank-up-title" style="color:#fff;">秩序の覚醒</div><div class="clear-main-msg" style="text-align:center;">混沌を制し、神を討ちし者へ。世界を再構築する理が、今あなたの魂に刻まれた。<br><br><span class="unique-relic-text" style="font-size:1.4em;">秩序のリバランス</span><br><br><span style="color:#aaa;font-size:.85em;">「すべてを平らにならし、あるべき姿へ」</span></div><button class="story-btn" style="border-color:#fff;color:#fff;" onclick="closeOrderAwakenModal()">理を受け入れる</button></div></div>
 
 <!-- 宝玉解放モーダル -->
+
 <div id="gem-unlock-modal" class="modal-overlay" style="z-index:58000;">
 <div class="hado-content" style="border-color:#22d3ee;max-width:460px;">
 <div class="hado-title" style="color:#22d3ee;font-size:1.5em;letter-spacing:3px;">✦ 宝玉の目覚め ✦</div>
@@ -274,7 +275,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.31</div>
+<div class="ver-footer">RELICORE v1.32</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -351,7 +352,7 @@ const RELIC_MASTER=[
 {id:611,star:6,name:"累積宝玉",atk:0,hp:0,gem:true,gemBase:0.10,desc:"所持数に応じてATK・HPを倍率強化。倍率＝1＋0.10×(所持数^0.6)。収集数上限なし。"},
 {id:701,star:7,name:"パンドラの箱",atk:0,hp:0,desc:"神を屠る唯一の条件。災厄の底に希望を宿す。"},{id:702,star:7,name:"終焉の福音",atk:0,hp:0,desc:"敵HPが50%以下のとき、与ダメージ+400%。(重複不可)"},{id:703,star:7,name:"神滅のアカシックレコード",atk:0,hp:0,desc:"与ダメージの最終倍率にさらに+400%。(重複不可)"},
 {id:711,star:7,name:"原初宝玉",atk:0,hp:0,gem:true,gemBase:0.25,desc:"所持数に応じてATK・HPを倍率強化。倍率＝1＋0.25×(所持数^0.6)。収集数上限なし。"},
-{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPが自ATKの100倍以上の時、差分比に応じた乗算（最大×8）で火力を補正。Stack蓄積でさらに底上げ。攻撃のたびにbaseATK/HP永続成長（0.001%/回）。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"敵最大HPが自ATKを上回る時、メモリークリスタル100個消費で「星の記憶」確定発動。ATK+10%・HP+50%を永続加算。（同一の敵には1度のみ発動）"},
+{id:804,star:8,name:"災厄の残滓",atk:0,hp:0,desc:"★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)"},{id:801,star:8,name:"天律崩壊オメガ・コア",atk:0,hp:0,desc:"【蓄積】一度の攻撃で遺物100個以上獲得時、その遺物のATK・HPに蓄積回数ボーナスを乗算して永続蓄積する。乗算倍率は蓄積回数・総攻撃回数に応じて微増する。"},{id:802,star:8,name:"特異演算機関：ジェネシスコード",atk:0,hp:0,desc:"敵HPが自ATKの100倍以上の時、差分比に応じた乗算（最大×8）で火力を補正。Stack蓄積でさらに底上げ。攻撃のたびにbaseATK/HP永続成長（0.001%/回）。"},{id:803,star:8,name:"記憶の遺産",atk:0,hp:0,desc:"敵最大HPが自ATKを上回る時、メモリークリスタル100個消費で「星の記憶」確定発動。ATK+10%・HP+50%を永続加算。"},
 {id:811,star:8,name:"神格宝玉",atk:0,hp:0,gem:true,gemBase:0.50,desc:"所持数に応じてATK・HPを倍率強化。倍率＝1＋0.50×(所持数^0.6)。収集数上限なし。"},
 ...STAR9
 ];
@@ -419,16 +420,16 @@ window.addEventListener("pointerup",stopAttackLoop);
 
 // ============ BigInt安全変換 ============
 // Number→BigInt変換。Infinity/NaN/overflow対策
-const BIG_CAP=BigInt("9".repeat(3000)); // 表示上限：3000桁（amh付近）
+// BIG_CAP: ボスHP計算の参照用のみ（プレイヤーステータスへの上限適用は廃止）
+const BIG_CAP=BigInt("9".repeat(3000));
 function safeBigInt(n){
-if(typeof n==="bigint")return n<0n?0n:(n>BIG_CAP?BIG_CAP:n);
+if(typeof n==="bigint")return n<0n?0n:n; // BigInt入力は上限なし
 if(!isFinite(n)||isNaN(n)||n<0)return 0n;
-// Number精度上限(1e300)を超える場合はBIG_CAPを返す
-if(n>1e300)return BIG_CAP;
+if(n>1e300){try{return BigInt(n.toFixed(0));}catch(e){return 0n;}}
 try{return BigInt(Math.floor(n));}catch(e){return 0n;}
 }
-// BigInt同士の乗算でオーバーフロー対策付き（上限キャップ）
-function safeMulBig(a,b){const r=a*b;return r>BIG_CAP?BIG_CAP:r;}
+// BigInt乗算（上限なし）
+function safeMulBig(a,b){return a*b;}
 
 // ============ フォーマット ============
 function getUnit(n){let s="";n+=26;while(n>=0){s=String.fromCharCode(97+(n%26))+s;n=Math.floor(n/26)-1;}return s;}
@@ -467,7 +468,7 @@ omegaAtkBig:player.omegaAtkBig||"0",omegaHpBig:player.omegaHpBig||"0",
 erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
 compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
-gameVersion:"1.31"};
+gameVersion:"1.32"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -475,8 +476,8 @@ function loadGame(){
 const s=localStorage.getItem(SAVE_KEY);
 if(s){
 const p=JSON.parse(s);Object.assign(player,p);
-// BigInt読み込み（旧セーブのBIG_CAP超え値を新CAPでクランプ）
-function _loadBig(str,def){try{const v=BigInt(str||def);return v>BIG_CAP?BIG_CAP:(v<0n?0n:v);}catch(e){return BigInt(def);}}
+// BigInt読み込み（上限なし・負値のみ0に丸める）
+function _loadBig(str,def){try{const v=BigInt(str||def);return v<0n?0n:v;}catch(e){return BigInt(def);}}
 player.baseAtk=_loadBig(p.baseAtk,"10");player.baseHP=_loadBig(p.baseHP,"100");player.maxDmg=_loadBig(p.maxDmg,"0");
 // v1.30未満のセーブ: 仕様変更に伴い最高ダメージをリセット
 if(!p.gameVersion||p.gameVersion<"1.30"){player.maxDmg=0n;}
@@ -496,7 +497,7 @@ Object.keys(player.inventory).forEach(id=>{if((player.inventory[id]||0)>0)player
 player.omegaCharge=0n; // 蓄積回数リセット（倍率を1回目×1.30から再スタート）
 player.kousaKillCount=p.kousaKillCount||0;
 player.omegaAtkBig=p.omegaAtkBig||"0";player.omegaHpBig=p.omegaHpBig||"0";
-// 旧BIG_CAP超え値のクランプ（omegaAtk/Hp, compressedAtk/Hp）
+// omegaAtk/Hp, compressedAtk/Hp 読み込み（負値のみ除去）
 {const oa=_loadBig(player.omegaAtkBig,"0");player.omegaAtkBig=oa.toString();}
 {const oh=_loadBig(player.omegaHpBig,"0");player.omegaHpBig=oh.toString();}
 player.hasCompressionCore=p.hasCompressionCore||false;player.compressionPower=p.compressionPower||0;
@@ -530,7 +531,7 @@ ensureOrderRelic();
 if(p.currentBossHP){
   currentBossHP=_loadBig(p.currentBossHP,BOSS_MAX_HP_BASE.toString());
 }else{currentBossHP=_loadBig(player.bossMaxHP,BOSS_MAX_HP_BASE.toString());}
-// bossMaxHPもクランプ
+// bossMaxHP復元
 {const bm=_loadBig(player.bossMaxHP,BOSS_MAX_HP_BASE.toString());player.bossMaxHP=bm.toString();}
 }else{currentBossHP=BigInt(player.bossMaxHP);}
 Object.keys(player.inventory).forEach(id=>{
@@ -683,25 +684,25 @@ const gm=greedMult();
 const gmBig=BigInt(Math.round(gm*10000));
 atkBig=atkBig*cbBig*gmBig/10000n;
 hpBig=hpBig*cbBig*gmBig/10000n;
-// 圧縮蓄積分（BigInt保存）乗算前にクランプ
+// 圧縮蓄積分（BigInt保存）
 const _cAtkRaw=player.compressedAtkBig?BigInt(player.compressedAtkBig):safeBigInt(player.compressedAtk||0);
 const _cHpRaw=player.compressedHpBig?BigInt(player.compressedHpBig):safeBigInt(player.compressedHp||0);
-// cbBig*gmBig/10000で最大637倍になるため、乗算前にBIG_CAP/1000でクランプ
-const cAtk=_cAtkRaw>BIG_CAP/1000n?BIG_CAP/1000n:_cAtkRaw;
-const cHp=_cHpRaw>BIG_CAP/1000n?BIG_CAP/1000n:_cHpRaw;
-// キャップ
-if(atkBig>BIG_CAP)atkBig=BIG_CAP;if(hpBig>BIG_CAP)hpBig=BIG_CAP;
+const cAtk=_cAtkRaw;
+const cHp=_cHpRaw;
+// 上限なし
+
 // 圧縮蓄積分にもcomp倍率・greedMultを適用
 const cAtkBoosted=cAtk*cbBig*gmBig/10000n;
 const cHpBoosted=cHp*cbBig*gmBig/10000n;
 // オメガコア蓄積分（乗算なし・そのまま加算）もクランプ
+// オメガコア蓄積分（乗算なし・そのまま加算）
 const oAtk=player.omegaAtkBig?BigInt(player.omegaAtkBig):0n;
 const oHp=player.omegaHpBig?BigInt(player.omegaHpBig):0n;
-const oAtkC=oAtk>BIG_CAP?BIG_CAP:oAtk;
-const oHpC=oHp>BIG_CAP?BIG_CAP:oHp;
-// 合計もクランプ
-let retAtk=atkBig+cAtkBoosted+oAtkC;if(retAtk>BIG_CAP)retAtk=BIG_CAP;
-let retHp=hpBig+cHpBoosted+oHpC;if(retHp>BIG_CAP)retHp=BIG_CAP;
+const oAtkC=oAtk;
+const oHpC=oHp;
+// 合計（上限なし）
+let retAtk=atkBig+cAtkBoosted+oAtkC;
+let retHp=hpBig+cHpBoosted+oHpC;
 // ===== 宝玉シリーズ倍率 =====
 // 倍率 = 1 + base × (所持数 ^ 0.6) の乗算をATK・HP両方に適用
 let gemMult=1.0;
@@ -711,8 +712,8 @@ if(cnt>0)gemMult*=(1+base*Math.pow(cnt,0.6));
 });
 if(gemMult>1.0){
 const gemBig=BigInt(Math.round(gemMult*100000));
-retAtk=retAtk*gemBig/100000n;if(retAtk>BIG_CAP)retAtk=BIG_CAP;
-retHp=retHp*gemBig/100000n;if(retHp>BIG_CAP)retHp=BIG_CAP;
+retAtk=retAtk*gemBig/100000n;
+retHp=retHp*gemBig/100000n;
 }
 return{atk:retAtk,hp:retHp,mult,compCount:comp,compBonus:cb,gemMult};
 }
@@ -724,11 +725,10 @@ let rv=Math.random()*100,cum=0;
 for(const e of KOUSA_RATES){cum+=e.r;if(rv<=cum)return KOUSA_BOSSES.find(b=>b.id===e.id);}
 return KOUSA_BOSSES.find(b=>b.id==="edel");
 }
-function trySpawnKousa(){if(Math.random()<0.30)spawnKousa();}
+function trySpawnKousa(){if(Math.random()<0.50)spawnKousa();}
 function spawnKousa(){
 kousaBossData=selectKousaBoss();
 // 虹災HP = 現在の溢れし災厄MaxHP × (hpMulMin〜hpMulMax) / 100
-// 例: edel(500〜800) → メインボスHPの5〜8倍、magmel(2000〜3000) → 20〜30倍
 const mainHPBig=BigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
 // メインボスHPを別途保存（ジェネシスコード・虹災終了後の復元に使用）
 player.mainBossMaxHP=mainHPBig.toString();
@@ -736,13 +736,10 @@ const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBoss
 // さらに±20%のばらつきを追加（同一ボス連続出現時もHP変化）
 const kousaHpRand=0.80+Math.random()*0.40;
 currentBossHP=mainHPBig*BigInt(Math.round(mul*kousaHpRand))/100n;
-// 虹災HPキャップ：実ATKベースで計算（maxDmgがBIG_CAPキャップ済みの場合も安全に）
-const _rawRef=lastDmg>0n?lastDmg:(player.maxDmg>0n&&player.maxDmg<BIG_CAP?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})());
-// ×5000000でBIG_CAPを超えないようBIG_CAP/5000001nを上限にクランプ
-const _refDmg2=_rawRef>BIG_CAP/5000001n?BIG_CAP/5000001n:_rawRef;
-const _kousaDmgCap=_refDmg2*5000000n;
+// 虹災HPキャップ：実ATKベースで計算（lastDmg優先）
+const _rawRef=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})());
+const _kousaDmgCap=_rawRef*5000000n;
 if(currentBossHP>_kousaDmgCap)currentBossHP=_kousaDmgCap;
-if(currentBossHP>BIG_CAP)currentBossHP=BIG_CAP;
 // 虹災戦用に bossMaxHP を一時上書き（HPバー用のみ）
 player.bossMaxHP=currentBossHP.toString();
 bossType="kousa_"+kousaBossData.id;
@@ -1134,7 +1131,7 @@ if(player.maxDmg<rates[star].cond)star=1;
 let sel;
 if(star===2&&player.hasDivineGuide&&Math.random()<0.1)sel=RELIC_MASTER.find(m=>m.id===117);
 else{
-let cands=RELIC_MASTER.filter(m=>m.star===star&&m.id!==0&&m.id!==999&&m.star<9&&m.id!==117&&m.id!==311&&m.id!==803);
+let cands=RELIC_MASTER.filter(m=>m.star===star&&m.id!==0&&m.id!==999&&m.star<9&&m.id!==117&&m.id!==311&&m.id!==803&&!m.gem);
 if(star===3)cands.push(RELIC_MASTER.find(m=>m.id===311));
 if(!cands.length)cands=RELIC_MASTER.filter(m=>m.star===1);
 sel=cands[Math.floor(Math.random()*cands.length)];
@@ -1183,8 +1180,6 @@ const atkGain=player.baseAtk/10n>0n?player.baseAtk/10n:1n;
 const hpGain=player.baseHP/2n>0n?player.baseHP/2n:1n;
 player.baseAtk+=atkGain;
 player.baseHP+=hpGain;
-if(player.baseAtk>BIG_CAP)player.baseAtk=BIG_CAP;
-if(player.baseHP>BIG_CAP)player.baseHP=BIG_CAP;
 enemyDisasterStarUsed=true;
 addLog(`<div><span style="color:#d4af37;font-weight:bold;">★星の記憶発動！メモリークリスタル100個を消費。baseATK+${fmtV(atkGain)}（+10%）/ baseHP+${fmtV(hpGain)}（+20%）</span></div>`);
 }
@@ -1205,8 +1200,6 @@ if(bossType==="kousa_gemini"){
     const actualAtkGain=player.baseAtk+gemAtkGain>geminiAtkCap?geminiAtkCap-player.baseAtk:gemAtkGain;
     player.baseAtk+=actualAtkGain;
     player.baseHP+=gemHpGain;
-    if(player.baseAtk>BIG_CAP)player.baseAtk=BIG_CAP;
-    if(player.baseHP>BIG_CAP)player.baseHP=BIG_CAP;
     geminiBuffTag=`<span class="c-gemini">【構文侵食】ATK+${fmtV(actualAtkGain)} HP+${fmtV(gemHpGain)}</span>`;
   }else if(geminiAtkCap>0n){
     geminiBuffTag=`<span class="c-gemini">【構文侵食：上限到達】</span>`;
@@ -1260,7 +1253,6 @@ atvBig=atvBig*_gapBig/100000n;
 const _evoBonus=1+Math.min(player.evolutionStack,5000)*0.00002;
 const _evoBig=BigInt(Math.round(_evoBonus*100000));
 atvBig=atvBig*_evoBig/100000n;
-if(atvBig>BIG_CAP)atvBig=BIG_CAP;
 // ③ baseAtk/HP成長（毎回）：現在ATK（遺物込み）の0.001%を永続加算、上限0.05%/回
 {
 const _rawG=tb.atk/100000n; // 0.001%（100回分の合計が従来の0.1%と同等）
@@ -1274,7 +1266,6 @@ addLog(`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【ジェ�
 }
 }
 let fd=atvBig*(randBig>0n?randBig:100000n)/100000n;
-if(fd>BIG_CAP)fd=BIG_CAP;
 let tags="";
 let luxDmg=0n;
 
@@ -1332,17 +1323,14 @@ isOvermatched=currentBossHP>=fd*100n; // 格下判定（キャップ適用条件
 if(isOvermatched&&fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
-if(fd<1n)fd=1n;if(fd>BIG_CAP)fd=BIG_CAP;
+if(fd<1n)fd=1n;
 
 // ===== maxDmg・lastDmg更新 =====
-// 格上戦（キャップなし・isOvermatched=false）のダメージは記録しない
-// → 次ボスHP計算・ドロップ資格判定に影響させないため
-if(!isOvermatched){
-// 格上戦：ダメージは記録せず、lastDmgも更新しない
-// （ボスHPは削れるが戦力評価には使わない）
-}else{
-if(fd>player.maxDmg)player.maxDmg=fd;
+// lastDmg は常に更新（次ボスHP計算の基準値として使用）
+// maxDmg（ドロップ資格判定）は格下時のみ更新
 lastDmg=fd;
+if(isOvermatched){
+if(fd>player.maxDmg)player.maxDmg=fd;
 }
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
@@ -1405,8 +1393,8 @@ const _boostedAtk=_dropResult.gainedAtk*_omegaMultBig/100000n;
 const _boostedHp=_dropResult.gainedHp*_omegaMultBig/100000n;
 const _oAtkNow=BigInt(player.omegaAtkBig||"0");
 const _oHpNow=BigInt(player.omegaHpBig||"0");
-player.omegaAtkBig=(_oAtkNow+_boostedAtk>BIG_CAP?BIG_CAP:_oAtkNow+_boostedAtk).toString();
-player.omegaHpBig=(_oHpNow+_boostedHp>BIG_CAP?BIG_CAP:_oHpNow+_boostedHp).toString();
+player.omegaAtkBig=(_oAtkNow+_boostedAtk).toString();
+player.omegaHpBig=(_oHpNow+_boostedHp).toString();
 logH+=`<div><span style="color:var(--cosmic-blue);font-weight:bold;">【オメガ・コア】ATK+${fmtV(_boostedAtk)} HP+${fmtV(_boostedHp)} 蓄積（×${_omegaMult.toFixed(2)}）</span></div>`;
 }
 
@@ -1521,7 +1509,7 @@ bossType="main";kousaBossData=null;
 // bossMaxHP を元に戻す：保存されていたmainBossMaxHPを使用（虹災HP汚染を排除）
 // player.mainBossMaxHP が存在すればそれを優先使用
 const _restoredHP=player.mainBossMaxHP?BigInt(player.mainBossMaxHP):safeBigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
-const newHPBig=_restoredHP>0n&&_restoredHP<=BIG_CAP?_restoredHP:BOSS_MAX_HP_BASE;
+const newHPBig=_restoredHP>0n?_restoredHP:BOSS_MAX_HP_BASE;
 player.bossMaxHP=newHPBig.toString();
 player.mainBossMaxHP=null; // リセット
 currentBossHP=newHPBig;
@@ -1560,14 +1548,13 @@ comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;playe
 player.killCount++;enemyDisasterStarUsed=false;
 // 次の敵HP計算：lastDmg × 100000（実ダメージ基準）
 // _minHPによる強制上昇を廃止（BIG_CAP汚染が残存するのを防ぐ）
-const _rawDmg=lastDmg>0n?lastDmg:(player.maxDmg>0n&&player.maxDmg<BIG_CAP?player.maxDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
-// ×100000でBIG_CAPを超えないようクランプ
-const _refDmg=_rawDmg>BIG_CAP/100001n?BIG_CAP/100001n:_rawDmg;
+const _rawDmg=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
+// 次ボスHP = 直前ダメージ × 100000 ±15%
+const _refDmg=_rawDmg;
 // ±15%の乱数ばらつき（85%〜115%）
 const _hpRandPct=BigInt(Math.round((85+Math.random()*30)*1000));
 let newHPBig=_refDmg*100000n*_hpRandPct/100000n;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
-if(newHPBig>BIG_CAP)newHPBig=BIG_CAP;
 player.bossMaxHP=newHPBig.toString();
 currentBossHP=newHPBig;
 addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災厄 討伐】第${player.killCount}体目を撃破！</span></div>`);
