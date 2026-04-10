@@ -658,6 +658,9 @@ let atkBig=0n,hpBig=0n,mult=1;
 const hasReg=(player.inventory[603]||0)>0,hasZan=(player.inventory[804]||0)>0;
 let comp=0;
 for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9&&!m.gem);if(at.length>0&&at.every(m=>player.everOwned[m.id]))comp++;}
+// ★9（虹災遺物8種）コンプリートで9段階目
+const _star9list=RELIC_MASTER.filter(m=>m.star===9);
+if(_star9list.length>0&&_star9list.every(m=>player.everOwned[m.id]))comp++;
 const cb=Math.pow(2,comp);
 const cbBig=BigInt(Math.round(cb));
 Object.entries(player.inventory).forEach(([id,c])=>{
@@ -1119,6 +1122,9 @@ const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
 // オメガ集計用：コンプリート倍率・強欲倍率を事前計算
 let _omegaCompCount=0;
 for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![117,0,999,311,803].includes(m.id)&&m.star!==9&&!m.gem);if(at.length>0&&at.every(m=>player.everOwned[m.id]))_omegaCompCount++;}
+// ★9（虹災遺物8種）コンプリートで9段階目
+const _omega9=RELIC_MASTER.filter(m=>m.star===9);
+if(_omega9.length>0&&_omega9.every(m=>player.everOwned[m.id]))_omegaCompCount++;
 const _omegaCbBig=BigInt(Math.round(Math.pow(2,_omegaCompCount)));
 const _omegaGmBig=BigInt(Math.round(greedMult()*10000));
 for(let i=0;i<count;i++){
@@ -1800,7 +1806,7 @@ lv100el.innerHTML=`覚醒ボーナス: ATK累積 <b>+${fmtV(la)}</b> / HP累積 
 document.getElementById("st-kill-count").textContent=fmtV(player.killCount||0);
 // 宝玉シリーズ表示
 const gemBox=document.getElementById("gem-box");
-const gemIds=[{id:611,name:"累積宝玉",base:0.10,color:"#22d3ee",star:6,chance:"0.500"},{id:711,name:"原初宝玉",base:0.25,color:"#c084fc",star:7,chance:"0.300"},{id:811,name:"神格宝玉",base:0.50,color:"#ffd700",star:8,chance:"0.100"}];
+const gemIds=[{id:611,name:"累積宝玉",base:0.10,color:"#22d3ee",star:6},{id:711,name:"原初宝玉",base:0.25,color:"#c084fc",star:7},{id:811,name:"神格宝玉",base:0.50,color:"#ffd700",star:8}];
 const ownedGems=gemIds.filter(g=>(player.inventory[g.id]||0)>0);
 if(ownedGems.length>0){
 gemBox.style.display="block";
@@ -1809,7 +1815,7 @@ document.getElementById("gem-status").innerHTML=ownedGems.map(g=>{
 const cnt=player.inventory[g.id]||0;
 const mult=1+g.base*Math.pow(cnt,0.6);
 const next=1+g.base*Math.pow(cnt+1,0.6);
-return`<span style="color:${g.color};font-weight:bold;">★${g.star} ${g.name} ×${cnt.toLocaleString()} → <b>×${mult.toFixed(3)}</b></span> <span style="color:#888;font-size:.85em;">次+${(next-mult).toFixed(4)}</span><br><span style="color:#555;font-size:.78em;">★${g.star}ドロップ時 ${g.chance}% で追加出現 / ATK・HP永続強化（上限なし）</span>`;
+return`<span style="color:${g.color};font-weight:bold;">★${g.star} ${g.name} ×${cnt.toLocaleString()} → <b>×${mult.toFixed(3)}</b></span> <span style="color:#888;font-size:.85em;">次+${(next-mult).toFixed(4)}</span>`;
 }).join("<br>");
 }else{gemBox.style.display="none";}
 const lv100box=document.getElementById("st-lv100bonus");
