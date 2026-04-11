@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.33</title>
+<title>RELICORE - v1.32</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899)}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -39,8 +39,8 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 #serial-modal{background:rgba(0,0,0,.9);z-index:70000}
 #kousa-relic-modal{background:rgba(0,0,0,.92);z-index:46000}
 
-.rank-up-content{background:#000;border:2px solid var(--growth);border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%;animation:heartbeat-pulse 2s infinite}
-.rank-up-title{color:var(--growth);font-size:1.6em;font-weight:bold;margin-bottom:20px;letter-spacing:4px}
+.rank-up-content{background:#000;border:2px solid var(–growth);border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%;animation:heartbeat-pulse 2s infinite}
+.rank-up-title{color:var(–growth);font-size:1.6em;font-weight:bold;margin-bottom:20px;letter-spacing:4px}
 .rank-up-msg{font-size:1.1em;line-height:1.8;margin-bottom:30px;color:#fff}
 .rank-up-sub{font-size:.85em;color:#aaa;margin-top:10px}
 .rare-card{background:#fff;padding:30px;border-radius:15px;width:85%;max-width:320px;text-align:center}
@@ -52,76 +52,76 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .glow-6{border:3px solid #fd7e14;box-shadow:0 0 25px rgba(253,126,20,.6)}
 .glow-7{border:3px solid #f00;box-shadow:0 0 30px rgba(255,0,0,.7);animation:rare-pulse 1s infinite alternate}
 .glow-8{border:3px solid #fff;background:linear-gradient(135deg,#1a1a1a,#000);box-shadow:0 0 30px rgba(255,255,255,.6);animation:rare-pulse .8s infinite alternate}
-.glow-9{border:3px solid transparent;background:linear-gradient(#1a0a2e,#1a0a2e) padding-box,var(--magmel) border-box;box-shadow:0 0 40px rgba(168,85,247,.7);animation:rainbow-pulse 1.2s infinite alternate}
-.hado-content{background:#000;border:3px solid var(--gold);border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%;animation:awaken-glow 3s infinite alternate}
-.hado-title{color:var(--gold);font-size:1.8em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 15px var(--gold)}
+.glow-9{border:3px solid transparent;background:linear-gradient(#1a0a2e,#1a0a2e) padding-box,var(–magmel) border-box;box-shadow:0 0 40px rgba(168,85,247,.7);animation:rainbow-pulse 1.2s infinite alternate}
+.hado-content{background:#000;border:3px solid var(–gold);border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%;animation:awaken-glow 3s infinite alternate}
+.hado-title{color:var(–gold);font-size:1.8em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 15px var(–gold)}
 .hado-msg{font-size:1em;line-height:2;margin-bottom:35px;color:#eee;text-align:left;background:rgba(255,255,255,.05);padding:20px;border-radius:10px}
-.cosmic-content{background:rgba(0,0,0,.8);border:2px solid var(--cosmic-blue);border-radius:30px;padding:40px 20px;text-align:center;color:#fff;max-width:480px;width:95%;animation:cosmic-pulse 4s infinite}
-.cosmic-title{color:#fff;font-size:2em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 20px var(--cosmic-blue);letter-spacing:6px}
+.cosmic-content{background:rgba(0,0,0,.8);border:2px solid var(–cosmic-blue);border-radius:30px;padding:40px 20px;text-align:center;color:#fff;max-width:480px;width:95%;animation:cosmic-pulse 4s infinite}
+.cosmic-title{color:#fff;font-size:2em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 20px var(–cosmic-blue);letter-spacing:6px}
 .cosmic-msg{font-size:1.1em;line-height:2.2;margin-bottom:35px;color:#e0f7ff}
-.cosmic-btn{background:none;border:1px solid var--cosmic-blue);color:var(--cosmic-blue);padding:12px 50px;font-size:1.1em;cursor:pointer;transition:.5s;border-radius:50px}
+.cosmic-btn{background:none;border:1px solid var–cosmic-blue);color:var(–cosmic-blue);padding:12px 50px;font-size:1.1em;cursor:pointer;transition:.5s;border-radius:50px}
 .story-content{max-width:500px;color:#fff;text-align:center;line-height:2.2}
 .story-text{margin-bottom:35px;font-size:1.05em;text-align:left;letter-spacing:.08em}
 .story-vow{color:gold;font-weight:bold;display:inline-block;animation:heart-beat 1.5s infinite;text-shadow:0 0 10px rgba(212,175,55,.8)}
 .story-btn{background:none;border:1px solid gold;color:gold;padding:12px 40px;font-size:1em;cursor:pointer;transition:.3s}
-.modal-content{background:#000;border:2px solid var(--gold);border-radius:20px;padding:35px 25px;text-align:center;color:#fff;max-width:450px;width:95%}
+.modal-content{background:#000;border:2px solid var(–gold);border-radius:20px;padding:35px 25px;text-align:center;color:#fff;max-width:450px;width:95%}
 .clear-main-msg{font-size:1.05em;line-height:1.8;margin:20px 0;color:#eee;text-align:left}
 .order-content{background:#000;border:2px solid #fff;border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:450px;width:95%}
 .policy-content{background:#fff;border-radius:15px;padding:25px;color:#333;max-width:500px;width:95%;max-height:85vh;overflow-y:auto;text-align:left}
 .policy-title{font-weight:bold;font-size:1.2em;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:8px;text-align:center}
 .policy-text{font-size:.82em;line-height:1.7;color:#444}
 .policy-footer{font-size:.75em;color:#777;text-align:right;margin-top:20px}
-#serial-input-box{background:#1a1a1a;border:1px solid var(--gold);color:#fff;padding:10px;width:100%;text-align:center;font-size:1.2em;letter-spacing:2px;margin-bottom:20px;border-radius:5px}
+#serial-input-box{background:#1a1a1a;border:1px solid var(–gold);color:#fff;padding:10px;width:100%;text-align:center;font-size:1.2em;letter-spacing:2px;margin-bottom:20px;border-radius:5px}
 
 /* ★9ドロップモーダル */
 .kousa-relic-content{background:#1a0a2e;border:3px solid transparent;background-clip:padding-box;border-radius:20px;padding:40px 20px;text-align:center;color:#fff;max-width:420px;width:95%;box-shadow:0 0 50px rgba(168,85,247,.5);animation:rainbow-pulse 2s infinite}
 .star9-label{font-size:2em;margin-bottom:10px}
-.star9-name{font-size:1.5em;font-weight:bold;margin-bottom:20px;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.star9-name{font-size:1.5em;font-weight:bold;margin-bottom:20px;background:var(–magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .star9-desc{font-size:.9em;color:#ddd;line-height:1.7;margin-bottom:25px;text-align:left}
 
 /* カラークラス */
 .c1{color:#888;font-weight:bold}.c2{color:#28a745;font-weight:bold}.c3{color:#007bff;font-weight:bold}.c4{color:#6610f2;font-weight:bold}.c5{color:#e83e8c;font-weight:bold}.c6{color:#fd7e14;font-weight:bold}.c7{color:#f00;font-weight:bold}.c8{color:#ffd700;font-weight:bold}
-.c9{font-weight:bold;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.c-order{color:#ffd700;font-weight:bold}.c-gemini{color:var(--gemini);font-weight:bold}
-.c-edel{color:var--edel);font-weight:bold}.c-neria{color:var--neria);font-weight:bold}.c-nox{color:var(--nox);font-weight:bold}.c-lilith{color:var(--lilith);font-weight:bold}.c-valka{color:var(--valka);font-weight:bold}.c-igna{color:var(--igna);font-weight:bold}.c-lux{color:var(--lux);font-weight:bold}
-.c-magmel{background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold}
+.c9{font-weight:bold;background:var(–magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.c-order{color:#ffd700;font-weight:bold}.c-gemini{color:var(–gemini);font-weight:bold}
+.c-edel{color:var–edel);font-weight:bold}.c-neria{color:var–neria);font-weight:bold}.c-nox{color:var(–nox);font-weight:bold}.c-lilith{color:var(–lilith);font-weight:bold}.c-valka{color:var(–valka);font-weight:bold}.c-igna{color:var(–igna);font-weight:bold}.c-lux{color:var(–lux);font-weight:bold}
+.c-magmel{background:var(–magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold}
 .unique-relic-text{font-weight:bold;background:linear-gradient(to right,#d4af37,#fff,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.rainbow-relic-text{font-weight:bold;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.rainbow-relic-text{font-weight:bold;background:var(–magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
 /* ヘッダー */
-#header{background:var(--dark);color:#fff;padding:12px 10px;border-bottom:2px solid #000;flex-shrink:0;transition:border-color .4s}
+#header{background:var(–dark);color:#fff;padding:12px 10px;border-bottom:2px solid #000;flex-shrink:0;transition:border-color .4s}
 .boss-area{text-align:center;width:100%}
 .boss-name{font-size:1em;font-weight:bold;color:#888;letter-spacing:2px;margin-bottom:4px;transition:color .3s}
 /* ボス種別バッジ */
 .boss-type-badge{display:inline-block;font-size:.65em;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:bold;vertical-align:middle}
 .badge-main{background:#333;color:#aaa}
-.badge-kousa{background:rgba(168,85,247,.3);color:var(--nox);border:1px solid var(--nox)}
-.badge-gemini{background:rgba(75,0,130,.3);color:#c084fc;border:1px solid var(--gemini)}
+.badge-kousa{background:rgba(168,85,247,.3);color:var(–nox);border:1px solid var(–nox)}
+.badge-gemini{background:rgba(75,0,130,.3);color:#c084fc;border:1px solid var(–gemini)}
 .hp-bar-container{background:#333;height:10px;border-radius:5px;overflow:hidden;margin:0 auto 8px auto;width:100%}
 #hp-bar-fill{height:100%;background:linear-gradient(90deg,#b02a37,#dc3545);width:100%;transition:width .1s ease-out,background .4s}
 .hp-val-display{font-size:1.45em;font-weight:bold;color:#ff6b6b;font-family:‘Courier New’,monospace;word-break:break-all;line-height:1.2;letter-spacing:-1px}
 /* 虹災ボス種別によるHP色 */
-.hpfill-edel{background:linear-gradient(90deg,#15803d,var(--edel))!important}
-.hpfill-neria{background:linear-gradient(90deg,#1d4ed8,var(--neria))!important}
-.hpfill-nox{background:linear-gradient(90deg,#7e22ce,var(--nox))!important}
-.hpfill-lilith{background:linear-gradient(90deg,#be185d,var(--lilith))!important}
-.hpfill-valka{background:linear-gradient(90deg,#c2410c,var(--valka))!important}
-.hpfill-igna{background:linear-gradient(90deg,#b91c1c,var(--igna))!important}
-.hpfill-lux{background:linear-gradient(90deg,#a16207,var(--lux))!important}
-.hpfill-magmel{background:(--magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
-.hpfill-gemini{background:linear-gradient(90deg,#2d0057,var(--gemini))!important}
+.hpfill-edel{background:linear-gradient(90deg,#15803d,var(–edel))!important}
+.hpfill-neria{background:linear-gradient(90deg,#1d4ed8,var(–neria))!important}
+.hpfill-nox{background:linear-gradient(90deg,#7e22ce,var(–nox))!important}
+.hpfill-lilith{background:linear-gradient(90deg,#be185d,var(–lilith))!important}
+.hpfill-valka{background:linear-gradient(90deg,#c2410c,var(–valka))!important}
+.hpfill-igna{background:linear-gradient(90deg,#b91c1c,var(–igna))!important}
+.hpfill-lux{background:linear-gradient(90deg,#a16207,var(–lux))!important}
+.hpfill-magmel{background:(–magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
+.hpfill-gemini{background:linear-gradient(90deg,#2d0057,var(–gemini))!important}
 .status-box{display:flex;gap:8px;margin-top:10px}
-.stat-card{flex:1;background:rgba(255,255,255,.08);padding:5px 10px;border-radius:6px;border-left:3px solid var(--primary);display:flex;flex-direction:column;overflow:hidden}
-.stat-card.hp-card{border-left-color:var(--hp)}
+.stat-card{flex:1;background:rgba(255,255,255,.08);padding:5px 10px;border-radius:6px;border-left:3px solid var(–primary);display:flex;flex-direction:column;overflow:hidden}
+.stat-card.hp-card{border-left-color:var(–hp)}
 .stat-label{font-size:.65em;color:#aaa;text-transform:uppercase;margin-bottom:1px}
 .stat-val{font-size:.95em;font-weight:bold;font-family:monospace;color:#fff;overflow-x:auto;white-space:nowrap}
-.nav{display:flex;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
+.nav{display:flex;background:var(–panel);border-bottom:1px solid var(–border);flex-shrink:0}
 .nav button{flex:1;padding:12px 0;border:none;background:none;color:#6c757d;font-weight:bold;font-size:.8em}
-.nav button.active{color:var(--primary);border-bottom:3px solid var(--primary);background:#fff}
+.nav button.active{color:var(–primary);border-bottom:3px solid var(–primary);background:#fff}
 #content-area{flex-grow:1;overflow:hidden;background:#fff}
 .tab{display:none;padding:10px 10px 150px 10px;height:100%;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .tab.active{display:block}
-.btn-attack{width:100%;padding:16px;background:var(--primary);color:#fff;font-size:1.3em;font-weight:bold;border:none;border-radius:12px;margin-bottom:10px;box-shadow:0 4px 0 #0056b3;-webkit-user-select:none;user-select:none;transition:background .3s}
+.btn-attack{width:100%;padding:16px;background:var(–primary);color:#fff;font-size:1.3em;font-weight:bold;border:none;border-radius:12px;margin-bottom:10px;box-shadow:0 4px 0 #0056b3;-webkit-user-select:none;user-select:none;transition:background .3s}
 /* ボス種別ごとの攻撃ボタン色 */
 .attack-kousa-edel{background:#15803d!important;box-shadow:0 4px 0 #14532d!important}
 .attack-kousa-neria{background:#1d4ed8!important;box-shadow:0 4px 0 #1e3a8a!important}
@@ -132,29 +132,29 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .attack-kousa-lux{background:#a16207!important;box-shadow:0 4px 0 #92400e!important}
 .attack-kousa-magmel{background:linear-gradient(90deg,#ef4444,#a855f7)!important;box-shadow:0 4px 0 #581c87!important}
 .attack-kousa-gemini{background:#4b0082!important;box-shadow:0 4px 0 #2e0057!important}
-#log{height:400px;font-size:.82em;background:#fafafa;border:1px solid var(--border);padding:10px;overflow-y:auto;border-radius:8px;line-height:1.4}
+#log{height:400px;font-size:.82em;background:#fafafa;border:1px solid var(–border);padding:10px;overflow-y:auto;border-radius:8px;line-height:1.4}
 .log-set{border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:8px}
 .vow-list-container{display:grid;grid-template-columns:1fr;gap:10px}
 @media(min-width:600px){.vow-list-container{grid-template-columns:1fr 1fr}}
-.vow-item{position:relative;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 10px 10px 16px;box-shadow:0 2px 4px rgba(0,0,0,.05);display:flex;flex-direction:column;min-height:100px}
+.vow-item{position:relative;background:#fff;border:1px solid var(–border);border-radius:8px;padding:10px 10px 10px 16px;box-shadow:0 2px 4px rgba(0,0,0,.05);display:flex;flex-direction:column;min-height:100px}
 .vow-item::before{content:””;position:absolute;left:0;top:0;bottom:0;width:4px;background:gold;border-radius:8px 0 0 8px}
 .vow-header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #f0f0f0;margin-bottom:6px;padding-bottom:4px}
 .vow-name{font-weight:bold;font-size:.9em;color:#333}
 .vow-lv{font-size:.75em;font-weight:bold;color:#888}
-.vow-lv.max{color:var(--gold)}
-.vow-highlight{font-weight:bold;font-size:.82em;display:block;line-height:1.5;color:var(--primary);background:#f0f7ff;padding:6px;border-radius:4px;margin-bottom:6px}
+.vow-lv.max{color:var(–gold)}
+.vow-highlight{font-weight:bold;font-size:.82em;display:block;line-height:1.5;color:var(–primary);background:#f0f7ff;padding:6px;border-radius:4px;margin-bottom:6px}
 .vow-tag{display:inline-block;white-space:nowrap;margin-right:4px}
 .vow-sub{font-size:.72em;color:#666;display:block;line-height:1.4}
 .relic-list-container{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.relic-card{position:relative;border:1px solid #e0d5f0;padding:6px 6px 6px 10px;border-radius:6px;background:var(--relic-bg);display:flex;flex-direction:column;min-height:70px}
+.relic-card{position:relative;border:1px solid #e0d5f0;padding:6px 6px 6px 10px;border-radius:6px;background:var(–relic-bg);display:flex;flex-direction:column;min-height:70px}
 .relic-card.star-low{grid-column:span 2}
 .relic-card.star-high{grid-column:span 3;border-width:2px;background:#fff}
 .relic-card.star-ultimate{grid-column:span 6;border:2px solid #d4af37;background:#1a1a1a;color:#fff}
 .relic-card.relic-unique{grid-column:span 6;border:2px solid #d4af37;background:#000;color:#fff;box-shadow:0 0 15px rgba(212,175,55,.4)}
-.relic-card.relic-rainbow{grid-column:span 6;border:2px solid transparent;background:linear-gradient(#0a0015,#0a0015) padding-box,var(--magmel) border-box;color:#fff;box-shadow:0 0 20px rgba(168,85,247,.4)}
-.relic-card::before{content:””;position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--relic-purple);border-radius:6px 0 0 6px}
-.relic-card.star-ultimate::before,.relic-card.relic-unique::before{background:var(--gold)}
-.relic-card.relic-rainbow::before{background:var(--nox)}
+.relic-card.relic-rainbow{grid-column:span 6;border:2px solid transparent;background:linear-gradient(#0a0015,#0a0015) padding-box,var(–magmel) border-box;color:#fff;box-shadow:0 0 20px rgba(168,85,247,.4)}
+.relic-card::before{content:””;position:absolute;left:0;top:0;bottom:0;width:3px;background:var(–relic-purple);border-radius:6px 0 0 6px}
+.relic-card.star-ultimate::before,.relic-card.relic-unique::before{background:var(–gold)}
+.relic-card.relic-rainbow::before{background:var(–nox)}
 .relic-name{font-weight:bold;font-size:.65em;min-height:2.4em;line-height:1.2}
 .relic-card.star-ultimate .relic-name,.relic-card.relic-unique .relic-name,.relic-card.relic-rainbow .relic-name{font-size:.8em}
 .relic-effect-box{font-size:.6em;color:#444;margin-top:2px;line-height:1.3}
@@ -162,12 +162,12 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .relic-desc-line{color:#666;font-style:italic;display:block;margin-top:4px;border-top:1px solid #f0f0f0;padding-top:2px}
 .relic-card.star-ultimate .relic-desc-line,.relic-card.relic-unique .relic-desc-line{color:#aaa;border-top-color:#333}
 .relic-card.relic-rainbow .relic-desc-line{color:#bbb;border-top-color:#333}
-.relic-countdown{font-size:.9em;color:var(--growth);font-weight:bold;margin-top:4px;border-top:1px dashed #ddd;padding-top:2px;display:block}
+.relic-countdown{font-size:.9em;color:var(–growth);font-weight:bold;margin-top:4px;border-top:1px dashed #ddd;padding-top:2px;display:block}
 .st-box{background:#fff;border:none;border-left:4px solid #28a745;border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:.82em;line-height:1.5;box-shadow:0 2px 4px rgba(0,0,0,.05)}
-.clickable-stat{display:inline-block;color:var(--primary);border:1px solid var(--primary);padding:2px 8px;border-radius:12px;font-size:.85em;cursor:pointer;background:#f0f7ff}
+.clickable-stat{display:inline-block;color:var(–primary);border:1px solid var(–primary);padding:2px 8px;border-radius:12px;font-size:.85em;cursor:pointer;background:#f0f7ff}
 .st-title-flex{display:flex;justify-content:space-between;align-items:baseline;font-weight:bold}
 .btn-reset{width:100%;padding:12px;background:#dc3545;color:#fff;border:none;border-radius:8px;font-weight:bold;margin-bottom:10px}
-.btn-serial{width:100%;padding:12px;background:#212529;color:var(--gold);border:1px solid var(--gold);border-radius:8px;font-weight:bold;margin-bottom:10px;cursor:pointer}
+.btn-serial{width:100%;padding:12px;background:#212529;color:var(–gold);border:1px solid var(–gold);border-radius:8px;font-weight:bold;margin-bottom:10px;cursor:pointer}
 .privacy-link{display:block;text-align:center;font-size:.75em;color:#888;text-decoration:underline;cursor:pointer;padding:10px}
 .ver-footer{position:fixed;bottom:4px;right:4px;color:#bbb;font-size:.65em;pointer-events:none;z-index:50}
 .btn-auto{width:100%;padding:11px;font-size:1em;font-weight:bold;border:none;border-radius:10px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;transition:background .2s,box-shadow .2s;letter-spacing:2px}
@@ -272,13 +272,14 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.33</div>
+<div class="ver-footer">RELICORE v1.32</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
 const BOSS_MAX_HP_BASE=100000000000000000000n;
 let enemyDisasterStarUsed=false,comboHit=0,attackInterval=null,activePointerId=null;
 let autoAttackInterval=null,isAutoAttack=false;
+let _attackSaveCounter=0; // saveGame間引き用（10回に1回保存）
 let erosionStack=0,waterAccumDmg=0n,luxHitCounter=0,kushiaCounter=0;
 let isModalOpen=false,needsUIUpdate=false;
 let lastDmg=0n; // 直前の与ダメージ（ボスHP計算に使用）
@@ -354,6 +355,18 @@ const RELIC_MASTER=[
 {id:911,star:9,name:"夢幻宝玉",atk:0,hp:0,gem:true,desc:"攻撃時の遺物ドロップ上限を突破する。1個につき+1。収集数上限なし。"},
 ...STAR9
 ];
+
+// ===== パフォーマンス最適化: 事前構築Map・候補配列 =====
+const RELIC_MAP=new Map();
+[...RELIC_MASTER,...STAR9].forEach(m=>RELIC_MAP.set(m.id,m));
+const CANDS_BASE={};
+for(let s=1;s<=8;s++){CANDS_BASE[s]=RELIC_MASTER.filter(m=>m.star===s&&m.id!==0&&m.id!==999&&m.id!==117&&m.id!==311&&!m.gem);}
+const CANDS3_WITH311=[...CANDS_BASE[3],...RELIC_MASTER.filter(m=>m.id===311)];
+const CANDS1_FALLBACK=RELIC_MASTER.filter(m=>m.star===1);
+const RELIC_117=RELIC_MASTER.find(m=>m.id===117);
+const RELIC_911=RELIC_MASTER.find(m=>m.id===911);
+const GEM_MAP={8:811,7:711,6:611};
+// =====
 
 let player={
 inventory:{0:1},everOwned:{0:true},deathCount:0,hadoExpAccum:0,totalLevel:1,baseAtk:10n,baseHP:100n,maxDmg:0n,
@@ -543,7 +556,7 @@ if(p.currentBossHP){
 {const bm=_loadBig(player.bossMaxHP,BOSS_MAX_HP_BASE.toString());player.bossMaxHP=bm.toString();}
 }else{currentBossHP=BigInt(player.bossMaxHP);}
 Object.keys(player.inventory).forEach(id=>{
-const r=RELIC_MASTER.find(m=>m.id==id);
+const r=RELIC_MAP.get(parseInt(id));
 if(r&&(r.star>=6||r.star===9)&&!r.gem&&player.inventory[id]>1)player.inventory[id]=1;
 });
 if(player.isCleared&&!player.rebalanceSeen)showClearStartMsg();
@@ -676,13 +689,13 @@ function getRelicBonus(){
 let atkBig=0n,hpBig=0n,mult=1;
 const hasReg=(player.inventory[603]||0)>0,hasZan=(player.inventory[804]||0)>0;
 let comp=0;
-for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![0,999].includes(m.id)&&m.star!==9&&!m.gem);if(at.length>0&&at.every(m=>player.everOwned[m.id]))comp++;}
+for(let s=1;s<=8;s++){const at=CANDS_BASE[s];if(at.length>0&&at.every(m=>player.everOwned[m.id]))comp++;}
 // ★9（虹災遺物8種）コンプリートで9段階目 ※STAR9配列を参照
 if(STAR9.length>0&&STAR9.every(m=>player.everOwned[m.id]))comp++;
 const cb=Math.pow(2,comp);
 const cbBig=BigInt(Math.round(cb));
 Object.entries(player.inventory).forEach(([id,c])=>{
-const r=RELIC_MASTER.find(m=>m.id==id);if(!r||r.star===999||r.star===9)return;
+const r=RELIC_MAP.get(parseInt(id));if(!r||r.star===999||r.star===9)return;
 // float計算はスケール1000倍で整数化してBigIntに変換
 let a=Math.round((r.atk||0)*c*1000),h=Math.round((r.hp||0)*c*1000);
 if(r.star===1&&player.hasHado){a*=100;h*=100;}else if(r.star===2&&player.hasGreatHado){a*=100;h*=100;}else if(r.star===3&&player.hasDivineGuide){a*=100;h*=100;}
@@ -1142,80 +1155,91 @@ return`<div style="font-size:.82em;">【狼煙】${Object.entries(g).map(([id,c]
 function getDropLog(count){
 const raw=getCurrentDropRates(),tp=Object.values(raw).reduce((s,i)=>s+i.p,0);
 const rates={};for(let s in raw)rates[s]={p:(raw[s].p/tp)*100,cond:raw[s].cond};
+// レート配列をループ外で固定配列化（forループ高速化）
+const rateKeys=Object.keys(rates);
+const rateCumulative=[];let _cp=0;
+for(const s of rateKeys){_cp+=rates[s].p;rateCumulative.push({p:_cp,star:parseInt(s),cond:rates[s].cond});}
 let sc={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0},sg={1:{},2:{},3:{},4:{},5:{},6:{},7:{},8:{},9:{}},showR=null;
-let gainedAtk=0n,gainedHp=0n; // オメガコア用：今回ドロップ遺物のATK/HP合計
+let gainedAtkNum=0,gainedHpNum=0; // Number累積（ループ後にBigInt変換）
 const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
-// オメガ集計用：コンプリート倍率・強欲倍率を事前計算
+// コンプリート倍率: CANDS_BASEを使いO(1)参照
 let _omegaCompCount=0;
-for(let s=1;s<=8;s++){const at=RELIC_MASTER.filter(m=>m.star===s&&![0,999].includes(m.id)&&m.star!==9&&!m.gem);if(at.length>0&&at.every(m=>player.everOwned[m.id]))_omegaCompCount++;}
-// ★9（虹災遺物8種）コンプリートで9段階目
-// ★9（虹災遺物8種）コンプリートで9段階目 ※STAR9配列を参照
+for(let s=1;s<=8;s++){const at=CANDS_BASE[s];if(at.length>0&&at.every(m=>player.everOwned[m.id]))_omegaCompCount++;}
 if(STAR9.length>0&&STAR9.every(m=>player.everOwned[m.id]))_omegaCompCount++;
 const _omegaCbBig=BigInt(Math.round(Math.pow(2,_omegaCompCount)));
 const _omegaGmBig=BigInt(Math.round(greedMult()*10000));
+const hasOmega=(player.inventory[801]||0)>0&&count>=100;
+// 星別乗算フラグをループ外で確定
+const _starMult=[0,
+  player.hasHado?100:1,
+  player.hasGreatHado?100:1,
+  player.hasDivineGuide?100:1,
+  player.hasWorldOrder?100:1,
+  player.hasCrown?100:1,
+  player.hasMeta?100:1,
+  1,1
+];
+const _rMult=hasR?1.5:1;const _zMult=hasZ?1000:1;
+const maxDmg=player.maxDmg;
 for(let i=0;i<count;i++){
-let rv=Math.random()*100,star=1,cp=0;
-for(let s in rates){cp+=rates[s].p;if(rv<=cp){star=parseInt(s);break;}}
-if(player.maxDmg<rates[star].cond)star=1;
-// ★9通常ドロップ枠は夢幻宝玉(911) — gemUnlocked後のみ、それ以外は★1に落とす
+let rv=Math.random()*100,star=1;
+for(let ci=0;ci<rateCumulative.length;ci++){if(rv<=rateCumulative[ci].p){star=rateCumulative[ci].star;break;}}
+if(maxDmg<rates[star].cond)star=1;
 if(star===9){
 if(player.gemUnlocked){
-const _mugenId=911;
-const _isFirst911=(player.inventory[_mugenId]||0)===0;
-player.inventory[_mugenId]=(player.inventory[_mugenId]||0)+1;
+const _isFirst911=(player.inventory[911]||0)===0;
+player.inventory[911]=(player.inventory[911]||0)+1;
 player.totalRelics++;
-const _gm911=RELIC_MASTER.find(m=>m.id===_mugenId);
-sc[9]=(sc[9]||0)+1;
-sg[9][_mugenId]=(sg[9][_mugenId]||0)+1;
-if(_isFirst911&&(!showR||9>showR.star))showR=_gm911;
-player.everOwned[_mugenId]=true;
-continue; // ★9枠は通常sel処理をスキップ
+sc[9]=(sc[9]||0)+1;sg[9][911]=(sg[9][911]||0)+1;
+if(_isFirst911&&(!showR||9>showR.star))showR=RELIC_911;
+player.everOwned[911]=true;
+continue;
 }else{star=1;}
 }
 let sel;
-if(star===2&&player.hasDivineGuide&&Math.random()<0.1)sel=RELIC_MASTER.find(m=>m.id===117);
+if(star===2&&player.hasDivineGuide&&Math.random()<0.1)sel=RELIC_117;
 else{
-let cands=RELIC_MASTER.filter(m=>m.star===star&&m.id!==0&&m.id!==999&&m.star<9&&m.id!==117&&m.id!==311&&!m.gem);
-if(star===3)cands.push(RELIC_MASTER.find(m=>m.id===311));
-// ★6〜8は獲得済み遺物をドロップ候補から除外
-if(star>=6)cands=cands.filter(m=>!(player.inventory[m.id]>0));
-if(!cands.length)cands=RELIC_MASTER.filter(m=>m.star===1);
+let cands;
+if(star===3)cands=CANDS3_WITH311;
+else cands=CANDS_BASE[star]||CANDS1_FALLBACK;
+// ★6〜8: 所持済みを除外（スライス不要なfilter）
+if(star>=6){
+const uc=[];for(let ci=0;ci<cands.length;ci++){if(!(player.inventory[cands[ci].id]>0))uc.push(cands[ci]);}
+cands=uc.length?uc:CANDS1_FALLBACK;
+}
 sel=cands[Math.floor(Math.random()*cands.length)];
 }
+if(!sel)continue;
 if(sel.star>=6&&!sel.gem){if(!(player.inventory[sel.id]>0)){player.inventory[sel.id]=1;player.totalRelics++;sc[sel.star]++;sg[sel.star][sel.id]=1;showR=sel;}}
 else if(!sel.gem){player.inventory[sel.id]=(player.inventory[sel.id]||0)+1;player.totalRelics++;sc[star]++;sg[star][sel.id]=(sg[star][sel.id]||0)+1;if(sel.star>=4&&player.inventory[sel.id]===1)if(!showR||sel.star>showR.star)showR=sel;}
 player.everOwned[sel.id]=true;
-// ===== 宝玉ドロップ追加抽選（72種コンプリート後のみ） =====
-// ★6→共鳴宝玉(611) 0.5%、★7→神核宝玉(711) 0.3%、★8→災禍宝玉(811) 0.1%
+// 宝玉ドロップ追加抽選
 if(player.gemUnlocked){
 const gemChance=star===8?0.001:star===7?0.003:star===6?0.005:0;
 if(gemChance>0&&Math.random()<gemChance){
-const gemId=star===8?811:star===7?711:611;
+const gemId=GEM_MAP[star];
 const isFirstGem=(player.inventory[gemId]||0)===0;
 player.inventory[gemId]=(player.inventory[gemId]||0)+1;
 player.totalRelics++;
-const gm=RELIC_MASTER.find(m=>m.id===gemId);
-sc[gm.star]=(sc[gm.star]||0)+1;
-sg[gm.star][gemId]=(sg[gm.star][gemId]||0)+1;
+const gm=RELIC_MAP.get(gemId);
+sc[gm.star]=(sc[gm.star]||0)+1;sg[gm.star][gemId]=(sg[gm.star][gemId]||0)+1;
 if(isFirstGem&&(!showR||gm.star>showR.star))showR=gm;
 player.everOwned[gemId]=true;
 }
 }
-// オメガコア用：ドロップ遺物のATK/HPを集計（各種強化倍率を適用）
-if((player.inventory[801]||0)>0&&count>=100&&sel.star<9&&sel.star!==999){
-let da=sel.atk||0,dh=sel.hp||0;
-if(sel.star===1&&player.hasHado){da*=100;dh*=100;}else if(sel.star===2&&player.hasGreatHado){da*=100;dh*=100;}else if(sel.star===3&&player.hasDivineGuide){da*=100;dh*=100;}
-if(sel.star===4&&player.hasWorldOrder){da*=100;dh*=100;}if(sel.star===5&&player.hasCrown){da*=100;dh*=100;}if(sel.star===6&&player.hasMeta){da*=100;dh*=100;}
-if(hasR&&sel.star<=6){da*=1.5;dh*=1.5;}if(hasZ&&sel.star<=6){da*=1000;dh*=1000;}
-// コンプリート倍率・強欲倍率を適用（getRelicBonusと同じレイヤー）
-gainedAtk+=safeBigInt(da)*_omegaCbBig*_omegaGmBig/10000n;
-gainedHp+=safeBigInt(dh)*_omegaCbBig*_omegaGmBig/10000n;
+// オメガコア集計（Numberで累積→ループ後に1回だけBigInt変換）
+if(hasOmega&&sel.star<9&&sel.star!==999){
+let da=(sel.atk||0)*_starMult[sel.star],dh=(sel.hp||0)*_starMult[sel.star];
+if(sel.star<=6){da*=_rMult*_zMult;dh*=_rMult*_zMult;}
+gainedAtkNum+=da;gainedHpNum+=dh;
 }
 }
 if(showR)openRareModal(showR);
-// 72種コンプリートチェック（未解放時のみ）
 if(!player.gemUnlocked)checkGemUnlock();
-let fe=[];for(let s=1;s<=9;s++){if(!sc[s])continue;if(sc[s]>20)fe.push(`<span class="c${Math.min(s,9)}">★${s}遺物 合計${sc[s]}個</span>`);else Object.entries(sg[s]).forEach(([id,c])=>{const m=RELIC_MASTER.find(x=>x.id==id)||STAR9.find(x=>x.id==id);if(!m)return;fe.push(`<span class="c${Math.min(m.star,9)}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`);});}
+// BigInt変換はここで1回だけ（ループ内の100回→1回に削減）
+const gainedAtk=hasOmega&&gainedAtkNum>0?safeBigInt(gainedAtkNum)*_omegaCbBig*_omegaGmBig/10000n:0n;
+const gainedHp=hasOmega&&gainedHpNum>0?safeBigInt(gainedHpNum)*_omegaCbBig*_omegaGmBig/10000n:0n;
+let fe=[];for(let s=1;s<=9;s++){if(!sc[s])continue;if(sc[s]>20)fe.push(`<span class="c${Math.min(s,9)}">★${s}遺物 合計${sc[s]}個</span>`);else Object.entries(sg[s]).forEach(([id,c])=>{const m=RELIC_MAP.get(parseInt(id));if(!m)return;fe.push(`<span class="c${Math.min(m.star,9)}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`);});}
 return{log:fe.length?`<div style="font-size:.82em;">獲得：${fe.join("、")}</div>`:"",gainedAtk,gainedHp};
 }
 
@@ -1271,8 +1295,8 @@ else if(player.hasWorldOrder&&!player.hasCrown&&(player.inventory[117]||0)>=2000
 else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&player.hadoExpAccum>=30000000)openCosmicModal("meta");
 }
 
-// 星の記憶（メイン戦のみ・確定発動・100個必要）
-if(!isKousa&&(player.inventory[803]||0)>0&&(player.inventory[311]||0)>=100&&bossMaxHP>(player.baseAtk+bonus.atk))activateDisasterStar(bonus);
+// 星の記憶（メイン戦＋kousa戦で発動・Geminiは除く）
+if(bossType!=="kousa_gemini"&&(player.inventory[803]||0)>0&&(player.inventory[311]||0)>=100&&bossMaxHP>(player.baseAtk+bonus.atk))activateDisasterStar(bonus);
 
 // ダメージ計算：全てBigInt演算でNumber()オーバーフロー回避
 // bonus.mult と skillM をスケール整数化してBigInt乗算
@@ -1545,7 +1569,10 @@ logH+=`<div><span style="color:${kousaBossData.colorVar};font-weight:bold;">${ko
 }
 checkLevelUp();
 }
-addLog(logH);saveGame();triggerUIUpdate();
+addLog(logH);
+_attackSaveCounter++;
+if(_attackSaveCounter>=10){saveGame();_attackSaveCounter=0;}
+triggerUIUpdate();
 }
 
 // ============ 虹災ボス撃破 ============
@@ -1732,15 +1759,15 @@ const fusionStyle=s.fusion?` style="border-left-color:#d4af37;background:linear-
 
 // ============ 収束核 ============
 const COMPRESS_UNIT=10000;
-function getCompressibleAmount(id,count){const r=RELIC_MASTER.find(m=>m.id==id);if(!r||![1,2,3].includes(r.star))return 0;if(Number(id)===311)return 0;if(Number(id)===116||Number(id)===117)return Math.max(0,count-300000);return count;}
+function getCompressibleAmount(id,count){const r=RELIC_MAP.get(parseInt(id));if(!r||![1,2,3].includes(r.star))return 0;if(Number(id)===311)return 0;if(Number(id)===116||Number(id)===117)return Math.max(0,count-300000);return count;}
 function getCompressTimes(){let t=0;Object.entries(player.inventory).forEach(([id,cnt])=>{t+=getCompressibleAmount(id,cnt);});return Math.floor(t/COMPRESS_UNIT);}
 function compressRelics(){
 const times=getCompressTimes();if(times<=0)return 0;
 let remaining=times*COMPRESS_UNIT,gainedAtkBig=0n,gainedHpBig=0n;
-const targets=Object.entries(player.inventory).filter(([id,cnt])=>getCompressibleAmount(id,cnt)>0).sort(([a],[b])=>{const ra=RELIC_MASTER.find(m=>m.id==a),rb=RELIC_MASTER.find(m=>m.id==b);return(ra?ra.star:0)-(rb?rb.star:0);});
+const targets=Object.entries(player.inventory).filter(([id,cnt])=>getCompressibleAmount(id,cnt)>0).sort(([a],[b])=>{const ra=RELIC_MAP.get(parseInt(a)),rb=RELIC_MAP.get(parseInt(b));return(ra?ra.star:0)-(rb?rb.star:0);});
 for(const[id,]of targets){
 if(remaining<=0)break;const avail=getCompressibleAmount(id,player.inventory[id]);const use=Math.min(avail,remaining);
-const r=RELIC_MASTER.find(m=>m.id==id);
+const r=RELIC_MAP.get(parseInt(id));
 if(r){
 let a=r.atk||0,h=r.hp||0;
 // 各種強化倍率を適用（getRelicBonusと同じ計算）
@@ -1777,7 +1804,7 @@ const b4disp=getRelicBonus();
 // 実際のATK/HP増加への貢献分 = bonus全体 - 在庫遺物のみのボーナス
 // 簡易的に cAtk*cb*gm を計算
 let compForDisp=0;
-for(let s=1;s<=8;s++){const at3=RELIC_MASTER.filter(m=>m.star===s&&![0,999].includes(m.id)&&m.star!==9&&!m.gem);if(at3.length>0&&at3.every(m=>player.everOwned[m.id]))compForDisp++;}
+for(let s=1;s<=8;s++){const at3=CANDS_BASE[s];if(at3.length>0&&at3.every(m=>player.everOwned[m.id]))compForDisp++;}
 if(STAR9.length>0&&STAR9.every(m=>player.everOwned[m.id]))compForDisp++;
 const cbDisp=BigInt(Math.round(Math.pow(2,compForDisp)));
 const gmDisp=BigInt(Math.round(greedMult()*10000));
@@ -1792,38 +1819,21 @@ addLog(`<div><span style="color:#00ffcc;font-weight:bold;">【収束核】${done
 saveGame();triggerUIUpdate();
 }
 
-function renderRelics(){
-renderCompressionUI();
-const c=document.getElementById("relic-list");if(!c)return;
-const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
-const sorted=Object.entries(player.inventory).filter(([,v])=>v>0).sort(([a],[b])=>{
-const ra=RELIC_MASTER.find(m=>m.id==a),rb=RELIC_MASTER.find(m=>m.id==b);
-if(!ra||!rb)return 0;if(ra.star===999&&rb.star!==999)return-1;if(ra.star!==999&&rb.star===999)return 1;
-if(ra.star!==rb.star)return ra.star-rb.star;return Number(a)-Number(b);
-});
-c.innerHTML=sorted.map(([id,cnt])=>{
-const m=RELIC_MASTER.find(x=>x.id==id)||STAR9.find(x=>x.id==id);if(!m)return"";
+// 差分更新用キャッシュ
+let _relicRenderCache={inv:{},hasR:false,hasZ:false,omegaAtk:"",omegaHp:"",evoStack:0};
+function _relicCardHTML(id,cnt,m,hasR,hasZ){
+if(!m)return"";
 if(m.star===999)return`<div class="relic-card relic-unique"><div class="relic-name"><span class="unique-relic-text">${m.name}</span></div><div class="relic-effect-box">${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}</div></div>`;
 if(m.star===9)return`<div class="relic-card relic-rainbow"><div class="relic-name"><span class="rainbow-relic-text">★9 ${m.name}</span></div><div class="relic-effect-box"><span style="color:#aaa;font-size:.85em;">【${m.fromBoss}より】</span><span class="relic-desc-line" style="color:#ccc;">${m.desc}</span></div></div>`;
-// 宝玉シリーズ専用表示
 if(m.gem){
 const gemColor=m.star===9?"#ff80ff":m.star===8?"#ffd700":m.star===7?"#c084fc":"#22d3ee";
 const cl2=m.star>=8?"star-ultimate":"star-high";
 let gemEffectHtml="";
-if(m.id===611){// 共鳴宝玉
-const mv=1+0.01*cnt;
-gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">全遺物効果 ×${mv.toFixed(2)}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で ×${(mv+0.01).toFixed(2)}</span>`;
-}else if(m.id===711){// 神核宝玉
-const mv=1+0.50*Math.pow(cnt,0.6);const nv=1+0.50*Math.pow(cnt+1,0.6);
-gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ATK/HP ×${mv.toFixed(3)}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で +${(nv-mv).toFixed(4)} → ×${nv.toFixed(3)}</span>`;
-}else if(m.id===811){// 災禍宝玉
-gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ダメージ上限 ATK×${100+cnt}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で +1% → ×${100+cnt+1}倍</span>`;
-}else if(m.id===911){// 夢幻宝玉
-gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ドロップ上限 ${100+cnt}個/攻撃</span><span class="relic-desc-line" style="color:#aaa;">次の1個で +1 → ${100+cnt+1}個</span>`;
-}else if(m.gemBase){// 旧形式フォールバック
-const gv=1+m.gemBase*Math.pow(cnt,0.6);const gnv=1+m.gemBase*Math.pow(cnt+1,0.6);
-gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">倍率 ×${gv.toFixed(3)}</span><span class="relic-desc-line" style="color:#aaa;">次+${(gnv-gv).toFixed(4)}</span>`;
-}
+if(m.id===611){const mv=1+0.01*cnt;gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">全遺物効果 ×${mv.toFixed(2)}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で ×${(mv+0.01).toFixed(2)}</span>`;}
+else if(m.id===711){const mv=1+0.50*Math.pow(cnt,0.6);const nv=1+0.50*Math.pow(cnt+1,0.6);gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ATK/HP ×${mv.toFixed(3)}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で +${(nv-mv).toFixed(4)} → ×${nv.toFixed(3)}</span>`;}
+else if(m.id===811){gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ダメージ上限 ATK×${100+cnt}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で +1% → ×${100+cnt+1}倍</span>`;}
+else if(m.id===911){gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ドロップ上限 ${100+cnt}個/攻撃</span><span class="relic-desc-line" style="color:#aaa;">次の1個で +1 → ${100+cnt+1}個</span>`;}
+else if(m.gemBase){const gv=1+m.gemBase*Math.pow(cnt,0.6);const gnv=1+m.gemBase*Math.pow(cnt+1,0.6);gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">倍率 ×${gv.toFixed(3)}</span><span class="relic-desc-line" style="color:#aaa;">次+${(gnv-gv).toFixed(4)}</span>`;}
 return`<div class="relic-card ${cl2}" style="border-color:${gemColor};"><div class="relic-name"><span style="color:${gemColor};font-weight:bold;">★${m.star} ${m.name} ×${cnt.toLocaleString()}</span></div><div class="relic-effect-box">${gemEffectHtml}<span class="relic-desc-line">${m.desc}</span></div></div>`;
 }
 let a=m.atk||0,h=m.hp||0;
@@ -1834,8 +1844,48 @@ const cl=m.star>=8?"star-ultimate":m.star>=4?"star-high":"star-low";
 let cd="";
 if(id==116){if(!player.hasHado)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasGreatHado)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasDivineGuide)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
 else if(id==117){if(!player.hasWorldOrder)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasCrown)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasMeta)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
-return`<div class="relic-card ${cl}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==801&&(player.omegaAtkBig||"0")!=="0"?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">蓄積ATK: ${fmtV(BigInt(player.omegaAtkBig))}<br>蓄積HP: ${fmtV(BigInt(player.omegaHpBig||"0"))}</span>`:""}${m.id==802?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">自己進化回数: ${(player.evolutionStack||0).toLocaleString()} 回<br>差分乗算：×${Math.min(8.0,Math.max(1.1,Math.log10(2)*0.8)).toFixed(2)}〜×8.00（敵HP/ATK比に応じて変動）<br>Stack補正: +${(Math.min(player.evolutionStack||0,5000)*0.002).toFixed(2)}%<br>baseATK/HP成長: ${Math.floor((player.evolutionStack||0)/100)}回発動済み</span>`:""}${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}${cd}</div></div>`;
-}).join("");
+return`<div class="relic-card ${cl}" data-rid="${id}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==801&&(player.omegaAtkBig||"0")!=="0"?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">蓄積ATK: ${fmtV(BigInt(player.omegaAtkBig))}<br>蓄積HP: ${fmtV(BigInt(player.omegaHpBig||"0"))}</span>`:""}${m.id==802?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">自己進化回数: ${(player.evolutionStack||0).toLocaleString()} 回<br>差分乗算：×${Math.min(8.0,Math.max(1.1,Math.log10(2)*0.8)).toFixed(2)}〜×8.00（敵HP/ATK比に応じて変動）<br>Stack補正: +${(Math.min(player.evolutionStack||0,5000)*0.002).toFixed(2)}%<br>baseATK/HP成長: ${Math.floor((player.evolutionStack||0)/100)}回発動済み</span>`:""}${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}${cd}</div></div>`;
+}
+function renderRelics(){
+renderCompressionUI();
+const c=document.getElementById("relic-list");if(!c)return;
+const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
+const curOmegaAtk=player.omegaAtkBig||"0",curOmegaHp=player.omegaHpBig||"0",curEvo=player.evolutionStack||0;
+// グローバルフラグ変化（hasR/hasZ/omegaAtk等）→フルリビルド
+const globalChanged=hasR!==_relicRenderCache.hasR||hasZ!==_relicRenderCache.hasZ
+  ||curOmegaAtk!==_relicRenderCache.omegaAtk||curOmegaHp!==_relicRenderCache.omegaHp
+  ||curEvo!==_relicRenderCache.evoStack;
+// ソート順取得
+const sorted=Object.entries(player.inventory).filter(([,v])=>v>0).sort(([a],[b])=>{
+const ra=RELIC_MAP.get(parseInt(a)),rb=RELIC_MAP.get(parseInt(b));
+if(!ra||!rb)return 0;if(ra.star===999&&rb.star!==999)return-1;if(ra.star!==999&&rb.star===999)return 1;
+if(ra.star!==rb.star)return ra.star-rb.star;return Number(a)-Number(b);
+});
+// 新規IDチェック（ソート順変化 or 遺物追加 or グローバル変化）
+const sortedIds=sorted.map(([id])=>id).join(",");
+const needsRebuild=globalChanged||sortedIds!==(_relicRenderCache.sortedIds||"");
+if(needsRebuild){
+// フルリビルド
+c.innerHTML=sorted.map(([id,cnt])=>{const m=RELIC_MAP.get(parseInt(id));return _relicCardHTML(id,cnt,m,hasR,hasZ);}).join("");
+_relicRenderCache.sortedIds=sortedIds;
+_relicRenderCache.hasR=hasR;_relicRenderCache.hasZ=hasZ;
+_relicRenderCache.omegaAtk=curOmegaAtk;_relicRenderCache.omegaHp=curOmegaHp;_relicRenderCache.evoStack=curEvo;
+_relicRenderCache.inv={};sorted.forEach(([id,cnt])=>{_relicRenderCache.inv[id]=cnt;});
+}else{
+// 差分更新：カウントが変わったカードだけ差し替え
+for(const [id,cnt] of sorted){
+if(_relicRenderCache.inv[id]===cnt)continue;// 変化なし
+const m=RELIC_MAP.get(parseInt(id));
+const newHtml=_relicCardHTML(id,cnt,m,hasR,hasZ);
+// 既存DOMを探して差し替え
+const existing=c.querySelector(`[data-rid="${id}"]`);
+if(existing){
+const tmp=document.createElement("div");tmp.innerHTML=newHtml;
+if(tmp.firstChild)c.replaceChild(tmp.firstChild,existing);
+}
+_relicRenderCache.inv[id]=cnt;
+}
+}
 }
 
 function renderStatus(){
