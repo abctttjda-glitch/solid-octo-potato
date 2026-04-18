@@ -190,6 +190,16 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 
 </head>
 <body>
+
+<div id="policy-modal" class="modal-overlay"><div class="policy-content"><div class="policy-title">プライバシーポリシー</div><div class="policy-text">RELICORE（以下「本サービス」）は、ユーザーのプライバシーを尊重し、適切な取り扱いと保護に努めます。<br><br><strong>1. 取得する情報</strong><br>ブラウザのローカルストレージに保存されるゲームデータ、アクセス解析ツールにより収集される匿名のアクセス情報を取得する場合があります。<br><br><strong>2. 情報の利用目的</strong><br>取得した情報はゲームの進行状況保存、不具合調査および改善に利用します。<br><br><strong>3. 免責事項</strong><br>本サービスの利用により生じた損害について、開発者は一切の責任を負いません。<div class="policy-footer">制定日：2026年3月1日<br>RELICORE 開発者　げぇいむ＆AI</div></div><button class="btn-attack" style="padding:10px;font-size:1em;" onclick="closePolicy()">閉じる</button></div></div>
+<div id="rank-up-modal" class="modal-overlay"><div class="rank-up-content"><div class="rank-up-title">覚醒</div><div class="rank-up-msg" id="rank-up-msg-text"></div><button class="story-btn" onclick="closeRankUpModal()">高みへ</button><div class="rank-up-sub">※すべての再起スキルが強化されました。</div></div></div>
+<div id="rare-drop-modal" class="modal-overlay" onclick="closeRareModal()"><div id="rare-card-content" class="rare-card"><span id="rare-star-label" class="rare-star"></span><span id="rare-name-label" class="rare-name"></span><div id="rare-desc-label" class="rare-desc"></div><div style="margin-top:20px;font-size:.7em;color:#888;">画面タップで閉じる</div></div></div>
+<div id="hado-awaken-modal" class="modal-overlay"><div class="hado-content"><div class="hado-title" id="hado-modal-title">隠しスキル覚醒</div><div class="hado-msg" id="hado-modal-msg"></div><button class="story-btn" onclick="closeHadoModal()">その力を受け入れる</button></div></div>
+<div id="cosmic-awaken-modal" class="modal-overlay"><div class="cosmic-content"><div class="cosmic-title" id="cosmic-modal-title">覚醒</div><div class="cosmic-msg" id="cosmic-modal-msg"></div><button class="cosmic-btn" onclick="closeCosmicModal()">宇宙の理を識る</button></div></div>
+<div id="story-modal" class="modal-overlay"><div class="story-content"><div class="story-text"><span style="color:#888;">わたしはすべてをうばわれた<br></span><span style="color:#4b0082;">奴によって世界は終わりを告げ、すべては虚無に飲まれたはずだった<br></span><span style="color:#fff;">しかし、それでもまだ諦めることを知らない光がある<br></span><span><span class="story-vow">『再起の誓い』</span><span style="color:#d4af37;">が魂を激しく鼓動させる<br></span></span><span style="color:#f00;font-weight:bold;">奴を一撃で葬るその日まで、わたしは止まらない</span></div><button class="story-btn" onclick="closeStory()">魂に刻印する</button></div></div>
+<div id="clear-modal" class="modal-overlay"><div class="modal-content"><h3 id="clear-modal-title" style="color:var(--gold);font-size:1.6em;letter-spacing:3px;">神話の終焉</h3><div id="clear-modal-msg" class="clear-main-msg"></div><button class="story-btn" onclick="closeClearModal()">災厄に立ち向かう</button></div></div>
+<div id="order-awaken-modal" class="modal-overlay"><div class="order-content"><div class="rank-up-title" style="color:#fff;">秩序の覚醒</div><div class="clear-main-msg" style="text-align:center;">混沌を制し、神を討ちし者へ。世界を再構築する理が、今あなたの魂に刻まれた。<br><br><span class="unique-relic-text" style="font-size:1.4em;">秩序のリバランス</span><br><br><span style="color:#aaa;font-size:.85em;">「すべてを平らにならし、あるべき姿へ」</span></div><button class="story-btn" style="border-color:#fff;color:#fff;" onclick="closeOrderAwakenModal()">理を受け入れる</button></div></div>
+
 <!-- 宝玉解放モーダル -->
 
 <div id="gem-unlock-modal" class="modal-overlay" style="z-index:58000;">
@@ -214,13 +224,43 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 </div>
 </div>
 
+<!-- 終極のエク＝ゼウス：初討伐エンディング -->
+
+<div id="zeus-ending-modal" class="modal-overlay" style="z-index:76000;">
+<div class="zeus-modal-content" style="max-width:480px;">
+<div style="font-size:.7em;color:#aaa;letter-spacing:4px;margin-bottom:14px;">— T R U E  E N D I N G —</div>
+<div style="font-size:2em;font-weight:bold;background:linear-gradient(135deg,#f5c518,#fff,#f5c518);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px;margin-bottom:6px;animation:zeus-text-glow 1.5s infinite alternate;">終極制覇</div>
+<div style="font-size:.75em;color:#888;letter-spacing:2px;margin-bottom:24px;">Ek=Zeus, Defeated</div>
+
+<div style="background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.25);border-radius:12px;padding:20px;margin-bottom:20px;text-align:left;">
+<div style="font-size:1.05em;color:#f5c518;font-weight:bold;margin-bottom:14px;text-align:center;letter-spacing:2px;text-shadow:0 0 10px rgba(245,197,24,.5);">よくぞここまで到達しました</div>
+<div style="font-size:.9em;color:#eee;line-height:2.2;">
+数えきれないほどの死と再起を繰り返し、<br>
+無数の遺物を集め、無限の強さを積み重ね——<br><br>
+ついにあなたは宇宙の頂点に立った。<br><br>
+<span style="color:#f5c518;font-weight:bold;">RELICORE はここまでとなります。</span><br><br>
+<span style="color:#ccc;font-size:.9em;">沢山プレイしてくれてありがとう。</span>
+</div>
+</div>
+
+<div class="zeus-relic-card" style="margin:0 0 20px 0;">
+<div style="font-size:.75em;color:#aaa;margin-bottom:6px;letter-spacing:2px;">★ UNIQUE TROPHY ★</div>
+<div class="zeus-relic-name">全知全能</div>
+<div style="font-size:.8em;color:#ccc;margin-top:8px;line-height:1.7;">万物の理を超え、終極に到達した者の証明。<br><span style="color:#888;font-size:.9em;">この遺物は強さを与えない。ただ——お前が成し遂げたことを、永遠に刻む。</span></div>
+</div>
+
+<div style="font-size:.78em;color:#888;margin-bottom:16px;">※ ゲームはこのまま続けることができます。<br>次のエク＝ゼウスは更なる強さで降臨します。</div>
+<button class="story-btn" style="border-color:#f5c518;color:#f5c518;" onclick="closeZeusEndingModal()">伝説へ――</button>
+</div>
+</div>
+
 <!-- 終極のエク＝ゼウス：出現モーダル -->
 
 <div id="zeus-appear-modal" class="modal-overlay" style="z-index:75000;">
 <div class="zeus-modal-content">
 <div style="font-size:.75em;color:#aaa;letter-spacing:3px;margin-bottom:10px;">— ABSOLUTE BEING —</div>
 <div style="font-size:1.8em;font-weight:bold;background:linear-gradient(135deg,#f5c518,#fff,#f5c518);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px;margin-bottom:6px;animation:zeus-text-glow 1.5s infinite alternate;">終極のエク＝ゼウス</div>
-<div style="font-size:.8em;color:#aaa;letter-spacing:2px;margin-bottom:20px;">Ek=Zeus, The Absolute Pinnacle</div>
+<div id="zeus-appear-sub" style="font-size:.8em;color:#aaa;letter-spacing:2px;margin-bottom:20px;">Ek=Zeus, The Absolute Pinnacle</div>
 <div style="background:rgba(245,197,24,.05);border:1px solid rgba(245,197,24,.3);border-radius:10px;padding:16px;margin-bottom:20px;font-size:.88em;line-height:2;color:#eee;text-align:left;">
 強くなりすぎた者への<span style="color:#f5c518;font-weight:bold;">懲罰</span>として、宇宙の頂点より降臨した。<br>
 この存在を<span style="color:#ff4444;font-weight:bold;">「倒す」</span>ことは想定されていない。<br><br>
@@ -251,15 +291,8 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div id="zeus-clear-modal" class="modal-overlay" style="z-index:75000;">
 <div class="zeus-modal-content">
 <div style="font-size:.75em;color:#f5c518;letter-spacing:4px;margin-bottom:8px;animation:zeus-text-glow 1s infinite alternate;">— ABSOLUTE TRANSCENDENCE —</div>
-<div style="font-size:1.8em;font-weight:bold;background:linear-gradient(135deg,#f5c518,#fff,#f5c518);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px;margin-bottom:20px;animation:zeus-text-glow 1.5s infinite alternate;">終極制覇</div>
-<div class="zeus-relic-card">
-<div style="font-size:.8em;color:#aaa;margin-bottom:6px;">★ UNIQUE TROPHY ★</div>
-<div class="zeus-relic-name">全知全能</div>
-<div style="font-size:.8em;color:#ccc;margin-top:10px;line-height:1.7;">万物の理を超え、終極に到達した者の証明。<br><span style="color:#888;font-size:.9em;">この遺物は強さを与えない。ただ——お前が成し遂げたことを、永遠に刻む。</span></div>
-</div>
-<div style="font-size:.85em;color:#aaa;line-height:1.8;margin-bottom:20px;text-align:left;">
-エク＝ゼウスを打ち倒した者として、<br>その名は宇宙の果てに刻まれた。
-</div>
+<div style="font-size:1.8em;font-weight:bold;background:linear-gradient(135deg,#f5c518,#fff,#f5c518);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px;margin-bottom:14px;animation:zeus-text-glow 1.5s infinite alternate;">終極制覇</div>
+<div id="zeus-clear-msg" style="font-size:.88em;color:#ccc;line-height:1.9;margin-bottom:16px;background:rgba(245,197,24,.05);border:1px solid rgba(245,197,24,.2);border-radius:8px;padding:14px;text-align:left;"></div>
 <button class="story-btn" style="border-color:#f5c518;color:#f5c518;" onclick="closeZeusClearModal()">伝説へ</button>
 </div>
 </div>
@@ -324,7 +357,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.37</div>
+<div class="ver-footer">RELICORE v1.38</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -572,7 +605,7 @@ erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
 compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
 zeusPreBossHP:zeusPreBossHP||null,
-gameVersion:"1.36"};
+gameVersion:"1.38"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -946,19 +979,33 @@ spawnZeus();
 function spawnZeus(){
 // 現在のメインボスHPを保存
 zeusPreBossHP=currentBossHP.toString();
+// 討伐数に応じてHP強化：2体目以降は1000^N倍（桁が3N桁増加）
+const kills=player.zeusKillCount||0;
+const zeusHP=kills===0?ZEUS_BASE_HP:ZEUS_BASE_HP*(1000n**BigInt(kills));
 // ゼウス出現
 bossType="zeus";
-currentBossHP=ZEUS_BASE_HP;
-player.bossMaxHP=ZEUS_BASE_HP.toString();
-_bossMaxHPBigLive=ZEUS_BASE_HP;
+currentBossHP=zeusHP;
+player.bossMaxHP=zeusHP.toString();
+_bossMaxHPBigLive=zeusHP;
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
-addLog(`<div><span class="c-zeus" style="font-size:1.15em;">【終極降臨】宇宙の頂点より裁定者が現れた——終極のエク＝ゼウス！！</span></div>`);
+const killsLabel=kills===0?"":`（第${kills+1}体目 / HP×${('1000^'+kills)}）`;
+addLog(`<div><span class="c-zeus" style="font-size:1.15em;">【終極降臨】宇宙の頂点より裁定者が現れた——終極のエク＝ゼウス！！${killsLabel}</span></div>`);
 updateBossHeaderStyle();
 isModalOpen=true;
+// 出現モーダルのサブテキストを討伐数に応じて更新
+const _subEl=document.getElementById("zeus-appear-sub");
+if(_subEl){
+  if(kills===0){
+    _subEl.textContent="Ek=Zeus, The Absolute Pinnacle";
+  }else{
+    _subEl.innerHTML=`<span style="color:#ff4444;font-weight:bold;">第${kills+1}体目 — HP ×1000<sup>${kills}</sup> の強化体</span>`;
+  }
+}
 document.getElementById("zeus-appear-modal").style.display="flex";
 saveGame();triggerUIUpdate();
 }
 function closeZeusAppearModal(){document.getElementById("zeus-appear-modal").style.display="none";isModalOpen=false;triggerUIUpdate();}
+function closeZeusEndingModal(){document.getElementById("zeus-ending-modal").style.display="none";isModalOpen=false;triggerUIUpdate();}
 function closeZeusDefeatModal(){document.getElementById("zeus-defeat-modal").style.display="none";isModalOpen=false;triggerUIUpdate();}
 function closeZeusClearModal(){document.getElementById("zeus-clear-modal").style.display="none";isModalOpen=false;triggerUIUpdate();}
 // ゼウスにやられた（戦闘終了、再起なし）
@@ -981,10 +1028,11 @@ document.getElementById("zeus-defeat-modal").style.display="flex";
 }
 // ゼウス撃破
 function onZeusDefeat(logH){
+const isFirstKill=(player.zeusKillCount||0)===0;
 player.zeusKillCount=(player.zeusKillCount||0)+1;
 logH+=`<div><span class="c-zeus" style="font-size:1.15em;animation:zeus-text-glow 1s infinite alternate;display:inline-block;">【終極制覇】エク＝ゼウスを打ち倒した！！ (累計${player.zeusKillCount}体)</span></div>`;
 addLog(logH);
-// 全知全能遺物付与
+// 全知全能遺物付与（初討伐時のみ）
 if(!(player.inventory[1000]>0)){
 player.inventory[1000]=1;
 player.everOwned[1000]=true;
@@ -1001,7 +1049,15 @@ zeusPreBossHP=null;
 updateBossHeaderStyle();
 saveGame();triggerUIUpdate();
 isModalOpen=true;
+if(isFirstKill){
+// 初討伐：エンディングモーダル
+document.getElementById("zeus-ending-modal").style.display="flex";
+}else{
+// 再討伐：通常の制覇モーダル（2体目以降の討伐数を反映）
+document.getElementById("zeus-clear-msg").innerHTML=
+`エク＝ゼウスを<span style="color:#f5c518;font-weight:bold;">第${player.zeusKillCount}体目</span>として打ち倒した。<br>次なる降臨はさらなる強さをもって現れるだろう。`;
 document.getElementById("zeus-clear-modal").style.display="flex";
+}
 }
 function updateBossHeaderStyle(){
 const fill=document.getElementById("hp-bar-fill");
