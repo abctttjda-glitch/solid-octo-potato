@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 
 <html lang="ja">
 <head>
@@ -357,7 +357,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.38</div>
+<div class="ver-footer">RELICORE v1.37.1</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -2016,10 +2016,12 @@ nameEl.style.color="#888";
 }
 
 // HPバー
-// float近似で十分（バー表示用なのでBigInt精度不要）
-const pct=bmaxHP>0n?(Number(currentBossHP)/Number(bmaxHP))*100:0;
-const _pctRnd=Math.max(0,Math.min(100,isFinite(pct)?pct:0));
-if(Math.abs(_pctRnd-_dispCache_hpBarPct)>0.05){document.getElementById("hp-bar-fill").style.width=_pctRnd+"%";_dispCache_hpBarPct=_pctRnd;}
+// BigInt演算でパーセントを計算（Number変換はHPが大きいとInfinityになり精度消失するため使用禁止）
+// pctBig = currentHP * 10000 / bmaxHP → 0〜10000 の整数（0.01%単位）
+// Number変換は 0〜10000 の範囲なので安全
+const _hpBarPctBig=bmaxHP>0n?currentBossHP*10000n/bmaxHP:0n;
+const _pctRnd=Math.max(0,Math.min(100,Number(_hpBarPctBig)/100));
+if(Math.abs(_pctRnd-_dispCache_hpBarPct)>0.005){document.getElementById("hp-bar-fill").style.width=_pctRnd+"%";_dispCache_hpBarPct=_pctRnd;}
 updateBossHeaderStyle();
 
 const ri=getRankIdx();const area=document.getElementById("st-rank-area");const title=document.getElementById("st-rank-title");
