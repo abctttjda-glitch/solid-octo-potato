@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.37.1</title>
+<title>RELICORE - v1.38</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899)}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -357,7 +357,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.37.1</div>
+<div class="ver-footer">RELICORE v1.38</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -445,7 +445,8 @@ const RELIC_MASTER=[
 const RELIC_MAP=new Map();
 [...RELIC_MASTER,...STAR9].forEach(m=>RELIC_MAP.set(m.id,m));
 const CANDS_BASE={};
-for(let s=1;s<=8;s++){CANDS_BASE[s]=RELIC_MASTER.filter(m=>m.star===s&&m.id!==0&&m.id!==999&&m.id!==117&&m.id!==311&&!m.gem);}
+// 804(災厄の残滓)は溢れし災厄討伐後の専用ドロップのため通常プールから除外
+for(let s=1;s<=8;s++){CANDS_BASE[s]=RELIC_MASTER.filter(m=>m.star===s&&m.id!==0&&m.id!==999&&m.id!==117&&m.id!==311&&m.id!==804&&!m.gem);}
 const CANDS3_WITH311=[...CANDS_BASE[3],...RELIC_MASTER.filter(m=>m.id===311)];
 const CANDS1_FALLBACK=RELIC_MASTER.filter(m=>m.star===1);
 const RELIC_117=RELIC_MASTER.find(m=>m.id===117);
@@ -1456,6 +1457,10 @@ else{
 let cands;
 if(star===3)cands=CANDS3_WITH311;
 else cands=CANDS_BASE[star]||CANDS1_FALLBACK;
+// 804(災厄の残滓)は溢れし災厄戦（クリア後メインボス）のみドロップ候補に追加
+if(star===8&&player.isCleared&&bossType==="main"&&!(player.inventory[804]>0)){
+const _r804=RELIC_MAP.get(804);if(_r804)cands=[...cands,_r804];
+}
 // ★6〜8: 所持済みを除外（スライス不要なfilter）
 if(star>=6&&star<=8){
 const uc=[];for(let ci=0;ci<cands.length;ci++){if(!(player.inventory[cands[ci].id]>0))uc.push(cands[ci]);}
@@ -1598,8 +1603,8 @@ const skillBig=BigInt(Math.round(skillM*100000));
 const randBig=BigInt(Math.round((0.8+Math.random()*0.4)*100000));
 // multBigが0になるのを防ぐ（最低1n）
 let atvBig=tb.atk*(multBig>0n?multBig:1n)/100000n*(skillBig>0n?skillBig:100000n)/100000n;
-// 804 災厄の残滓：メイン・虹災両方に適用（上限×50）
-if((player.inventory[804]||0)>0){
+// 804 災厄の残滓：溢れし災厄戦・虹災戦のみ適用（終末神戦は除く）
+if((player.inventory[804]||0)>0&&!(bossType==="main"&&!player.isCleared)){
 const killMult=BigInt(Math.round(Math.min(50, 1+Math.log10(player.killCount+1)*0.06)*100000));
 atvBig=atvBig*killMult/100000n;
 }
