@@ -59,7 +59,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .cosmic-content{background:rgba(0,0,0,.8);border:2px solid var(--cosmic-blue);border-radius:30px;padding:40px 20px;text-align:center;color:#fff;max-width:480px;width:95%;animation:cosmic-pulse 4s infinite}
 .cosmic-title{color:#fff;font-size:2em;font-weight:bold;margin-bottom:25px;text-shadow:0 0 20px var(--cosmic-blue);letter-spacing:6px}
 .cosmic-msg{font-size:1.1em;line-height:2.2;margin-bottom:35px;color:#e0f7ff}
-.cosmic-btn{background:none;border:1px solid var--cosmic-blue);color:var(--cosmic-blue);padding:12px 50px;font-size:1.1em;cursor:pointer;transition:.5s;border-radius:50px}
+.cosmic-btn{background:none;border:1px solid var(--cosmic-blue);color:var(--cosmic-blue);padding:12px 50px;font-size:1.1em;cursor:pointer;transition:.5s;border-radius:50px}
 .story-content{max-width:500px;color:#fff;text-align:center;line-height:2.2}
 .story-text{margin-bottom:35px;font-size:1.05em;text-align:left;letter-spacing:.08em}
 .story-vow{color:gold;font-weight:bold;display:inline-block;animation:heart-beat 1.5s infinite;text-shadow:0 0 10px rgba(212,175,55,.8)}
@@ -83,7 +83,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .c1{color:#888;font-weight:bold}.c2{color:#28a745;font-weight:bold}.c3{color:#007bff;font-weight:bold}.c4{color:#6610f2;font-weight:bold}.c5{color:#e83e8c;font-weight:bold}.c6{color:#fd7e14;font-weight:bold}.c7{color:#f00;font-weight:bold}.c8{color:#ffd700;font-weight:bold}
 .c9{font-weight:bold;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .c-order{color:#ffd700;font-weight:bold}.c-gemini{color:var(--gemini);font-weight:bold}
-.c-edel{color:var--edel);font-weight:bold}.c-neria{color:var--neria);font-weight:bold}.c-nox{color:var(--nox);font-weight:bold}.c-lilith{color:var(--lilith);font-weight:bold}.c-valka{color:var(--valka);font-weight:bold}.c-igna{color:var(--igna);font-weight:bold}.c-lux{color:var(--lux);font-weight:bold}
+.c-edel{color:var(--edel);font-weight:bold}.c-neria{color:var(--neria);font-weight:bold}.c-nox{color:var(--nox);font-weight:bold}.c-lilith{color:var(--lilith);font-weight:bold}.c-valka{color:var(--valka);font-weight:bold}.c-igna{color:var(--igna);font-weight:bold}.c-lux{color:var(--lux);font-weight:bold}
 .c-magmel{background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold}
 .unique-relic-text{font-weight:bold;background:linear-gradient(to right,#d4af37,#fff,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .rainbow-relic-text{font-weight:bold;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -108,7 +108,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .hpfill-valka{background:linear-gradient(90deg,#c2410c,var(--valka))!important}
 .hpfill-igna{background:linear-gradient(90deg,#b91c1c,var(--igna))!important}
 .hpfill-lux{background:linear-gradient(90deg,#a16207,var(--lux))!important}
-.hpfill-magmel{background:(--magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
+.hpfill-magmel{background:var(--magmel)!important;background-size:200% 100%!important;animation:rainbow-slide 2s linear infinite!important}
 .hpfill-gemini{background:linear-gradient(90deg,#2d0057,var(--gemini))!important}
 .status-box{display:flex;gap:8px;margin-top:10px}
 .stat-card{flex:1;background:rgba(255,255,255,.08);padding:5px 10px;border-radius:6px;border-left:3px solid var(--primary);display:flex;flex-direction:column;overflow:hidden}
@@ -980,7 +980,7 @@ function getMimicSpawnRate(){
 // 基本5% + レゾナ(1102)による加算（0.01%/個、上限+10%）
 const rezCnt=player.inventory[1102]||0;
 const bonus=Math.min(0.10,rezCnt*0.0001);
-return 0.90+bonus;
+return 0.05+bonus;
 }
 
 function getMimicIrisBonus(){
@@ -1006,7 +1006,7 @@ mimicHP=100;
 bossType="mimic";
 // ミミック出現中はメインボスHPを保持（虹災と同じ方式）
 player.mainBossMaxHP=player.mainBossMaxHP||player.bossMaxHP;
-addLog(`<div><span class="c-mimic">💎【ジュエルミミック出現！】宝箱に擬態した謎の生命体……全てのダメージを1にする。</span></div>`);
+addLog(`<div><span class="c-mimic">💎【ジュエルミミック出現！】宝箱に擬態した謎の生命体……すべてのダメージは1になる</span></div>`);
 updateBossHeaderStyle();
 saveGame();triggerUIUpdate();
 }
@@ -1072,7 +1072,7 @@ if(!player.gemUnlocked)checkGemUnlock();
 saveGame();triggerUIUpdate();
 }
 
-function trySpawnKousa(){if(Math.random()<0.50)spawnKousa();}
+function trySpawnKousa(){if(bossType!=="main")return;if(Math.random()<0.50)spawnKousa();}
 function spawnKousa(){
 kousaBossData=selectKousaBoss();
 // 虹災HP = 現在の溢れし災厄MaxHP × (hpMulMin〜hpMulMax) / 100
@@ -1213,11 +1213,17 @@ btn.className="btn-attack attack-zeus";
 nameEl.style.color="var(--zeus-gold)";
 return;
 }
+if(bossType==="mimic"){
+fill.className="hpfill-mimic";
+btn.className="btn-attack attack-mimic";
+nameEl.style.color="var(--mimic)";
+return;
+}
 if(bossType==="main"){
 nameEl.style.color="#888";
 return;
 }
-// 虹災ボス
+// 虹災ボス（kousa_*）
 if(kousaBossData){
 fill.className=kousaBossData.hpClass;
 btn.className="btn-attack "+kousaBossData.btnClass;
@@ -2190,10 +2196,9 @@ if(_bhStr!==_dispCache.bossHp){hd.textContent=_bhStr;_dispCache.bossHp=_bhStr;}
 
 // ボス名表示
 const nameEl=document.getElementById("boss-display-name");
-const isKousa=
-  bossType!=="main" &&
-  bossType!=="zeus" &&
-  bossType!=="mimic";
+const fill=document.getElementById("hp-bar-fill");
+const btn=document.getElementById("attackBtn");
+const isKousa=bossType!=="main"&&bossType!=="zeus"&&bossType!=="mimic";
 const isZeusUI=bossType==="zeus";
 if(!player.isCleared){
 nameEl.innerHTML="終末神アポカリス＝ティア";
@@ -2206,7 +2211,7 @@ fill.className="hpfill-mimic";
 btn.className="btn-attack attack-mimic";
 nameEl.style.color="var(--mimic)";
 nameEl.textContent="💎 ジュエルミミック";
-}else if(kousaBossData){
+}else if(isKousa&&kousaBossData){
 const bdg=bossType==="kousa_gemini"?`<span class='boss-type-badge badge-gemini'>Gemini</span>`:`<span class='boss-type-badge badge-kousa'>厄災</span>`;
 nameEl.innerHTML=kousaBossData.name+bdg;
 nameEl.style.color=kousaBossData.colorVar;
