@@ -980,7 +980,7 @@ function getMimicSpawnRate(){
 // 基本5% + レゾナ(1102)による加算（0.01%/個、上限+10%）
 const rezCnt=player.inventory[1102]||0;
 const bonus=Math.min(0.10,rezCnt*0.0001);
-return 0.05+bonus;
+return 0.99+bonus;
 }
 
 function getMimicIrisBonus(){
