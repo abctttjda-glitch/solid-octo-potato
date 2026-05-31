@@ -2190,7 +2190,10 @@ if(_bhStr!==_dispCache.bossHp){hd.textContent=_bhStr;_dispCache.bossHp=_bhStr;}
 
 // ボス名表示
 const nameEl=document.getElementById("boss-display-name");
-const isKousa=bossType!=="main"&&bossType!=="zeus";
+const isKousa=
+  bossType!=="main" &&
+  bossType!=="zeus" &&
+  bossType!=="mimic";
 const isZeusUI=bossType==="zeus";
 if(!player.isCleared){
 nameEl.innerHTML="終末神アポカリス＝ティア";
