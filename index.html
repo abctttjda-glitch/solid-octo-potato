@@ -1460,7 +1460,7 @@ function showOrderAwakenModal(){isModalOpen=true;document.getElementById("order-
 function closeOrderAwakenModal(){player.inventory[999]=1;player.rebalanceSeen=true;document.getElementById("order-awaken-modal").style.display="none";isModalOpen=false;saveGame();triggerUIUpdate();}
 
 // ===== 宝玉解放チェック（72種コンプリート時に1度だけ発動） =====
-const GEM_IDS=[611,711,811,911];
+const GEM_IDS=[611,711,811,911,1101,1102,1103,1104];
 // コレクション対象遺物（宝玉除く）= ★1〜★9 + 特殊(再起の誓い/秩序のリバランス) = 72種
 function getNormalRelics(){
 return RELIC_MASTER.filter(m=>!m.gem);
