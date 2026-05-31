@@ -139,12 +139,6 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .c-mimic{color:#7fff7f;font-weight:bold}
 /* ジュエルシリーズ */
 :root{--jewel-quartz:#22d3ee;--jewel-rezone:#c084fc;--jewel-iris:#ffd700;--jewel-zenith:#ff80ff}
-.jewel-box-card{background:#fff;border:1px solid #e0d5f0;border-radius:8px;padding:10px 12px 10px 16px;margin-bottom:8px;display:flex;flex-direction:column;gap:3px;position:relative;box-shadow:0 2px 4px rgba(0,0,0,.05)}
-.jewel-box-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:8px 0 0 8px;background:var(--jborder,var(--relic-purple))}
-.jewel-card-name{font-weight:bold;font-size:.9em}
-.jewel-card-effect{font-size:.85em;font-weight:bold;margin-top:1px}
-.jewel-card-desc{font-size:.72em;color:#666;margin-top:2px;font-style:italic}
-.jewel-card-next{font-size:.7em;color:#999;margin-top:1px}
 #log{height:400px;font-size:.82em;background:#fafafa;border:1px solid var(--border);padding:10px;overflow-y:auto;border-radius:8px;line-height:1.4}
 .log-set{border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:8px}
 .vow-list-container{display:grid;grid-template-columns:1fr;gap:10px}
@@ -1960,9 +1954,10 @@ let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
 let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,player.totalLevel*100)+1+player.totalLevel+(Math.min(50000,player.inventory[402]||0)*5)));
 player.baseHP+=upHP;player.deathCount+=expDeath;
 const dropTxt=getGuaranteedDrop();
+// 不退転の力（_dropResult.log）もミミック攻撃時に有効
 logH=`<div><span class="c-mimic">💎 ミミックに攻撃！残りHP: ${mimicHP}/100</span>` +
 `<span style="color:var(--growth);font-weight:bold;"> (基礎HP+${fmtV(upHP)})</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}</div>` +
-dropTxt;
+_dropResult.log+dropTxt;
 checkLevelUp();
 }
 addLog(logH);
@@ -2577,14 +2572,8 @@ const killLbl=document.getElementById("jewel-kill-label");
 if(killLbl)killLbl.textContent=`ミミック討伐: ${(player.mimicKillCount||0).toLocaleString()}体`;
 document.getElementById("jewel-status").innerHTML=ownedJewels.map(j=>{
 const cnt=player.inventory[j.id]||0;
-// 宝玉シリーズと同じ★ランク色: ★6=#22d3ee ★7=#c084fc ★8=#ffd700 ★9=#ff80ff
-const rankColor=j.color; // jewelDefsのcolorがそのまま★ランク色
-return`<div class="jewel-box-card" style="--jborder:${rankColor};">` +
-`<div class="jewel-card-name"><span style="color:${rankColor};font-weight:bold;">★${j.star} ${j.name}</span><span style="color:#888;font-size:.78em;margin-left:6px;">×${cnt.toLocaleString()}</span></div>` +
-`<div class="jewel-card-effect" style="color:${rankColor};">${j.effect(cnt)}</div>` +
-`<div class="jewel-card-desc">${j.label}</div>` +
-`<div class="jewel-card-next">${j.next(cnt)}</div>` +
-`</div>`;
+const nextTxt=j.next?`<span style="color:#666;font-size:.75em;margin-left:4px;">${j.next(cnt)}</span>`:"";
+return`<div style="margin-bottom:6px;"><span style="color:${j.color};font-weight:bold;">★${j.star} ${j.name}</span><span style="color:#666;font-size:.8em;margin-left:5px;">×${cnt.toLocaleString()}</span><br><span style="color:#888;font-size:.8em;">${j.label}</span>　<span style="color:${j.color};font-weight:bold;">${j.effect(cnt)}</span>${nextTxt}</div>`;
 }).join("");
 }else{jewelBox.style.display="none";}
 if(lv100el)(player.lv100ExpBonus||0)>0?lv100el.style.display="block":lv100el.style.display="none";
