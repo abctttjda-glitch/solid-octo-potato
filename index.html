@@ -137,6 +137,14 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 @keyframes mimic-shimmer{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3) drop-shadow(0 0 6px #7fff7f)}}
 .badge-mimic{background:rgba(45,158,95,.3);color:#7fff7f;border:1px solid #2d9e5f}
 .c-mimic{color:#7fff7f;font-weight:bold}
+/* ジュエルシリーズ */
+:root{--jewel-quartz:#7fff7f;--jewel-rezone:#00e5ff;--jewel-iris:#c084fc;--jewel-zenith:#ffe066}
+.jewel-box-card{background:#0d1a10;border:1px solid #2d9e5f;border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;flex-direction:column;gap:3px;position:relative;overflow:hidden}
+.jewel-box-card::before{content:"💎";position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:1.8em;opacity:.12}
+.jewel-card-name{font-weight:bold;font-size:.9em}
+.jewel-card-effect{font-size:.85em;font-weight:bold;margin-top:1px}
+.jewel-card-desc{font-size:.72em;color:#888;margin-top:2px;font-style:italic}
+.jewel-card-next{font-size:.7em;color:#555;margin-top:1px}
 #log{height:400px;font-size:.82em;background:#fafafa;border:1px solid var(--border);padding:10px;overflow-y:auto;border-radius:8px;line-height:1.4}
 .log-set{border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:8px}
 .vow-list-container{display:grid;grid-template-columns:1fr;gap:10px}
@@ -356,6 +364,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="st-box" id="st-lv100bonus" style="border-left-color:var(--gold);display:none;"></div><div class="st-box">総攻撃数: <span id="st-totalclicks">0</span><br>戦闘経験値: <span id="v-death">0</span><br>累計遺物獲得数: <span id="st-totalrelics" style="font-weight:bold;color:var(--relic-purple);">0</span><br>最高ダメージ: <span id="st-maxdmg">0</span> <button onclick="resetMaxDmg()" style="font-size:.7em;padding:2px 8px;background:#dc3545;color:#fff;border:none;border-radius:8px;cursor:pointer;vertical-align:middle;">リセット</button><br>最終ダメージ倍率: <span id="st-dmgmult" style="font-weight:bold;color:var(--primary);">x1.00</span><br>獲得資格: <span id="st-rank" class="clickable-stat" onclick="checkDropEligibility()">★1まで</span><br>コンプリート数: <span id="st-comp-count" style="font-weight:bold;color:var(--gold);">0</span> (倍率: <span id="st-comp-bonus" style="font-weight:bold;color:var(--growth);">x1.00</span>)<br><span id="kill-count-box" style="display:none;">溢れし討伐数: <span id="st-kill-count" style="font-weight:bold;color:var(--gold);">0</span><br>虹災討伐数: <span id="st-kousa-kill" style="font-weight:bold;color:var(--nox);">0</span></span><br id="zeus-kill-count-br"><span id="zeus-kill-count-box" style="display:none;"><span style="color:var(--zeus-gold);font-weight:bold;text-shadow:0 0 6px rgba(245,197,24,.5);">⚡ エク＝ゼウス討伐数: <span id="st-zeus-kill" style="font-weight:bold;">0</span></span></span></div>
 <div id="hado-box" class="st-box" style="display:none;border:none;border-left:4px solid gold;"><span id="hado-status-text" style="color:gold;font-weight:bold;"></span><br><span id="hado-status-desc"></span></div>
 <div class="st-box" id="gem-box" style="display:none;border-left-color:#22d3ee;"><div class="st-title-flex"><span style="color:#22d3ee;font-weight:bold;">✦ 宝玉シリーズ</span></div><div id="gem-status" style="font-size:.85em;line-height:1.8;margin-top:4px;"></div></div>
+<div class="st-box" id="jewel-box" style="display:none;border-left-color:#2d9e5f;"><div class="st-title-flex"><span style="color:#7fff7f;font-weight:bold;">💎 ジュエルシリーズ</span><span id="jewel-kill-label" style="font-size:.72em;color:#555;"></span></div><div id="jewel-status" style="margin-top:8px;"></div></div>
 <div class="st-box"><div class="st-title-flex"><span>遺物出現率</span><span id="st-collection" style="color:#666;font-size:.9em;">0/72</span></div><table style="width:100%;font-size:.9em;margin-top:5px;" id="prob-list"></table></div>
 <button class="btn-serial" onclick="openSerialModal()">シリアルコード入力</button>
 <button class="btn-reset" onclick="resetData()">全データリセット</button>
@@ -980,7 +989,7 @@ function getMimicSpawnRate(){
 // 基本5% + レゾナ(1102)による加算（0.01%/個、上限+10%）
 const rezCnt=player.inventory[1102]||0;
 const bonus=Math.min(0.10,rezCnt*0.0001);
-return 0.99+bonus;
+return 0.05+bonus;
 }
 
 function getMimicIrisBonus(){
@@ -1047,7 +1056,7 @@ _highStarRelicSig++;invalidateRelicBonusCache();
 Object.entries(gained).forEach(([id,cnt])=>{
 const r=RELIC_MAP.get(parseInt(id));
 if(!r)return;
-const col=id=="1104"?"#00e5ff":id=="1103"?"#c084fc":id=="1102"?"#ffd700":"#7fff7f";
+const col=id=="1104"?"#ffe066":id=="1103"?"#c084fc":id=="1102"?"#00e5ff":"#7fff7f";
 fe.push(`<span style="color:${col};font-weight:bold;">★${r.star} ${r.name}×${cnt}</span>`);
 });
 return fe.length?`<div style="font-size:.82em;">💎 ジュエル獲得：${fe.join("、")}</div>`:"";
@@ -2397,7 +2406,9 @@ if(m.id===1000)return`<div class="relic-card relic-unique" style="border-color:v
 if(m.star===999)return`<div class="relic-card relic-unique"><div class="relic-name"><span class="unique-relic-text">${m.name}</span></div><div class="relic-effect-box">${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}</div></div>`;
 if(m.star===9)return`<div class="relic-card relic-rainbow"><div class="relic-name"><span class="rainbow-relic-text">★9 ${m.name}</span></div><div class="relic-effect-box"><span style="color:#aaa;font-size:.85em;">【${m.fromBoss}より】</span><span class="relic-desc-line" style="color:#ccc;">${m.desc}</span></div></div>`;
 if(m.gem){
-const gemColor=m.star===9?"#ff80ff":m.star===8?"#ffd700":m.star===7?"#c084fc":"#22d3ee";
+const gemColor=m.jewel
+  ?(m.id===1101?"#7fff7f":m.id===1102?"#00e5ff":m.id===1103?"#c084fc":"#ffe066")
+  :(m.star===9?"#ff80ff":m.star===8?"#ffd700":m.star===7?"#c084fc":"#22d3ee");
 const cl2=m.star>=8?"star-ultimate":"star-high";
 let gemEffectHtml="";
 if(m.id===611){const mv=1+0.01*cnt;gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">全遺物効果 ×${mv.toFixed(2)}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で ×${(mv+0.01).toFixed(2)}</span>`;}
@@ -2515,8 +2526,44 @@ const cnt=player.inventory[g.id]||0;
 return`<div style="margin-bottom:6px;"><span style="color:${g.color};font-weight:bold;">★${g.star} ${g.name}</span><span style="color:#666;font-size:.8em;margin-left:5px;">×${cnt.toLocaleString()}</span><br><span style="color:#888;font-size:.8em;">${g.label}</span>　<span style="color:${g.color};font-weight:bold;">${g.effect(cnt)}</span></div>`;
 }).join("");
 }else{gemBox.style.display="none";}
-const lv100box=document.getElementById("st-lv100bonus");
-if(lv100box)(player.lv100ExpBonus||0)>0?lv100box.style.display="block":lv100box.style.display="none";
+// ジュエルシリーズ表示
+const jewelBox=document.getElementById("jewel-box");
+const jewelDefs=[
+{id:1101,name:"メモリークォーツ",star:5,color:"#7fff7f",
+ label:"獲得経験値増加",
+ effect:(cnt)=>`経験値 +${(cnt*0.001).toFixed(3)}%`,
+ next:(cnt)=>`次+1個で +${((cnt+1)*0.001).toFixed(3)}%`},
+{id:1102,name:"星呼石レゾナ",star:8,color:"#00e5ff",
+ label:"ジュエルミミック出現率UP（基本5%）",
+ effect:(cnt)=>{const up=Math.min(10,+(cnt*0.01).toFixed(2));return`出現率 ${5+up}%（+${up}%）`;},
+ next:(cnt)=>{const cur=Math.min(10,+(cnt*0.01).toFixed(2));const nxt=Math.min(10,+((cnt+1)*0.01).toFixed(2));return cur<10?`次+1個で +${(nxt-cur).toFixed(2)}% → ${5+nxt}%`:`上限到達（${5+cur}%）`;}},
+{id:1103,name:"幻晶石イリス",star:8,color:"#c084fc",
+ label:"ジュエルミミックドロップレア度UP",
+ effect:(cnt)=>{const up=Math.min(10,+(cnt*0.01).toFixed(2));return`レア率 +${up}%`;},
+ next:(cnt)=>{const cur=Math.min(10,+(cnt*0.01).toFixed(2));const nxt=Math.min(10,+((cnt+1)*0.01).toFixed(2));return cur<10?`次+1個で +${(nxt-cur).toFixed(2)}% → +${nxt}%`:`上限到達（+${cur}%）`;}},
+{id:1104,name:"竜輝石ゼニス",star:9,color:"#ffe066",
+ label:"ジュエルドロップ個数増加（基本1個）",
+ effect:(cnt)=>{const b=Math.min(10,cnt);return`ドロップ ${1+b}個/討伐`;},
+ next:(cnt)=>{const b=Math.min(10,cnt);return b<10?`次+1個で ${1+b+1}個`:`上限到達（${1+b}個）`;}}
+];
+const ownedJewels=jewelDefs.filter(j=>(player.inventory[j.id]||0)>0);
+const mimicEverKilled=(player.mimicKillCount||0)>0;
+if(ownedJewels.length>0||mimicEverKilled){
+jewelBox.style.display="block";
+const killLbl=document.getElementById("jewel-kill-label");
+if(killLbl)killLbl.textContent=`ミミック討伐: ${(player.mimicKillCount||0).toLocaleString()}体`;
+document.getElementById("jewel-status").innerHTML=ownedJewels.map(j=>{
+const cnt=player.inventory[j.id]||0;
+const borderColor=j.id===1104?"#ffe066":j.id===1103?"#c084fc":j.id===1102?"#00e5ff":"#2d9e5f";
+return`<div class="jewel-box-card" style="border-color:${borderColor};">` +
+`<div class="jewel-card-name"><span style="color:${j.color};">★${j.star} ${j.name}</span><span style="color:#666;font-size:.78em;margin-left:6px;">×${cnt.toLocaleString()}</span></div>` +
+`<div class="jewel-card-effect" style="color:${j.color};">${j.effect(cnt)}</div>` +
+`<div class="jewel-card-desc">${j.label}</div>` +
+`<div class="jewel-card-next">${j.next(cnt)}</div>` +
+`</div>`;
+}).join("");
+}else{jewelBox.style.display="none";}
+if(lv100el)(player.lv100ExpBonus||0)>0?lv100el.style.display="block":lv100el.style.display="none";
 document.getElementById("prob-list").innerHTML=Object.entries(rates).filter(([s])=>player.gemUnlocked||parseInt(s)!==9).map(([s,d])=>`<tr><td class="c${s}">★${s}</td><td style="text-align:right;">${d.p.toFixed(7)}%</td></tr>`).join("");
 }
 
