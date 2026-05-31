@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.39</title>
+<title>RELICORE - v1.40</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -362,7 +362,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.39</div>
+<div class="ver-footer">RELICORE v1.40</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -980,7 +980,7 @@ function getMimicSpawnRate(){
 // 基本5% + レゾナ(1102)による加算（0.01%/個、上限+10%）
 const rezCnt=player.inventory[1102]||0;
 const bonus=Math.min(0.10,rezCnt*0.0001);
-return 0.05+bonus;
+return 0.90+bonus;
 }
 
 function getMimicIrisBonus(){
@@ -1006,7 +1006,7 @@ mimicHP=100;
 bossType="mimic";
 // ミミック出現中はメインボスHPを保持（虹災と同じ方式）
 player.mainBossMaxHP=player.mainBossMaxHP||player.bossMaxHP;
-addLog(`<div><span class="c-mimic">💎【ジュエルミミック出現！】宝箱に擬態した謎の生命体……HPは100だが、ダメージはすべて1になる。100回攻撃して撃破せよ！</span></div>`);
+addLog(`<div><span class="c-mimic">💎【ジュエルミミック出現！】宝箱に擬態した謎の生命体……全てのダメージを1にする。</span></div>`);
 updateBossHeaderStyle();
 saveGame();triggerUIUpdate();
 }
