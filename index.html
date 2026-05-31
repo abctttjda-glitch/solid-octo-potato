@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.39a</title>
+<title>RELICORE - v1.39</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -136,6 +136,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .hpfill-mimic{background:linear-gradient(90deg,#0f3d21,#2d9e5f)!important}
 @keyframes mimic-shimmer{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3) drop-shadow(0 0 6px #7fff7f)}}
 .badge-mimic{background:rgba(45,158,95,.3);color:#7fff7f;border:1px solid #2d9e5f}
+.overflow-toggle-btn{font-size:.8em;padding:5px 14px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;color:#fff;display:block;width:100%;margin-top:5px;letter-spacing:1px}
+.overflow-toggle-btn.state-on{background:#22c55e;box-shadow:0 2px 0 #15803d}
+.overflow-toggle-btn.state-off{background:#dc3545;box-shadow:0 2px 0 #991b1b}
 .c-mimic{color:#7fff7f;font-weight:bold}
 #log{height:400px;font-size:.82em;background:#fafafa;border:1px solid var(--border);padding:10px;overflow-y:auto;border-radius:8px;line-height:1.4}
 .log-set{border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:8px}
@@ -362,7 +365,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.39a</div>
+<div class="ver-footer">RELICORE v1.39</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -2436,7 +2439,7 @@ const cl=m.star>=8?"star-ultimate":m.star>=4?"star-high":"star-low";
 let cd="";
 if(id==116){if(!player.hasHado)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasGreatHado)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasDivineGuide)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
 else if(id==117){if(!player.hasWorldOrder)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasCrown)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasMeta)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
-return`<div class="relic-card ${cl}" data-rid="${id}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==804&&(player.inventory[804]>0)?`<span class="relic-desc-line" style="margin-top:4px;display:block;"><button onclick="toggleOverflowSpawn()" style="font-size:.75em;padding:3px 10px;border:none;border-radius:6px;cursor:pointer;font-weight:bold;background:${player.disableOverflow?"#dc3545":"#22c55e"};color:#fff;">溢れし災厄 出現 ${player.disableOverflow?"OFF ▶ ONにする":"ON ▶ OFFにする"}</button></span>`:""}
+return`<div class="relic-card ${cl}" data-rid="${id}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==804&&(player.inventory[804]>0)?`<button onclick="toggleOverflowSpawn()" class="overflow-toggle-btn ${player.disableOverflow?"state-off":"state-on"}">${player.disableOverflow?"⛔ 溢れし災厄 出現 OFF（タップでONに）":"✅ 溢れし災厄 出現 ON（タップでOFFに）"}</button>`:""}
 ${m.id==801?`<span class="relic-desc-line" style="color:#ffd700;">戦闘開始時に敵MaxHPの10%を削る</span>`:""}${m.id==802?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">自己進化回数: ${(player.evolutionStack||0).toLocaleString()} 回<br>差分乗算：×${Math.min(8.0,Math.max(1.1,Math.log10(2)*0.8)).toFixed(2)}〜×8.00（敵HP/ATK比に応じて変動）<br>Stack補正: +${(Math.min(player.evolutionStack||0,5000)*0.002).toFixed(2)}%<br>baseATK/HP成長: ${Math.floor((player.evolutionStack||0)/100)}回発動済み</span>`:""}${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}${cd}</div></div>`;
 }
 function renderRelics(){
@@ -2450,10 +2453,20 @@ const globalChanged=hasR!==_relicRenderCache.hasR||hasZ!==_relicRenderCache.hasZ
  ||curOmegaAtk!==_relicRenderCache.omegaAtk||curOmegaHp!==_relicRenderCache.omegaHp
  ||curEvo!==_relicRenderCache.evoStack||_curDisableOverflow!==_relicRenderCache.disableOverflow;
 // ソート順取得
+const _sortPriority=id=>{
+if(id===999)return 0;  // アーカイブゼロ: 先頭
+if(id===1000)return 1; // 全知全能
+if(id===804)return 2;  // 災厄の残滓: アーカイブゼロの直下
+return 100;            // それ以外は通常順
+};
 const sorted=Object.entries(player.inventory).filter(([,v])=>v>0).sort(([a],[b])=>{
-const ra=RELIC_MAP.get(parseInt(a)),rb=RELIC_MAP.get(parseInt(b));
-if(!ra||!rb)return 0;if(ra.star===999&&rb.star!==999)return-1;if(ra.star!==999&&rb.star===999)return 1;
-if(ra.star!==rb.star)return ra.star-rb.star;return Number(a)-Number(b);
+const ia=parseInt(a),ib=parseInt(b);
+const ra=RELIC_MAP.get(ia),rb=RELIC_MAP.get(ib);
+if(!ra||!rb)return 0;
+const pa=_sortPriority(ia),pb=_sortPriority(ib);
+if(pa!==pb)return pa-pb;
+if(ra.star!==rb.star)return rb.star-ra.star; // star降順（高い方が上）
+return ia-ib;
 });
 // 新規IDチェック（ソート順変化 or 遺物追加 or グローバル変化）
 const sortedIds=sorted.map(([id])=>id).join(",");
