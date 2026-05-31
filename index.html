@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.41</title>
+<title>RELICORE - v1.40</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -153,6 +153,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .vow-tag{display:inline-block;white-space:nowrap;margin-right:4px}
 .vow-sub{font-size:.72em;color:#666;display:block;line-height:1.4}
 .relic-list-container{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+#relic804-slot .relic-card{grid-column:unset;}
 .relic-card{position:relative;border:1px solid #e0d5f0;padding:6px 6px 6px 10px;border-radius:6px;background:var(--relic-bg);display:flex;flex-direction:column;min-height:70px}
 .relic-card.star-low{grid-column:span 2}
 .relic-card.star-high{grid-column:span 3;border-width:2px;background:#fff}
@@ -351,6 +352,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div style="font-size:.7em;color:#888;margin-bottom:8px;">★1〜3の遺物10,000個を1回分として圧縮。メモリー系は30万個を保護。圧縮した遺物の能力値は蓄積されます。</div>
 <button id="comp-btn" onclick="doCompress()" style="width:100%;padding:10px;background:#00ffcc;color:#000;border:none;border-radius:8px;font-weight:bold;font-size:1em;cursor:pointer;letter-spacing:2px;">収束圧縮</button>
 </div>
+<div id="relic804-slot" style="display:none;margin-bottom:6px;"></div>
 <div class="relic-list-container" id="relic-list"></div>
 </div>
 <div id="status" class="tab">
@@ -365,7 +367,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.41</div>
+<div class="ver-footer">RELICORE v1.40</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -489,6 +491,7 @@ residue:{total:0,edel:0,neria:0,nox:0,lilith:0,valka:0,igna:0,lux:0,magmel:0},
 hasFusionCore:false,
 mainBossMaxHP:null,
 gemUnlocked:false,
+disasterOff:false,
 lv100AtkBonus:"0",lv100HpBonus:"0",lv100ExpBonus:0,lv100MilestonesApplied:0,
 zeusKillCount:0
 };
@@ -660,6 +663,7 @@ player.attackExpBonus=p.attackExpBonus||0;
 player.hasAutoPrivilege=p.hasAutoPrivilege||false;
 player.autoSpeed=p.autoSpeed||1;
 player.residue=p.residue||{total:0,edel:0,neria:0,nox:0,lilith:0,valka:0,igna:0,lux:0,magmel:0};
+player.disasterOff=p.disasterOff||false;
 player.hasFusionCore=p.hasFusionCore||false;
 player.mainBossMaxHP=p.mainBossMaxHP||null;
 player.gemUnlocked=p.gemUnlocked||false;
@@ -1053,7 +1057,7 @@ if(!r)return;
 const col=id=="1104"?"#ff80ff":id=="1103"?"#ffd700":id=="1102"?"#c084fc":"#22d3ee";
 fe.push(`<span style="color:${col};font-weight:bold;">★${r.star} ${r.name}×${cnt}</span>`);
 });
-return fe.length?`<div style="font-size:.92em;">${fe.join("、")}</div>`:"";
+return fe.length?`<div style="font-size:.82em;">💎 ジュエル獲得：${fe.join("、")}</div>`:"";
 }
 
 function onMimicDefeat(logH){
@@ -2167,12 +2171,8 @@ addLog(`<div><span style="color:#ffd700;font-weight:bold;">【聖閃の理】戦
 function handleBossDefeat(){
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 player.killCount++;enemyDisasterStarUsed=false;
-// 次の敵HP計算：lastDmg × 100000（実ダメージ基準）
-// _minHPによる強制上昇を廃止（BIG_CAP汚染が残存するのを防ぐ）
 const _rawDmg=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
-// 次ボスHP = 直前ダメージ × 100000 ±15%
 const _refDmg=_rawDmg;
-// ±15%の乱数ばらつき（85%〜115%）
 const _hpRandPct=BigInt(Math.round((85+Math.random()*30)*1000));
 let newHPBig=_refDmg*100000n*_hpRandPct/100000n;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
@@ -2180,17 +2180,40 @@ player.bossMaxHP=newHPBig.toString();
 _bossMaxHPBigLive=newHPBig;
 currentBossHP=newHPBig;
 addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災厄 討伐】第${player.killCount}体目を撃破！</span></div>`);
-// 共鳴＝災核融合：解放&残滓加算
 if(!player.hasFusionCore){player.hasFusionCore=true;addLog(`<div><span style="color:#ff69b4;font-weight:bold;font-size:1.05em;">【新スキル解放】共鳴＝災核融合が魂に刻まれた！</span></div>`);}
 player.residue.total++;
-// 聖閃の理：新ボス出現時に発動
 applySeisenEffect();
-// ミミック出現抽選
+// 災厄OFFモード：溢れし災厄は出現せず、kousa/mimic/zeusをまとめて抽選
+if(player.disasterOff&&(player.inventory[804]||0)>0){
+_spawnDisasterOffMode();
+}else{
+// 通常モード
 trySpawnMimic();
-// 虹災割り込み抽選（30%）
 trySpawnKousa();
-// ゼウス割り込み抽選（0.001%）- 虹災が出なかった場合のみ
 if(bossType==="main")trySpawnZeus();
+}
+}
+// 災厄OFFモード：kousa50% / mimic30% / zeus20%
+function _spawnDisasterOffMode(){
+// ミミック出現条件チェック（マグメル討伐 or inventory[908]必須）
+const mimicAvail=!!(player.residue&&player.residue.magmel>0)||(player.inventory[908]>0);
+// 出現確率テーブル（ミミック出現不可の場合はその分をzeusへ）
+const pKousa=0.50;
+const pMimic=mimicAvail?0.30:0.00;
+const pZeus=1.00-pKousa-pMimic; // 0.20 or 0.50
+const rv=Math.random();
+if(rv<pKousa){
+// 虹災（kousa or gemini）
+spawnKousa();
+}else if(rv<pKousa+pMimic){
+// ジュエルミミック
+spawnMimic();
+}else{
+// ゼウス（出現条件チェック）
+if(player.zeusKillCount>=1||true){spawnZeus();}
+// ゼウス出現不可なら虹災で補填
+else{spawnKousa();}
+}
 }
 
 // ============ UI描画 ============
@@ -2448,19 +2471,59 @@ const cl=m.star>=8?"star-ultimate":m.star>=4?"star-high":"star-low";
 let cd="";
 if(id==116){if(!player.hasHado)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasGreatHado)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasDivineGuide)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
 else if(id==117){if(!player.hasWorldOrder)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasCrown)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasMeta)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
+// 804専用カード：溢れし災厄出現トグル付き
+if(id==804){
+const dOff=player.disasterOff;
+const toggleBg=dOff?"linear-gradient(135deg,#0a2a0a,#143614)":"linear-gradient(135deg,#2a0a0a,#3a1010)";
+const toggleBorder=dOff?"#4cff7c":"#ff4c4c";
+const toggleLabel=dOff
+?`<span style="color:#4cff7c;font-weight:bold;font-size:.95em;">✅ 溢れし災厄　OFF</span><span style="color:#aaa;font-size:.75em;margin-left:6px;">kousa50% / ミミック30% / ゼウス20%</span>`
+:`<span style="color:#ff4c4c;font-weight:bold;font-size:.95em;">🔴 溢れし災厄　ON</span><span style="color:#aaa;font-size:.75em;margin-left:6px;">通常出現中</span>`;
+return`<div class="relic-card star-ultimate" data-rid="804" style="border-color:#c84b00;grid-column:1/-1;">
+<div class="relic-name"><span class="unique-relic-text">★8 災厄の残滓</span></div>
+<div class="relic-effect-box">
+<span class="relic-desc-line" style="color:#ffd700;">★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)</span>
+<div onclick="toggleDisasterMode()" style="margin-top:8px;padding:10px 14px;border-radius:10px;border:2px solid ${toggleBorder};background:${toggleBg};cursor:pointer;display:flex;align-items:center;gap:8px;transition:.2s;">
+<div style="width:36px;height:20px;border-radius:10px;background:${dOff?"#4cff7c":"#555"};position:relative;transition:.2s;flex-shrink:0;">
+<div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;${dOff?"right:2px":"left:2px"};transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.5);"></div>
+</div>
+${toggleLabel}
+</div>
+</div>
+</div>`;
+}
 return`<div class="relic-card ${cl}" data-rid="${id}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==801?`<span class="relic-desc-line" style="color:#ffd700;">戦闘開始時に敵MaxHPの10%を削る</span>`:""}${m.id==802?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">自己進化回数: ${(player.evolutionStack||0).toLocaleString()} 回<br>差分乗算：×${Math.min(8.0,Math.max(1.1,Math.log10(2)*0.8)).toFixed(2)}〜×8.00（敵HP/ATK比に応じて変動）<br>Stack補正: +${(Math.min(player.evolutionStack||0,5000)*0.002).toFixed(2)}%<br>baseATK/HP成長: ${Math.floor((player.evolutionStack||0)/100)}回発動済み</span>`:""}${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}${cd}</div></div>`;
+}
+function toggleDisasterMode(){
+if(!(player.inventory[804]>0))return;
+player.disasterOff=!player.disasterOff;
+saveGame();
+renderRelics();
+triggerUIUpdate();
 }
 function renderRelics(){
 renderCompressionUI();
-const c=document.getElementById("relic-list");if(!c)return;
 const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
+// 804（災厄の残滓）は専用スロットに固定表示（アーカイブゼロ直下）
+const slot804=document.getElementById("relic804-slot");
+if(slot804){
+const cnt804=player.inventory[804]||0;
+if(cnt804>0){
+slot804.style.display="block";
+const m804=RELIC_MAP.get(804);
+slot804.innerHTML=_relicCardHTML(804,cnt804,m804,hasR,hasZ);
+}else{
+slot804.style.display="none";
+}
+}
+const c=document.getElementById("relic-list");if(!c)return;
 const curOmegaAtk=player.omegaAtkBig||"0",curOmegaHp=player.omegaHpBig||"0",curEvo=player.evolutionStack||0;
 // グローバルフラグ変化（hasR/hasZ/omegaAtk等）→フルリビルド
 const globalChanged=hasR!==_relicRenderCache.hasR||hasZ!==_relicRenderCache.hasZ
 ||curOmegaAtk!==_relicRenderCache.omegaAtk||curOmegaHp!==_relicRenderCache.omegaHp
-||curEvo!==_relicRenderCache.evoStack;
+||curEvo!==_relicRenderCache.evoStack||(player.disasterOff!==(_relicRenderCache.disasterOff??!player.disasterOff));
 // ソート順取得
-const sorted=Object.entries(player.inventory).filter(([,v])=>v>0).sort(([a],[b])=>{
+const sorted=Object.entries(player.inventory).filter(([id,v])=>v>0&&parseInt(id)!==804).sort(([a],[b])=>{
 const ra=RELIC_MAP.get(parseInt(a)),rb=RELIC_MAP.get(parseInt(b));
 if(!ra||!rb)return 0;if(ra.star===999&&rb.star!==999)return-1;if(ra.star!==999&&rb.star===999)return 1;
 if(ra.star!==rb.star)return ra.star-rb.star;return Number(a)-Number(b);
@@ -2474,6 +2537,7 @@ c.innerHTML=sorted.map(([id,cnt])=>{const m=RELIC_MAP.get(parseInt(id));return _
 _relicRenderCache.sortedIds=sortedIds;
 _relicRenderCache.hasR=hasR;_relicRenderCache.hasZ=hasZ;
 _relicRenderCache.omegaAtk=curOmegaAtk;_relicRenderCache.omegaHp=curOmegaHp;_relicRenderCache.evoStack=curEvo;
+_relicRenderCache.disasterOff=player.disasterOff;
 _relicRenderCache.inv={};sorted.forEach(([id,cnt])=>{_relicRenderCache.inv[id]=cnt;});
 }else{
 // 差分更新：カウントが変わったカードだけ差し替え
