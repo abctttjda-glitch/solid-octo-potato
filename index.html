@@ -1848,8 +1848,11 @@ if(isOvermatched&&fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
 if(fd<1n)fd=1n;
+
 // ミミック：全ダメージを1に固定
-if(isMimic){fd=1n;rescueFd=1n;}
+if(isMimic){
+  fd=1n;
+}
 
 // ===== maxDmg・lastDmg更新 =====
 // lastDmg は常に更新（次ボスHP計算の基準値として使用）
