@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.39.1</title>
+<title>RELICORE - v1.39a</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -362,7 +362,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.39.1</div>
+<div class="ver-footer">RELICORE v1.39a</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -526,7 +526,17 @@ refreshAutoBtn();
 }
 const attackBtn=document.getElementById("attackBtn");
 function startAttackLoop(e){if(activePointerId!==null)return;activePointerId=e.pointerId;if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);e.preventDefault();}
-function stopAttackLoop(e){if(e.pointerId===activePointerId){if(attackInterval){clearInterval(attackInterval);attackInterval=null;}activePointerId=null;}}
+function stopAttackLoop(e){
+if(e&&e.pointerId===activePointerId){
+if(attackInterval){clearInterval(attackInterval);attackInterval=null;}
+activePointerId=null;
+}
+}
+function forceStopAttack(){
+// タブ切り替え等の際に確実に攻撃ループを停止
+if(attackInterval){clearInterval(attackInterval);attackInterval=null;}
+activePointerId=null;
+}
 attackBtn.addEventListener("contextmenu",e=>e.preventDefault());
 attackBtn.addEventListener("pointerdown",startAttackLoop);
 attackBtn.addEventListener("pointerup",stopAttackLoop);
@@ -2134,9 +2144,12 @@ function toggleOverflowSpawn(){
 if(!(player.inventory[804]>0))return;
 player.disableOverflow=!player.disableOverflow;
 saveGame();
-const msg=player.disableOverflow
-?"<span style='color:#f97316;font-weight:bold;'>【溢れし災厄】出現を<span style='color:#dc3545;'>OFF</span>にしました。</span>"
-:"<span style='color:#f97316;font-weight:bold;'>【溢れし災厄】出現を<span style='color:#22c55e;'>ON</span>にしました。</span>";
+const _isNowOff=player.disableOverflow;
+const _inOverflow=player.isCleared&&bossType==="main";
+const _suffix=_inOverflow?`<span style='color:#aaa;font-size:.85em;'> ※現在の溢れし災厄を撃破後から適用</span>`:"";
+const msg=_isNowOff
+?`<span style='color:#f97316;font-weight:bold;'>【溢れし災厄】出現を<span style='color:#dc3545;'>OFF</span>にしました。</span>${_suffix}`
+:`<span style='color:#f97316;font-weight:bold;'>【溢れし災厄】出現を<span style='color:#22c55e;'>ON</span>にしました。</span>${_suffix}`;
 addLog(`<div>${msg}</div>`);
 renderRelics();triggerUIUpdate();
 }
@@ -2394,7 +2407,7 @@ let _dispCache={atk:"",hp:"",bossHp:"",rankLv:"",rankTitle:"",compCount:"",compB
 let _dispCache_bossType="",_dispCache_isCleared=false;
 let _dispCache_hadoText="";
 let _dispCache_hpBarPct=-1;
-let _relicRenderCache={inv:{},hasR:false,hasZ:false,omegaAtk:"",omegaHp:"",evoStack:0};
+let _relicRenderCache={inv:{},hasR:false,hasZ:false,omegaAtk:"",omegaHp:"",evoStack:0,disableOverflow:false};
 function _relicCardHTML(id,cnt,m,hasR,hasZ){
 if(!m)return"";
 if(m.id===1000)return`<div class="relic-card relic-unique" style="border-color:var(--zeus-gold);background:radial-gradient(135deg,#1a1400,#000);box-shadow:0 0 20px rgba(245,197,24,.4);animation:zeus-pulse 3s infinite;"><div class="relic-name"><span style="font-weight:bold;background:linear-gradient(135deg,#f5c518,#fff,#f5c518);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:.9em;letter-spacing:2px;">⚡ 全知全能</span></div><div class="relic-effect-box"><span style="color:#aaa;font-size:.82em;font-style:italic;">終極のエク＝ゼウス撃破の証明。<br>効果：1回の攻撃で10回分の行動——攻撃回数・報酬獲得数が10倍になる。<br>万物の理を超えた者は、もはや時間すら自在に操る。</span></div></div>`;
@@ -2432,9 +2445,10 @@ const c=document.getElementById("relic-list");if(!c)return;
 const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
 const curOmegaAtk=player.omegaAtkBig||"0",curOmegaHp=player.omegaHpBig||"0",curEvo=player.evolutionStack||0;
 // グローバルフラグ変化（hasR/hasZ/omegaAtk等）→フルリビルド
+const _curDisableOverflow=player.disableOverflow||false;
 const globalChanged=hasR!==_relicRenderCache.hasR||hasZ!==_relicRenderCache.hasZ
  ||curOmegaAtk!==_relicRenderCache.omegaAtk||curOmegaHp!==_relicRenderCache.omegaHp
- ||curEvo!==_relicRenderCache.evoStack;
+ ||curEvo!==_relicRenderCache.evoStack||_curDisableOverflow!==_relicRenderCache.disableOverflow;
 // ソート順取得
 const sorted=Object.entries(player.inventory).filter(([,v])=>v>0).sort(([a],[b])=>{
 const ra=RELIC_MAP.get(parseInt(a)),rb=RELIC_MAP.get(parseInt(b));
@@ -2449,7 +2463,7 @@ if(needsRebuild){
 c.innerHTML=sorted.map(([id,cnt])=>{const m=RELIC_MAP.get(parseInt(id));return _relicCardHTML(id,cnt,m,hasR,hasZ);}).join("");
 _relicRenderCache.sortedIds=sortedIds;
 _relicRenderCache.hasR=hasR;_relicRenderCache.hasZ=hasZ;
-_relicRenderCache.omegaAtk=curOmegaAtk;_relicRenderCache.omegaHp=curOmegaHp;_relicRenderCache.evoStack=curEvo;
+_relicRenderCache.omegaAtk=curOmegaAtk;_relicRenderCache.omegaHp=curOmegaHp;_relicRenderCache.evoStack=curEvo;_relicRenderCache.disableOverflow=_curDisableOverflow;
 _relicRenderCache.inv={};sorted.forEach(([id,cnt])=>{_relicRenderCache.inv[id]=cnt;});
 }else{
 // 差分更新：カウントが変わったカードだけ差し替え
@@ -2525,7 +2539,7 @@ document.getElementById("prob-list").innerHTML=Object.entries(rates).filter(([s]
 }
 
 function checkDropEligibility(){let m="【獲得資格詳細】\n";Object.entries(getCurrentDropRates()).forEach(([s,d])=>{m+=`★${s}: ${player.maxDmg>=d.cond?"解放済み":"未解放 (要:"+fmtV(d.cond)+")"}\n`;});alert(m);}
-function showTab(id){document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));document.getElementById(id).classList.add("active");document.getElementById("nav-"+id).classList.add("active");if(id==="vow")_vowNeedsRender=true;triggerUIUpdate();}
+function showTab(id){forceStopAttack();document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));document.getElementById(id).classList.add("active");document.getElementById("nav-"+id).classList.add("active");if(id==="vow")_vowNeedsRender=true;triggerUIUpdate();}
 function addLog(html){const l=document.getElementById("log");const d=document.createElement("div");d.className="log-set";d.innerHTML=html;l.insertBefore(d,l.firstChild);while(l.children.length>10)l.removeChild(l.lastChild);}
 function updateLog(msg){addLog(`<div>${msg}</div>`);}
 function resetData(){if(confirm("全リセットしますか？")){localStorage.clear();location.reload();}}
