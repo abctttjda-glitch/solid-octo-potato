@@ -2411,6 +2411,17 @@ let _dispCache_bossType="",_dispCache_isCleared=false;
 let _dispCache_hadoText="";
 let _dispCache_hpBarPct=-1;
 let _relicRenderCache={inv:{},hasR:false,hasZ:false,omegaAtk:"",omegaHp:"",evoStack:0,disableOverflow:false};
+function _overflowToggleBtnHTML(){
+// disableOverflow の状態を毎回参照して確実に正しいHTMLを返す
+if(!(player.inventory[804]>0))return "";
+const isOff=player.disableOverflow;
+const cls="overflow-toggle-btn "+(isOff?"state-off":"state-on");
+const label=isOff
+  ?"\u26d4 \u6ea2\u308c\u3057\u707d\u5384 \u51fa\u73fe OFF\uff08\u30bf\u30c3\u30d7\u3067ON\u306b\uff09"
+  :"\u2705 \u6ea2\u308c\u3057\u707d\u5384 \u51fa\u73fe ON\uff08\u30bf\u30c3\u30d7\u3067OFF\u306b\uff09";
+return "<button onclick=\"toggleOverflowSpawn()\" class=\""+cls+"\">"+label+"</button>";
+}
+
 function _relicCardHTML(id,cnt,m,hasR,hasZ){
 if(!m)return"";
 if(m.id===1000)return`<div class="relic-card relic-unique" style="border-color:var(--zeus-gold);background:radial-gradient(135deg,#1a1400,#000);box-shadow:0 0 20px rgba(245,197,24,.4);animation:zeus-pulse 3s infinite;"><div class="relic-name"><span style="font-weight:bold;background:linear-gradient(135deg,#f5c518,#fff,#f5c518);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:.9em;letter-spacing:2px;">⚡ 全知全能</span></div><div class="relic-effect-box"><span style="color:#aaa;font-size:.82em;font-style:italic;">終極のエク＝ゼウス撃破の証明。<br>効果：1回の攻撃で10回分の行動——攻撃回数・報酬獲得数が10倍になる。<br>万物の理を超えた者は、もはや時間すら自在に操る。</span></div></div>`;
@@ -2439,7 +2450,7 @@ const cl=m.star>=8?"star-ultimate":m.star>=4?"star-high":"star-low";
 let cd="";
 if(id==116){if(!player.hasHado)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasGreatHado)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasDivineGuide)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
 else if(id==117){if(!player.hasWorldOrder)cd=`<span class="relic-countdown">${Math.max(0,100000-cnt)}</span>`;else if(!player.hasCrown)cd=`<span class="relic-countdown">${Math.max(0,200000-cnt)}</span>`;else if(!player.hasMeta)cd=`<span class="relic-countdown">${Math.max(0,300000-cnt)}</span>`;}
-return`<div class="relic-card ${cl}" data-rid="${id}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==804&&(player.inventory[804]>0)?`<button onclick="toggleOverflowSpawn()" class="overflow-toggle-btn ${player.disableOverflow?"state-off":"state-on"}">${player.disableOverflow?"⛔ 溢れし災厄 出現 OFF（タップでONに）":"✅ 溢れし災厄 出現 ON（タップでOFFに）"}</button>`:""}
+return`<div class="relic-card ${cl}" data-rid="${id}"><div class="relic-name"><span class="${m.star>=8?"unique-relic-text":"c"+m.star}">★${m.star} ${m.name}${m.star<6?"×"+cnt.toLocaleString():""}</span></div><div class="relic-effect-box">${a>0?`ATK+${fmtF(a)} `:""}${h>0?`HP+${fmtF(h)}`:""}${m.mult?` (x${m.mult})`:""}${m.id==804?_overflowToggleBtnHTML():""}
 ${m.id==801?`<span class="relic-desc-line" style="color:#ffd700;">戦闘開始時に敵MaxHPの10%を削る</span>`:""}${m.id==802?`<span class="relic-desc-line" style="color:var(--cosmic-blue);">自己進化回数: ${(player.evolutionStack||0).toLocaleString()} 回<br>差分乗算：×${Math.min(8.0,Math.max(1.1,Math.log10(2)*0.8)).toFixed(2)}〜×8.00（敵HP/ATK比に応じて変動）<br>Stack補正: +${(Math.min(player.evolutionStack||0,5000)*0.002).toFixed(2)}%<br>baseATK/HP成長: ${Math.floor((player.evolutionStack||0)/100)}回発動済み</span>`:""}${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}${cd}</div></div>`;
 }
 function renderRelics(){
