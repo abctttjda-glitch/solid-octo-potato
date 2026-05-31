@@ -2468,8 +2468,9 @@ const _normalRelics=getNormalRelics();
 const _normalCnt=_normalRelics.filter(m=>player.everOwned[m.id]).length;
 const _gemCnt=GEM_IDS.filter(id=>(player.inventory[id]||0)>0).length;
 const _totalOwned=player.gemUnlocked?_normalCnt+_gemCnt:_normalCnt;
-const _totalMax=player.gemUnlocked?76:72;
-document.getElementById("st-collection").textContent=`${_totalOwned}/${_totalMax}`;
+const _totalMax=player.gemUnlocked
+ ? _normalRelics.length + GEM_IDS.length
+ : _normalRelics.length;document.getElementById("st-collection").textContent=`${_totalOwned}/${_totalMax}`;
 document.getElementById("st-comp-count").textContent=b.compCount;
 document.getElementById("st-comp-bonus").textContent="x"+b.compBonus.toFixed(2);
 document.getElementById("st-kousa-kill").textContent=fmtV(player.kousaKillCount||0);
