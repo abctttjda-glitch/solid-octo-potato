@@ -138,7 +138,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 .badge-mimic{background:rgba(45,158,95,.3);color:#7fff7f;border:1px solid #2d9e5f}
 .c-mimic{color:#7fff7f;font-weight:bold}
 /* ジュエルシリーズ */
-:root{--jewel-quartz:#e83e8c;--jewel-rezone:#00e5ff;--jewel-iris:#c084fc;--jewel-zenith:#ffe066}
+:root{--jewel-quartz:#22d3ee;--jewel-rezone:#c084fc;--jewel-iris:#ffd700;--jewel-zenith:#ff80ff}
 .jewel-box-card{background:#fff;border:1px solid #e0d5f0;border-radius:8px;padding:10px 12px 10px 16px;margin-bottom:8px;display:flex;flex-direction:column;gap:3px;position:relative;box-shadow:0 2px 4px rgba(0,0,0,.05)}
 .jewel-box-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:8px 0 0 8px;background:var(--jborder,var(--relic-purple))}
 .jewel-card-name{font-weight:bold;font-size:.9em}
@@ -470,8 +470,8 @@ const GEM_MAP={8:811,7:711,6:611};
 const ZEUS_BASE_HP=BigInt("99999"+"0".repeat(313));
 // ============ ジュエルシリーズ遺物 ============
 const JEWEL_RELICS=[
-{id:1101,star:5,name:"メモリークォーツ",atk:0,hp:0,gem:true,jewel:true,desc:"獲得経験値増加。1個につき+0.001%（上限なし）。"},
-{id:1102,star:8,name:"星呼石レゾナ",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミックの出現率UP。1個につき+0.01%（上限+10%）。"},
+{id:1101,star:6,name:"メモリークォーツ",atk:0,hp:0,gem:true,jewel:true,desc:"獲得経験値増加。1個につき+0.001%（上限なし）。"},
+{id:1102,star:7,name:"星呼石レゾナ",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミックの出現率UP。1個につき+0.01%（上限+10%）。"},
 {id:1103,star:8,name:"幻晶石イリス",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミックのドロップレア度UP。1個につき+0.01%（上限+10%）。"},
 {id:1104,star:9,name:"竜輝石ゼニス",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミック討伐時のジュエル系アイテム個数増加（上限+10個）。"}
 ];
@@ -1024,17 +1024,14 @@ saveGame();triggerUIUpdate();
 }
 
 function getMimicDropLog(){
-// ドロップ計算
-// 基本確率: メモリークォーツ97.5%、レゾナ1.24%、イリス1.24%、ゼニス0.02%→合計99.99%→調整: 97.52%, 1.24%, 1.24%, 0.2%→ゼニス0.2%でOK
-// 合計: 97.52+1.24+1.24+0.2 = 100.0(調整: メモリークォーツ = 100 - 1.24 - 1.24 - 0.2 = 97.32)
-// 指定通り: メモリークォーツ97.5%, レゾナ1.24%, イリス1.24%, ゼニス0.2%, 残り(0.02%)はメモリークォーツに吸収
-// 実際: 97.32+1.24+1.24+0.2=100.0
-const irisBonus=getMimicIrisBonus(); // 0〜0.10
-// irisボーナス分だけレア枠を強化（メモリークォーツ→レアへ振替）
-// レア枠基本: レゾナ1.24%, イリス1.24%, ゼニス0.2%
-// イリス所持でレア率全体UP（メモリークォーツ比率を下げてレア枠へ）
-const rareTotal=2.48+0.2+irisBonus*100; // irisボーナスをパーセントに
-const quartzRate=Math.max(0,100-rareTotal);
+// ドロップ確率（★ランク反映）:
+// ゼニス(★9): 0.10%  イリス(★8): 0.80%  レゾナ(★7): 1.60%  クォーツ(★6): 97.50%
+// イリスボーナスでレア枠全体をUP（クォーツ比率を下げてレア枠へ振替）
+const irisBonus=getMimicIrisBonus(); // 0〜0.10（実数）
+// レア枠基本合計: 0.10+0.80+1.60 = 2.50%
+// irisボーナス（0〜10%相当）をパーセントに変換してレア枠に加算
+const rareTotalBase=2.50+irisBonus*100;
+const quartzRate=Math.max(0,100-rareTotalBase);
 // ゼニス個数ボーナス
 const zenBonus=getMimicZenithBonus();
 const baseDropCount=1+zenBonus;
@@ -1044,10 +1041,10 @@ let gained={};
 for(let i=0;i<baseDropCount;i++){
 const rv=Math.random()*100;
 let id;
-if(rv<0.2){id=1104;} // ゼニス
-else if(rv<0.2+1.24){id=1103;} // イリス
-else if(rv<0.2+1.24+1.24){id=1102;} // レゾナ
-else{id=1101;} // メモリークォーツ
+if(rv<0.10){id=1104;} // ゼニス(★9) 0.10%
+else if(rv<0.10+0.80){id=1103;} // イリス(★8) 0.80%
+else if(rv<0.10+0.80+1.60){id=1102;} // レゾナ(★7) 1.60%
+else{id=1101;} // クォーツ(★6) 97.50%
 // irisボーナスによるレアシフト（既にiris所持で確率変動済み）
 player.inventory[id]=(player.inventory[id]||0)+1;
 player.totalRelics++;
@@ -1059,7 +1056,7 @@ _highStarRelicSig++;invalidateRelicBonusCache();
 Object.entries(gained).forEach(([id,cnt])=>{
 const r=RELIC_MAP.get(parseInt(id));
 if(!r)return;
-const col=id=="1104"?"#ffe066":id=="1103"?"#c084fc":id=="1102"?"#00e5ff":"#e83e8c";
+const col=id=="1104"?"#ff80ff":id=="1103"?"#ffd700":id=="1102"?"#c084fc":"#22d3ee";
 fe.push(`<span style="color:${col};font-weight:bold;">★${r.star} ${r.name}×${cnt}</span>`);
 });
 return fe.length?`<div style="font-size:.82em;">💎 ジュエル獲得：${fe.join("、")}</div>`:"";
@@ -1945,8 +1942,29 @@ comboHit=0;
 onMimicDefeat(logH);
 return;
 }
-// ミミック生存中はEXP加算なし・反撃なし
-logH=`<div><span class="c-mimic">💎 ミミックに攻撃！残りHP: ${mimicHP}/100</span></div>`;
+// ミミック生存中：EXPと再起スキル（反撃の狼煙）は通常通り発動、ただし反撃ダメージなし
+{
+const km=player.inventory[405]||0;
+const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);
+const ens=(player.inventory[605]||0)>=1?Math.min(20,1+Math.log10(_ensTK+1)):1.0;
+const lv100ExpMult=1+(player.lv100ExpBonus||0)/100;
+const _atkBonusCap=player.totalLevel*10000;
+const _atkBonusClamped=Math.min(player.attackExpBonus||0,_atkBonusCap);
+const expHado=Math.floor((player.totalLevel*100+km*500+Math.floor(_atkBonusClamped/1000))*ens*lv100ExpMult);
+const _qtzCnt=player.inventory[1101]||0;
+const _qtzMult=1+_qtzCnt*0.00001;
+const expDeath=Math.floor(player.totalLevel*100*_qtzMult);
+player.hadoExpAccum+=expHado;
+// 再起スキル：HP成長 + 狼煙による遺物獲得（反撃ダメージ0扱い→必ず「再起」発動）
+let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
+let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,player.totalLevel*100)+1+player.totalLevel+(Math.min(50000,player.inventory[402]||0)*5)));
+player.baseHP+=upHP;player.deathCount+=expDeath;
+const dropTxt=getGuaranteedDrop();
+logH=`<div><span class="c-mimic">💎 ミミックに攻撃！残りHP: ${mimicHP}/100</span>` +
+`<span style="color:var(--growth);font-weight:bold;"> (基礎HP+${fmtV(upHP)})</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}</div>` +
+dropTxt;
+checkLevelUp();
+}
 addLog(logH);
 _attackSaveCounter++;if(_attackSaveCounter>=10){saveGame();_attackSaveCounter=0;}
 triggerUIUpdate();
@@ -2413,9 +2431,7 @@ if(m.id===1000)return`<div class="relic-card relic-unique" style="border-color:v
 if(m.star===999)return`<div class="relic-card relic-unique"><div class="relic-name"><span class="unique-relic-text">${m.name}</span></div><div class="relic-effect-box">${m.desc?`<span class="relic-desc-line">${m.desc}</span>`:""}</div></div>`;
 if(m.star===9)return`<div class="relic-card relic-rainbow"><div class="relic-name"><span class="rainbow-relic-text">★9 ${m.name}</span></div><div class="relic-effect-box"><span style="color:#aaa;font-size:.85em;">【${m.fromBoss}より】</span><span class="relic-desc-line" style="color:#ccc;">${m.desc}</span></div></div>`;
 if(m.gem){
-const gemColor=m.jewel
-  ?(m.id===1101?"#e83e8c":m.id===1102?"#00e5ff":m.id===1103?"#c084fc":"#ffe066")
-  :(m.star===9?"#ff80ff":m.star===8?"#ffd700":m.star===7?"#c084fc":"#22d3ee");
+const gemColor=m.star===9?"#ff80ff":m.star===8?"#ffd700":m.star===7?"#c084fc":"#22d3ee";
 const cl2=m.star>=8?"star-ultimate":"star-high";
 let gemEffectHtml="";
 if(m.id===611){const mv=1+0.01*cnt;gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">全遺物効果 ×${mv.toFixed(2)}</span><span class="relic-desc-line" style="color:#aaa;">次の1個で ×${(mv+0.01).toFixed(2)}</span>`;}
@@ -2536,19 +2552,19 @@ return`<div style="margin-bottom:6px;"><span style="color:${g.color};font-weight
 // ジュエルシリーズ表示
 const jewelBox=document.getElementById("jewel-box");
 const jewelDefs=[
-{id:1101,name:"メモリークォーツ",star:5,color:"#e83e8c",
+{id:1101,name:"メモリークォーツ",star:6,color:"#22d3ee",
  label:"獲得経験値増加",
  effect:(cnt)=>`経験値 +${(cnt*0.001).toFixed(3)}%`,
  next:(cnt)=>`次+1個で +${((cnt+1)*0.001).toFixed(3)}%`},
-{id:1102,name:"星呼石レゾナ",star:8,color:"#00e5ff",
+{id:1102,name:"星呼石レゾナ",star:7,color:"#c084fc",
  label:"ジュエルミミック出現率UP（基本5%）",
  effect:(cnt)=>{const up=Math.min(10,+(cnt*0.01).toFixed(2));return`出現率 ${5+up}%（+${up}%）`;},
  next:(cnt)=>{const cur=Math.min(10,+(cnt*0.01).toFixed(2));const nxt=Math.min(10,+((cnt+1)*0.01).toFixed(2));return cur<10?`次+1個で +${(nxt-cur).toFixed(2)}% → ${5+nxt}%`:`上限到達（${5+cur}%）`;}},
-{id:1103,name:"幻晶石イリス",star:8,color:"#c084fc",
+{id:1103,name:"幻晶石イリス",star:8,color:"#ffd700",
  label:"ジュエルミミックドロップレア度UP",
  effect:(cnt)=>{const up=Math.min(10,+(cnt*0.01).toFixed(2));return`レア率 +${up}%`;},
  next:(cnt)=>{const cur=Math.min(10,+(cnt*0.01).toFixed(2));const nxt=Math.min(10,+((cnt+1)*0.01).toFixed(2));return cur<10?`次+1個で +${(nxt-cur).toFixed(2)}% → +${nxt}%`:`上限到達（+${cur}%）`;}},
-{id:1104,name:"竜輝石ゼニス",star:9,color:"#ffe066",
+{id:1104,name:"竜輝石ゼニス",star:9,color:"#ff80ff",
  label:"ジュエルドロップ個数増加（基本1個）",
  effect:(cnt)=>{const b=Math.min(10,cnt);return`ドロップ ${1+b}個/討伐`;},
  next:(cnt)=>{const b=Math.min(10,cnt);return b<10?`次+1個で ${1+b+1}個`:`上限到達（${1+b}個）`;}}
@@ -2561,13 +2577,11 @@ const killLbl=document.getElementById("jewel-kill-label");
 if(killLbl)killLbl.textContent=`ミミック討伐: ${(player.mimicKillCount||0).toLocaleString()}体`;
 document.getElementById("jewel-status").innerHTML=ownedJewels.map(j=>{
 const cnt=player.inventory[j.id]||0;
-// 左ボーダーと名前色：★ランク準拠（★5=#e83e8c, ★8=#ffd700, ★9=rainbow風に紫）
-const rankColor=j.id===1101?"#e83e8c":j.id===1102?"#ffd700":j.id===1103?"#ffd700":"#c084fc";
-const nameColor=j.id===1101?"#e83e8c":j.id===1102?"#00e5ff":j.id===1103?"#c084fc":"#ffe066";
-const effectColor=nameColor;
+// 宝玉シリーズと同じ★ランク色: ★6=#22d3ee ★7=#c084fc ★8=#ffd700 ★9=#ff80ff
+const rankColor=j.color; // jewelDefsのcolorがそのまま★ランク色
 return`<div class="jewel-box-card" style="--jborder:${rankColor};">` +
-`<div class="jewel-card-name"><span style="color:${nameColor};font-weight:bold;">★${j.star} ${j.name}</span><span style="color:#888;font-size:.78em;margin-left:6px;">×${cnt.toLocaleString()}</span></div>` +
-`<div class="jewel-card-effect" style="color:${effectColor};">${j.effect(cnt)}</div>` +
+`<div class="jewel-card-name"><span style="color:${rankColor};font-weight:bold;">★${j.star} ${j.name}</span><span style="color:#888;font-size:.78em;margin-left:6px;">×${cnt.toLocaleString()}</span></div>` +
+`<div class="jewel-card-effect" style="color:${rankColor};">${j.effect(cnt)}</div>` +
 `<div class="jewel-card-desc">${j.label}</div>` +
 `<div class="jewel-card-next">${j.next(cnt)}</div>` +
 `</div>`;
