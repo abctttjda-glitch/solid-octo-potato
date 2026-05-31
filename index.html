@@ -1665,7 +1665,7 @@ if(_anyGained){_highStarRelicSig++;invalidateRelicBonusCache();
 }if(!player.gemUnlocked)checkGemUnlock();
 const gainedAtk=0n,gainedHp=0n;
 let fe=[];for(let s=1;s<=9;s++){if(!sc[s])continue;if(sc[s]>20)fe.push(`<span class="c${Math.min(s,9)}">★${s}遺物 合計${sc[s]}個</span>`);else Object.entries(sg[s]).forEach(([id,c])=>{const m=RELIC_MAP.get(parseInt(id));if(!m)return;fe.push(`<span class="c${Math.min(m.star,9)}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`);});}
-return{log:fe.length?`<div style="font-size:.82em;">獲得：${fe.join("、")}</div>`:"",gainedAtk,gainedHp};
+return{log:fe.length?`<div style="font-size:.82em;">${fe.join("、")}</div>`:"",gainedAtk,gainedHp};
 }
 
 // ============ メイン攻撃 ============
