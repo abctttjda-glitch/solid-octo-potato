@@ -2209,15 +2209,14 @@ spawnKousa();
 // ジュエルミミック
 spawnMimic();
 }else{
-// ゼウス（出現条件チェック）
-if(player.zeusKillCount>=1||true){spawnZeus();}
-// ゼウス出現不可なら虹災で補填
+// ゼウス：isCleared かつ条件を満たす場合のみ出現。条件を満たさなければ虹災で補填
+if(player.isCleared){spawnZeus();}
 else{spawnKousa();}
 }
 }
 
 // ============ UI描画 ============
-function triggerUIUpdate(){if(!needsUIUpdate){needsUIUpdate=true;requestAnimationFrame(()=>{refreshUI();needsUIUpdate=false;});}}
+function triggerUIUpdate(){if(!needsUIUpdate){needsUIUpdate=true;requestAnimationFrame(()=>{try{refreshUI();}catch(e){console.error("refreshUI error:",e);}needsUIUpdate=false;});}}
 function refreshUI(){
 const b=getRelicBonus(),sm=calcFinalDmgMult();
 const tb=omegaApply(player.baseAtk+b.atk,player.baseHP+b.hp);
@@ -2296,7 +2295,8 @@ if(player.hasMeta)ht="メタ・アクシオム：全理の定義者";else if(pla
 const hb=document.getElementById("hado-box");
 if(ht){hb.style.display="block";document.getElementById("hado-status-text").textContent=ht;document.getElementById("hado-status-desc").textContent="★各種遺物強化及びドロップ率が大幅に上昇中";}else hb.style.display="none";
 
-const tid=document.querySelector(".tab.active").id;
+const _activeTab=document.querySelector(".tab.active");
+const tid=_activeTab?_activeTab.id:"battle";
 _checkVowRenderKey();
 if(tid==="vow"){if(_vowNeedsRender)renderVow();}else if(tid==="relic")renderRelics();else if(tid==="status")renderStatus();
 // コンプリート数は常時更新（タブ問わず）
@@ -2479,13 +2479,13 @@ const toggleBorder=dOff?"#4cff7c":"#ff4c4c";
 const toggleLabel=dOff
 ?`<span style="color:#4cff7c;font-weight:bold;font-size:.95em;">✅ 溢れし災厄　OFF</span><span style="color:#aaa;font-size:.75em;margin-left:6px;">kousa50% / ミミック30% / ゼウス20%</span>`
 :`<span style="color:#ff4c4c;font-weight:bold;font-size:.95em;">🔴 溢れし災厄　ON</span><span style="color:#aaa;font-size:.75em;margin-left:6px;">通常出現中</span>`;
-return`<div class="relic-card star-ultimate" data-rid="804" style="border-color:#c84b00;grid-column:1/-1;">
+return`<div class="relic-card star-ultimate" data-rid="804" style="border-color:#c84b00;">
 <div class="relic-name"><span class="unique-relic-text">★8 災厄の残滓</span></div>
 <div class="relic-effect-box">
 <span class="relic-desc-line" style="color:#ffd700;">★1〜★6遺物の能力を1000倍に引き上げる。最終ダメージ × (1 + log10(総討伐数 + 1) × 0.06)</span>
-<div onclick="toggleDisasterMode()" style="margin-top:8px;padding:10px 14px;border-radius:10px;border:2px solid ${toggleBorder};background:${toggleBg};cursor:pointer;display:flex;align-items:center;gap:8px;transition:.2s;">
-<div style="width:36px;height:20px;border-radius:10px;background:${dOff?"#4cff7c":"#555"};position:relative;transition:.2s;flex-shrink:0;">
-<div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;${dOff?"right:2px":"left:2px"};transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.5);"></div>
+<div data-action="toggleDisaster" style="margin-top:8px;padding:10px 14px;border-radius:10px;border:2px solid ${toggleBorder};background:${toggleBg};cursor:pointer;display:flex;align-items:center;gap:8px;">
+<div style="width:36px;height:20px;border-radius:10px;background:${dOff?"#4cff7c":"#555"};position:relative;flex-shrink:0;">
+<div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;${dOff?"right:2px":"left:2px"};box-shadow:0 1px 3px rgba(0,0,0,.5);"></div>
 </div>
 ${toggleLabel}
 </div>
@@ -2501,12 +2501,18 @@ saveGame();
 renderRelics();
 triggerUIUpdate();
 }
+// 遺物タブ内のイベント委任（innerHTML経由でonclickが失われるのを防ぐ）
+document.addEventListener("click",function(e){
+const el=e.target.closest("[data-action='toggleDisaster']");
+if(el)toggleDisasterMode();
+});
 function renderRelics(){
 renderCompressionUI();
 const hasR=(player.inventory[603]||0)>0,hasZ=(player.inventory[804]||0)>0;
 // 804（災厄の残滓）は専用スロットに固定表示（アーカイブゼロ直下）
 const slot804=document.getElementById("relic804-slot");
 if(slot804){
+try{
 const cnt804=player.inventory[804]||0;
 if(cnt804>0){
 slot804.style.display="block";
@@ -2515,6 +2521,7 @@ slot804.innerHTML=_relicCardHTML(804,cnt804,m804,hasR,hasZ);
 }else{
 slot804.style.display="none";
 }
+}catch(e){slot804.style.display="none";}
 }
 const c=document.getElementById("relic-list");if(!c)return;
 const curOmegaAtk=player.omegaAtkBig||"0",curOmegaHp=player.omegaHpBig||"0",curEvo=player.evolutionStack||0;
