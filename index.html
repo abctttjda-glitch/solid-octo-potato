@@ -1876,17 +1876,8 @@ if(isMimic){
   fd=1n;
 }
 
-// ===== maxDmg・lastDmg更新 =====
-// キャップ判定（isOvermatched）とは独立して常時更新する
-// ミミックへのダメージ（fd=1）は除外
-if(!isMimic){
-lastDmg=fd;
-if(fd>player.maxDmg)player.maxDmg=fd;
-}
-
 // ===== 救済判定（メイン・虹災両方に適用） =====
 // 役割：「与ダメ最低保証」= どんな状況でも必ずボスHP×0.2%は削れる攻撃回数保証
-// rescueFdはボスHPを削る実効値のみ。maxDmg・lastDmg・次ボスHP決定には一切影響しない。
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
@@ -1897,10 +1888,16 @@ rescueFd=guaranteedDmg;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
 }
-// fdが保証値以上でも救済フラグは立てない（表示のみ変わる）
 }
 
-// maxDmg・lastDmgはすでに救済判定より前に更新済み
+// ===== maxDmg・lastDmg更新 =====
+// 救済ダメージ確定後に更新（救済によって実際のダメージが fd を超える場合に正しく記録）
+// ミミックへのダメージ（fd=1）は除外
+if(!isMimic){
+const _effectiveDmg=rescueFd>fd?rescueFd:fd;
+lastDmg=_effectiveDmg;
+if(_effectiveDmg>player.maxDmg)player.maxDmg=_effectiveDmg;
+}
 
 // === Geminiシールド処理 ===
 let shieldBlocked=false;
