@@ -1079,6 +1079,8 @@ addLog(logH);
 applySeisenEffect();
 updateBossHeaderStyle();
 if(!player.gemUnlocked)checkGemUnlock();
+// ミミック戦中はlastDmg=1になるので再抽選前にmaxDmgから復元
+if(player.maxDmg>1n)lastDmg=player.maxDmg;
 // OFFモードなら溢れし災厄に戻さず即再抽選
 if(player.disasterOff&&player.isCleared&&(player.inventory[804]||0)>0)_spawnDisasterOffMode();
 saveGame();triggerUIUpdate();
@@ -2242,7 +2244,8 @@ player.mainBossMaxHP=mainHPBig.toString();
 const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
 const kousaHpRand=0.80+Math.random()*0.40;
 currentBossHP=mainHPBig*BigInt(Math.round(mul*kousaHpRand))/100n;
-const _rawRef=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})());
+// lastDmgはミミック戦中に1になるため使わない。maxDmg優先・なければbaseAtkで計算
+const _rawRef=player.maxDmg>0n?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})();
 const _kousaDmgCap=_rawRef*5000000n;
 if(currentBossHP>_kousaDmgCap)currentBossHP=_kousaDmgCap;
 player.bossMaxHP=currentBossHP.toString();
