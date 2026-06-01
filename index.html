@@ -1060,7 +1060,7 @@ if(!r)return;
 const col=id=="1104"?"#ff80ff":id=="1103"?"#ffd700":id=="1102"?"#c084fc":"#22d3ee";
 fe.push(`<span style="color:${col};font-weight:bold;">★${r.star} ${r.name}×${cnt}</span>`);
 });
-return fe.length?`<div style="font-size:.82em;">${fe.join("、")}</div>`:"";
+return fe.length?`<div style="font-size:.82em;">💎 ジュエル獲得：${fe.join("、")}</div>`:"";
 }
 
 function onMimicDefeat(logH){
@@ -1861,11 +1861,9 @@ if((player.inventory[504]||0)>0&&Math.random()<0.01){fd+=tb.atk;tags+=`<span sty
 if((player.inventory[601]||0)>0){const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;}
 
 // ===== ATK×100倍 ハードキャップ =====
-// 敵HPが与ダメ（fd）の100倍以上 = 格下状態 → キャップ適用
-// 敵HPが与ダメの100倍未満   = 格上・拮抗状態 → キャップなし（スキル自由発動）
-// ただし格上戦（キャップなし）のダメージはmaxDmg・lastDmgに記録しない
-isOvermatched=currentBossHP>=fd*100n; // 格下判定（キャップ適用条件）
-if(isOvermatched&&fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
+// 格下・格上問わず常時適用（格上でもキャップで上限を守る）
+isOvermatched=currentBossHP>=fd*100n; // 格下判定（参照用として残す）
+if(fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
 if(fd<1n)fd=1n;
@@ -1876,10 +1874,10 @@ if(isMimic){
 }
 
 // ===== maxDmg・lastDmg更新 =====
-// lastDmg は常に更新（次ボスHP計算の基準値として使用）
-// maxDmg（ドロップ資格判定）は格下時のみ更新
+// キャップ判定（isOvermatched）とは独立して常時更新する
+// ミミックへのダメージ（fd=1）は除外
+if(!isMimic){
 lastDmg=fd;
-if(isOvermatched){
 if(fd>player.maxDmg)player.maxDmg=fd;
 }
 
