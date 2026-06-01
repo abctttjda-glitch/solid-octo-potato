@@ -1060,19 +1060,22 @@ if(!r)return;
 const col=id=="1104"?"#ff80ff":id=="1103"?"#ffd700":id=="1102"?"#c084fc":"#22d3ee";
 fe.push(`<span style="color:${col};font-weight:bold;">★${r.star} ${r.name}×${cnt}</span>`);
 });
-return fe.length?`<div style="font-size:.82em;">💎 ジュエル獲得：${fe.join("、")}</div>`:"";
+return fe.length?`<div style="font-size:.82em;">${fe.join("、")}</div>`:"";
 }
 
 function onMimicDefeat(logH){
 player.mimicKillCount=(player.mimicKillCount||0)+1;
 mimicHP=0;
 bossType="main";
-// メインボスHP復元
-const _restoredHP=player.mainBossMaxHP?BigInt(player.mainBossMaxHP):BigInt(player.bossMaxHP);
-player.bossMaxHP=_restoredHP.toString();
-_bossMaxHPBigLive=_restoredHP;
+// メインボスHP：現在の戦力（maxDmg）ベースで再計算
+{const _ref=player.maxDmg>1n?player.maxDmg:(lastDmg>1n?lastDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
+const _hpPct=BigInt(Math.round((85+Math.random()*30)*1000));
+let _newHP=_ref*100000n*_hpPct/100000n;
+if(_newHP<BOSS_MAX_HP_BASE)_newHP=BOSS_MAX_HP_BASE;
+player.bossMaxHP=_newHP.toString();
+_bossMaxHPBigLive=_newHP;
 player.mainBossMaxHP=null;
-currentBossHP=_restoredHP;
+currentBossHP=_newHP;}
 const dropLog=getMimicDropLog();
 logH+=`<div><span class="c-mimic">💎【ジュエルミミック討伐！】(累計${player.mimicKillCount}体)</span></div>`+dropLog;
 addLog(logH);
@@ -1108,7 +1111,7 @@ erosionStack=0;waterAccumDmg=0n;comboHit=0;kushiaCounter=0;luxHitCounter=0;playe
 // Geminiシールド初期化
 if(kousaBossData.id==="gemini"){
 geminiShield=Math.floor(Math.random()*51)+50; // 50〜100
-geminiAtkCap=player.baseAtk*10n>0n?player.baseAtk*10n:10n; // バフ上限: 開始時baseAtk×10
+geminiAtkCap=player.baseAtk*2n>0n?player.baseAtk*2n:10n; // バフ上限: 開始時baseAtk×2（過剰増加防止）
 addLog(`<div><span class="c-gemini">【Geminiシールド展開】耐久値：${geminiShield} — 全攻撃ダメージを無効化！</span></div>`);
 }else{
 geminiShield=0;
@@ -1720,8 +1723,8 @@ let geminiBuffTag="";
 if(bossType==="kousa_gemini"){
 // baseAtkがキャップ未満の時のみバフを付与（指数爆発防止）
 if(geminiAtkCap>0n&&player.baseAtk<geminiAtkCap){
- const gemAtkGain=player.baseAtk*20n/1000n>0n?player.baseAtk*20n/1000n:1n; // ×1.020相当
- const gemHpGain=player.baseHP*40n/1000n>0n?player.baseHP*40n/1000n:1n;   // ×1.040相当
+ const gemAtkGain=player.baseAtk*5n/1000n>0n?player.baseAtk*5n/1000n:1n; // ×1.005相当（0.5%）
+ const gemHpGain=player.baseHP*10n/1000n>0n?player.baseHP*10n/1000n:1n;   // ×1.010相当（1%）
  // キャップを超えないよう加算量を調整
  const actualAtkGain=player.baseAtk+gemAtkGain>geminiAtkCap?geminiAtkCap-player.baseAtk:gemAtkGain;
  player.baseAtk+=actualAtkGain;
@@ -2123,10 +2126,12 @@ geminiAtkCap=0n; // Geminiバフ上限リセット
 
 // メイン戦に戻す
 bossType="main";kousaBossData=null;
-// bossMaxHP を元に戻す：保存されていたmainBossMaxHPを使用（虹災HP汚染を排除）
-// player.mainBossMaxHP が存在すればそれを優先使用
-const _restoredHP=player.mainBossMaxHP?BigInt(player.mainBossMaxHP):safeBigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
-const newHPBig=_restoredHP>0n?_restoredHP:BOSS_MAX_HP_BASE;
+// bossMaxHP を更新：現在の戦力（maxDmg）ベースで再計算（Geminiバフ等でATKが急増しても正しく追従）
+// handleBossDefeat と同じ計算式を使用
+const _ref=player.maxDmg>0n?player.maxDmg:(lastDmg>0n?lastDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
+const _hpPct=BigInt(Math.round((85+Math.random()*30)*1000));
+let newHPBig=_ref*100000n*_hpPct/100000n;
+if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
 player.bossMaxHP=newHPBig.toString();
 _bossMaxHPBigLive=newHPBig;
 player.mainBossMaxHP=null; // リセット
@@ -2233,26 +2238,24 @@ _setupKousaBoss();
 // kousa系ボスのHP設定・状態初期化を共通化（OFFモード用）
 function _setupKousaBoss(){
 if(!kousaBossData)return;
-// bossMaxHP が空・無効な場合のフォールバック
-const _rawBossHP=player.bossMaxHP||BOSS_MAX_HP_BASE.toString();
-let mainHPBig;
-try{mainHPBig=BigInt(_rawBossHP);}catch(e){mainHPBig=BOSS_MAX_HP_BASE;}
-if(mainHPBig<=0n)mainHPBig=BOSS_MAX_HP_BASE;
+// HP基準を現在の戦力（maxDmg）× 100000 で計算（handleBossDefeatと同じ方式）
+// これによりGeminiバフ等でATKが急増した後でも正しくスケールする
+const _ref=player.maxDmg>0n?player.maxDmg:(lastDmg>1n?lastDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})());
+const _hpPct=BigInt(Math.round((85+Math.random()*30)*1000));
+let mainHPBig=_ref*100000n*_hpPct/100000n;
+if(mainHPBig<BOSS_MAX_HP_BASE)mainHPBig=BOSS_MAX_HP_BASE;
 player.mainBossMaxHP=mainHPBig.toString();
 const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
 const kousaHpRand=0.80+Math.random()*0.40;
 currentBossHP=mainHPBig*BigInt(Math.round(mul*kousaHpRand))/100n;
-// lastDmgはミミック戦中に1になるため使わない。maxDmg優先・なければbaseAtkで計算
-const _rawRef=player.maxDmg>0n?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})();
-const _kousaDmgCap=_rawRef*5000000n;
-if(currentBossHP>_kousaDmgCap)currentBossHP=_kousaDmgCap;
 player.bossMaxHP=currentBossHP.toString();
 _bossMaxHPBigLive=currentBossHP;
 bossType="kousa_"+kousaBossData.id;
 erosionStack=0;waterAccumDmg=0n;comboHit=0;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 if(kousaBossData.id==="gemini"){
 geminiShield=Math.floor(Math.random()*51)+50;
-geminiAtkCap=player.baseAtk*10n>0n?player.baseAtk*10n:10n;
+// Geminiバフ上限：開始時baseAtkの2倍まで（過剰増加防止）
+geminiAtkCap=player.baseAtk*2n>0n?player.baseAtk*2n:10n;
 addLog(`<div><span class="c-gemini">【Geminiシールド展開】耐久値：${geminiShield} — 全攻撃ダメージを無効化！</span></div>`);
 }else{
 geminiShield=0;
