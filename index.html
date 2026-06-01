@@ -708,7 +708,10 @@ currentBossHP=_loadBig(p.currentBossHP,BOSS_MAX_HP_BASE.toString());
 }else{currentBossHP=_loadBig(player.bossMaxHP,BOSS_MAX_HP_BASE.toString());}
 // bossMaxHP復元
 {const bm=_loadBig(player.bossMaxHP,BOSS_MAX_HP_BASE.toString());player.bossMaxHP=bm.toString();}
-}else{currentBossHP=BigInt(player.bossMaxHP);}
+}else{
+currentBossHP=BigInt(player.bossMaxHP);
+_bossMaxHPBigLive=BigInt(player.bossMaxHP);
+}
 Object.keys(player.inventory).forEach(id=>{
 const r=RELIC_MAP.get(parseInt(id));
 if(r&&(r.star>=6||r.star===9)&&!r.gem&&player.inventory[id]>1)player.inventory[id]=1;
@@ -1076,9 +1079,10 @@ addLog(logH);
 applySeisenEffect();
 updateBossHeaderStyle();
 if(!player.gemUnlocked)checkGemUnlock();
+// OFFモードなら溢れし災厄に戻さず即再抽選
+if(player.disasterOff&&player.isCleared&&(player.inventory[804]||0)>0)_spawnDisasterOffMode();
 saveGame();triggerUIUpdate();
 }
-
 function trySpawnKousa(){if(bossType!=="main")return;if(Math.random()<0.50)spawnKousa();}
 function spawnKousa(){
 kousaBossData=selectKousaBoss();
@@ -1193,6 +1197,8 @@ _bossMaxHPBigLive=_restoredHP;
 zeusPreBossHP=null;
 }
 updateBossHeaderStyle();
+// OFFモードなら溢れし災厄に戻さず即再抽選
+if(player.disasterOff&&player.isCleared&&(player.inventory[804]||0)>0)_spawnDisasterOffMode();
 saveGame();triggerUIUpdate();
 isModalOpen=true;
 if(isFirstKill){
@@ -2156,6 +2162,8 @@ showStar9Modal(rd);
 return;
 }
 if(!player.gemUnlocked)checkGemUnlock();
+// OFFモードなら溢れし災厄に戻さず即再抽選
+if(player.disasterOff&&player.isCleared&&(player.inventory[804]||0)>0)_spawnDisasterOffMode();
 saveGame();triggerUIUpdate();
 }
 
@@ -2163,6 +2171,7 @@ saveGame();triggerUIUpdate();
 // ===== 聖閃の理（遺物801）：バトル開始時に敵MaxHPの10%を即時削る =====
 function applySeisenEffect(){
 if((player.inventory[801]||0)===0)return;
+if(!_bossMaxHPBigLive)return;
 const _cut=_bossMaxHPBigLive>0n?_bossMaxHPBigLive/10n:0n;
 if(_cut<=0n)return;
 currentBossHP=currentBossHP>_cut?currentBossHP-_cut:0n;
@@ -2172,47 +2181,84 @@ function handleBossDefeat(){
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 player.killCount++;enemyDisasterStarUsed=false;
 const _rawDmg=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
-const _refDmg=_rawDmg;
 const _hpRandPct=BigInt(Math.round((85+Math.random()*30)*1000));
-let newHPBig=_refDmg*100000n*_hpRandPct/100000n;
+let newHPBig=_rawDmg*100000n*_hpRandPct/100000n;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
 player.bossMaxHP=newHPBig.toString();
 _bossMaxHPBigLive=newHPBig;
 currentBossHP=newHPBig;
+const isOff=player.disasterOff&&player.isCleared&&(player.inventory[804]||0)>0;
+if(!isOff){
 addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災厄 討伐】第${player.killCount}体目を撃破！</span></div>`);
+}
 if(!player.hasFusionCore){player.hasFusionCore=true;addLog(`<div><span style="color:#ff69b4;font-weight:bold;font-size:1.05em;">【新スキル解放】共鳴＝災核融合が魂に刻まれた！</span></div>`);}
 player.residue.total++;
 applySeisenEffect();
-// 災厄OFFモード：溢れし災厄は出現せず、kousa/mimic/zeusをまとめて抽選
-if(player.disasterOff&&(player.inventory[804]||0)>0){
+if(isOff){
 _spawnDisasterOffMode();
 }else{
-// 通常モード
 trySpawnMimic();
 trySpawnKousa();
 if(bossType==="main")trySpawnZeus();
 }
 }
-// 災厄OFFモード：kousa50% / mimic30% / zeus20%
+// 災厄OFFモード：ミミック15% / Gemini5% / ゼウス0.01% / kousa系79.99%
 function _spawnDisasterOffMode(){
-// ミミック出現条件チェック（マグメル討伐 or inventory[908]必須）
+// クリア後・804所持・OFFモードの三条件を満たす場合のみ動作
+if(!player.isCleared||(player.inventory[804]||0)===0||!player.disasterOff)return;
 const mimicAvail=!!(player.residue&&player.residue.magmel>0)||(player.inventory[908]>0);
-// 出現確率テーブル（ミミック出現不可の場合はその分をzeusへ）
-const pKousa=0.50;
-const pMimic=mimicAvail?0.30:0.00;
-const pZeus=1.00-pKousa-pMimic; // 0.20 or 0.50
+const zeusAvail=player.isCleared;
+const pMimic=mimicAvail?0.15:0;
+const pGemini=0.05;
+const pZeus=zeusAvail?0.0001:0;
+const pKousa=1-pMimic-pGemini-pZeus;
 const rv=Math.random();
-if(rv<pKousa){
-// 虹災（kousa or gemini）
-spawnKousa();
-}else if(rv<pKousa+pMimic){
-// ジュエルミミック
+if(rv<pZeus){
+spawnZeus();
+}else if(rv<pZeus+pGemini){
+kousaBossData=KOUSA_BOSSES.find(k=>k.id==="gemini");
+_setupKousaBoss();
+}else if(rv<pZeus+pGemini+pMimic){
 spawnMimic();
 }else{
-// ゼウス：isCleared かつ条件を満たす場合のみ出現。条件を満たさなければ虹災で補填
-if(player.isCleared){spawnZeus();}
-else{spawnKousa();}
+const kousaOnly=KOUSA_RATES.filter(k=>k.id!=="gemini");
+const total=kousaOnly.reduce((s,k)=>s+k.r,0);
+let r=Math.random()*total;
+let chosen=kousaOnly[kousaOnly.length-1];
+for(const k of kousaOnly){r-=k.r;if(r<=0){chosen=k;break;}}
+kousaBossData=KOUSA_BOSSES.find(kb=>kb.id===chosen.id);
+_setupKousaBoss();
 }
+}
+// kousa系ボスのHP設定・状態初期化を共通化（OFFモード用）
+function _setupKousaBoss(){
+if(!kousaBossData)return;
+// bossMaxHP が空・無効な場合のフォールバック
+const _rawBossHP=player.bossMaxHP||BOSS_MAX_HP_BASE.toString();
+let mainHPBig;
+try{mainHPBig=BigInt(_rawBossHP);}catch(e){mainHPBig=BOSS_MAX_HP_BASE;}
+if(mainHPBig<=0n)mainHPBig=BOSS_MAX_HP_BASE;
+player.mainBossMaxHP=mainHPBig.toString();
+const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
+const kousaHpRand=0.80+Math.random()*0.40;
+currentBossHP=mainHPBig*BigInt(Math.round(mul*kousaHpRand))/100n;
+const _rawRef=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})());
+const _kousaDmgCap=_rawRef*5000000n;
+if(currentBossHP>_kousaDmgCap)currentBossHP=_kousaDmgCap;
+player.bossMaxHP=currentBossHP.toString();
+_bossMaxHPBigLive=currentBossHP;
+bossType="kousa_"+kousaBossData.id;
+erosionStack=0;waterAccumDmg=0n;comboHit=0;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
+if(kousaBossData.id==="gemini"){
+geminiShield=Math.floor(Math.random()*51)+50;
+geminiAtkCap=player.baseAtk*10n>0n?player.baseAtk*10n:10n;
+addLog(`<div><span class="c-gemini">【Geminiシールド展開】耐久値：${geminiShield} — 全攻撃ダメージを無効化！</span></div>`);
+}else{
+geminiShield=0;
+}
+addLog(`<div><span style="color:${kousaBossData.colorVar};font-weight:bold;font-size:1.1em;">【虹災割込】${kousaBossData.intro}</span></div>`);
+applySeisenEffect();
+updateBossHeaderStyle();
 }
 
 // ============ UI描画 ============
@@ -2477,8 +2523,8 @@ const dOff=player.disasterOff;
 const toggleBg=dOff?"linear-gradient(135deg,#0a2a0a,#143614)":"linear-gradient(135deg,#2a0a0a,#3a1010)";
 const toggleBorder=dOff?"#4cff7c":"#ff4c4c";
 const toggleLabel=dOff
-?`<span style="color:#4cff7c;font-weight:bold;font-size:.95em;">✅ 溢れし災厄　OFF</span><span style="color:#aaa;font-size:.75em;margin-left:6px;">kousa50% / ミミック30% / ゼウス20%</span>`
-:`<span style="color:#ff4c4c;font-weight:bold;font-size:.95em;">🔴 溢れし災厄　ON</span><span style="color:#aaa;font-size:.75em;margin-left:6px;">通常出現中</span>`;
+?`<span style="color:#4cff7c;font-weight:bold;font-size:.95em;">✅ 溢れし災厄　OFF</span>`
+:`<span style="color:#ff4c4c;font-weight:bold;font-size:.95em;">🔴 溢れし災厄　ON</span>`;
 return`<div class="relic-card star-ultimate" data-rid="804" style="border-color:#c84b00;">
 <div class="relic-name"><span class="unique-relic-text">★8 災厄の残滓</span></div>
 <div class="relic-effect-box">
