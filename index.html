@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.40</title>
+<title>RELICORE - v1.43</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -367,7 +367,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.40</div>
+<div class="ver-footer">RELICORE v1.43</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -1580,7 +1580,7 @@ player.totalRelics+=n;
 return`<div style="font-size:.82em;">【狼煙】${Object.entries(g).map(([id,c])=>{const m=RELIC_MAP.get(parseInt(id));return m?`<span class="c${m.star}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`:"";}).join("、")}</div>`;
 }
 function getDropLog(count){
-count=Math.min(count,80+(player.inventory[911]||0));
+count=Math.min(count,100+(player.inventory[911]||0));
 const raw=getCurrentDropRates(),tp=Object.values(raw).reduce((s,i)=>s+i.p,0);
 const rates={};for(let s in raw)rates[s]={p:(raw[s].p/tp)*100,cond:raw[s].cond};
 // レート配列をループ外で固定配列化（forループ高速化）
@@ -1913,7 +1913,7 @@ tags+=geminiBuffTag;
 const lv=Math.min(10,player.totalLevel);
 // 夢幻宝玉(911): 1個につきドロップ上限+1
 const _mugenCnt=player.inventory[911]||0;
-const _dropCap=80+_mugenCnt;
+const _dropCap=100+_mugenCnt;
 const dropN=Math.min(_dropCap,lv+Math.floor(player.totalLevel/10)*5+Math.min(50,player.inventory[401]||0));
 const _dropResult=getDropLog(_omni?dropN*10:dropN);
 let logH;
@@ -2639,7 +2639,13 @@ const lv100el=document.getElementById("st-lv100bonus");
 if(lv100el){
 const la=BigInt(player.lv100AtkBonus||"0");
 const lh=BigInt(player.lv100HpBonus||"0");
-lv100el.innerHTML=`覚醒ボーナス: ATK累積 <b>+${fmtV(la)}</b> / HP累積 <b>+${fmtV(lh)}</b><br>経験値ボーナス: <b>×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</b>`;
+lv100el.innerHTML=
+`<div style="font-weight:bold;color:var(--gold);margin-bottom:6px;">覚醒ボーナス</div>`+
+`<div style="display:flex;flex-direction:column;gap:4px;font-size:.9em;">`+
+`<div><span style="color:#888;min-width:90px;display:inline-block;">ATK累積</span><span style="color:var(--gold);font-weight:bold;">+${fmtV(la)}</span></div>`+
+`<div><span style="color:#888;min-width:90px;display:inline-block;">HP累積</span><span style="color:var(--growth);font-weight:bold;">+${fmtV(lh)}</span></div>`+
+`<div><span style="color:#888;min-width:90px;display:inline-block;">経験値ボーナス</span><span style="color:var(--primary);font-weight:bold;">×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</span></div>`+
+`</div>`;
 }
 document.getElementById("st-kill-count").textContent=fmtV(player.killCount||0);
 // ゼウス討伐数表示
