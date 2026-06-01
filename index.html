@@ -1060,7 +1060,7 @@ if(!r)return;
 const col=id=="1104"?"#ff80ff":id=="1103"?"#ffd700":id=="1102"?"#c084fc":"#22d3ee";
 fe.push(`<span style="color:${col};font-weight:bold;">★${r.star} ${r.name}×${cnt}</span>`);
 });
-return fe.length?`<div style="font-size:.82em;">💎 ジュエル獲得：${fe.join("、")}</div>`:"";
+return fe.length?`<div style="font-size:.82em;">${fe.join("、")}</div>`:"";
 }
 
 function onMimicDefeat(logH){
