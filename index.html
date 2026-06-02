@@ -1079,13 +1079,14 @@ currentBossHP=_newHP;}
 const dropLog=getMimicDropLog();
 logH+=`<div><span class="c-mimic">💎【ジュエルミミック討伐！】(累計${player.mimicKillCount}体)</span></div>`+dropLog;
 addLog(logH);
-applySeisenEffect();
 updateBossHeaderStyle();
 if(!player.gemUnlocked)checkGemUnlock();
 // ミミック戦中はlastDmg=1になるので再抽選前にmaxDmgから復元
 if(player.maxDmg>1n)lastDmg=player.maxDmg;
 // OFFモードなら溢れし災厄に戻さず即再抽選
 if(player.disasterOff&&player.isCleared&&(player.inventory[804]||0)>0)_spawnDisasterOffMode();
+// 聖閃の理：新ボス確定後に1回発動
+applySeisenEffect();
 saveGame();triggerUIUpdate();
 }
 function trySpawnKousa(){if(bossType!=="main")return;if(Math.random()<0.50)spawnKousa();}
@@ -1117,8 +1118,7 @@ addLog(`<div><span class="c-gemini">【Geminiシールド展開】耐久値：${
 geminiShield=0;
 }
 addLog(`<div><span style="color:var(--nox);font-weight:bold;font-size:1.1em;">【虹災割り込み】${kousaBossData.intro}</span></div>`);
-// 聖閃の理：虹災ボス出現時に発動
-applySeisenEffect();
+// 聖閃の理はhandleBossDefeat側で発動するため、ここでは呼ばない
 updateBossHeaderStyle();
 saveGame();triggerUIUpdate();
 }
@@ -2133,8 +2133,6 @@ player.bossMaxHP=newHPBig.toString();
 _bossMaxHPBigLive=newHPBig;
 player.mainBossMaxHP=null; // リセット
 currentBossHP=newHPBig;
-// 聖閃の理：メイン戦復帰時に発動
-applySeisenEffect();
 
 logH+=`<div><span style="color:var(--nox);font-weight:bold;">【虹災討伐】${def.name}を撃破！(累計${player.kousaKillCount}体)</span></div>`;
 
@@ -2166,6 +2164,8 @@ return;
 if(!player.gemUnlocked)checkGemUnlock();
 // OFFモードなら溢れし災厄に戻さず即再抽選
 if(player.disasterOff&&player.isCleared&&(player.inventory[804]||0)>0)_spawnDisasterOffMode();
+// 聖閃の理：新ボス確定後に1回発動
+applySeisenEffect();
 saveGame();triggerUIUpdate();
 }
 
@@ -2195,7 +2195,6 @@ addLog(`<div><span style="color:var(--gold);font-weight:bold;">【溢れし災�
 }
 if(!player.hasFusionCore){player.hasFusionCore=true;addLog(`<div><span style="color:#ff69b4;font-weight:bold;font-size:1.05em;">【新スキル解放】共鳴＝災核融合が魂に刻まれた！</span></div>`);}
 player.residue.total++;
-applySeisenEffect();
 if(isOff){
 _spawnDisasterOffMode();
 }else{
@@ -2203,6 +2202,8 @@ trySpawnMimic();
 trySpawnKousa();
 if(bossType==="main")trySpawnZeus();
 }
+// 聖閃の理は新ボス確定後に1回だけ発動（spawn関数内では呼ばない）
+applySeisenEffect();
 }
 // 災厄OFFモード：ミミック15% / Gemini5% / ゼウス0.01% / kousa系79.99%
 function _spawnDisasterOffMode(){
@@ -2258,7 +2259,7 @@ addLog(`<div><span class="c-gemini">【Geminiシールド展開】耐久値：${
 geminiShield=0;
 }
 addLog(`<div><span style="color:${kousaBossData.colorVar};font-weight:bold;font-size:1.1em;">【虹災割込】${kousaBossData.intro}</span></div>`);
-applySeisenEffect();
+// 聖閃の理はhandleBossDefeat側で発動するため、ここでは呼ばない
 updateBossHeaderStyle();
 }
 
