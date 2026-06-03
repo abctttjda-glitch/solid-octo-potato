@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.43</title>
+<title>RELICORE - v1.44</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -367,7 +367,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.43</div>
+<div class="ver-footer">RELICORE v1.44</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -625,7 +625,7 @@ erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
 compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
 zeusPreBossHP:zeusPreBossHP||null,
-gameVersion:"1.39"};
+gameVersion:"1.44"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -645,6 +645,9 @@ player.compressedAtkBig="0";player.compressedHpBig="0";
 player.compressedAtk=0;player.compressedHp=0;
 player.omegaAtkBig="0";player.omegaHpBig="0";
 }
+// v1.44未満のセーブ: 救済ダメージがmaxDmgに混入するバグ修正のため強制リセット
+// → ATK・敵HP・最大ダメージの乖離を解消する
+if(!p.gameVersion||p.gameVersion<"1.44"){player.maxDmg=0n;}
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
 // everOwned：旧セーブは inventory から復元（入手済み = 所持 or 圧縮済みで失った分を考慮不可のため inventory ベースで補完）
@@ -1898,11 +1901,12 @@ isRescue=true;
 }
 
 // ===== maxDmg・lastDmg更新 =====
-// 救済ダメージ（rescueFd）はmaxDmg・lastDmgに反映しない
-// → 救済はあくまで「詰み防止の補助」であり、戦力評価には使わない
-// → これを反映すると次ボスHPが跳ね上がり、ATK・敵HP・最大ダメージの乖離が拡大するバグの原因になる
-// ミミックへのダメージも除外
-if(!isMimic&&!isRescue){
+// fd（実ATKベースの素ダメージ）は常に記録する（救済時も含む）
+// rescueFd（救済上乗せ分）だけは記録しない
+// → 救済の「ボスHP/500」という巨大値をmaxDmgに入れると
+//   次ボスHPが実ATKとかけ離れて乖離が拡大するため除外
+// ミミックへのダメージは除外
+if(!isMimic){
 lastDmg=fd;
 if(fd>player.maxDmg)player.maxDmg=fd;
 }
