@@ -469,7 +469,7 @@ const JEWEL_RELICS=[
 {id:1101,star:6,name:"メモリークォーツ",atk:0,hp:0,gem:true,jewel:true,desc:"獲得経験値増加。1個につき+0.001%（上限なし）。"},
 {id:1102,star:7,name:"星呼石レゾナ",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミックの出現率UP。1個につき+0.01%（上限+10%）。"},
 {id:1103,star:8,name:"幻晶石イリス",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミックのドロップレア度UP。1個につき+0.01%（上限+10%）。"},
-{id:1104,star:9,name:"竜輝石ゼニス",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミック討伐時のジュエル系アイテム個数増加（上限+10個）。"}
+{id:1104,star:9,name:"竜輝石ゼニス",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミック討伐時のジュエル系アイテム個数増加（上限+10個）。ミミックへの与ダメージ+1（特攻）。所持上限10個。"}
 ];
 JEWEL_RELICS.forEach(r=>RELIC_MAP.set(r.id,r));
 const ZEUS_RELIC={id:1000,star:999,name:"全知全能",atk:0,hp:0,desc:"万物の理を超え、終極に到達した者の証明。効果：1回の攻撃で10回分の行動を行う（攻撃回数・報酬獲得数が10倍）。"};
@@ -1002,6 +1002,10 @@ function getMimicZenithBonus(){
 // ゼニス(1104)によるドロップ個数加算（1個/個、上限+10個）
 return Math.min(10,player.inventory[1104]||0);
 }
+function getMimicZenithAtkBonus(){
+// ゼニス(1104)によるミミック特攻ダメージ加算（+1/個、上限+10）
+return Math.min(10,player.inventory[1104]||0);
+}
 
 function trySpawnMimic(){
 // メインボス戦中のみ出現（虹災・ゼウス・ミミック戦中は出ない）
@@ -1026,12 +1030,12 @@ saveGame();triggerUIUpdate();
 
 function getMimicDropLog(){
 // ドロップ確率（★ランク反映）:
-// ゼニス(★9): 0.10%  イリス(★8): 0.80%  レゾナ(★7): 1.60%  クォーツ(★6): 97.50%
+// ゼニス(★9): 1.00%  イリス(★8): 3.00%  レゾナ(★7): 5.00%  クォーツ(★6): 91.00%
 // イリスボーナスでレア枠全体をUP（クォーツ比率を下げてレア枠へ振替）
 const irisBonus=getMimicIrisBonus(); // 0〜0.10（実数）
-// レア枠基本合計: 0.10+0.80+1.60 = 2.50%
+// レア枠基本合計: 1.00+3.00+5.00 = 9.00%
 // irisボーナス（0〜10%相当）をパーセントに変換してレア枠に加算
-const rareTotalBase=2.50+irisBonus*100;
+const rareTotalBase=9.00+irisBonus*100;
 const quartzRate=Math.max(0,100-rareTotalBase);
 // ゼニス個数ボーナス
 const zenBonus=getMimicZenithBonus();
@@ -1042,11 +1046,13 @@ let gained={};
 for(let i=0;i<baseDropCount;i++){
 const rv=Math.random()*100;
 let id;
-if(rv<0.10){id=1104;} // ゼニス(★9) 0.10%
-else if(rv<0.10+0.80){id=1103;} // イリス(★8) 0.80%
-else if(rv<0.10+0.80+1.60){id=1102;} // レゾナ(★7) 1.60%
-else{id=1101;} // クォーツ(★6) 97.50%
+if(rv<1.00){id=1104;} // ゼニス(★9) 1.00%
+else if(rv<1.00+3.00){id=1103;} // イリス(★8) 3.00%
+else if(rv<1.00+3.00+5.00){id=1102;} // レゾナ(★7) 5.00%
+else{id=1101;} // クォーツ(★6) 91.00%（irisボーナスなし時）
 // irisボーナスによるレアシフト（既にiris所持で確率変動済み）
+// ゼニス(1104)は所持上限10個
+if(id===1104&&(player.inventory[1104]||0)>=10){id=1101;} // 上限超えたらクォーツに振替
 player.inventory[id]=(player.inventory[id]||0)+1;
 player.totalRelics++;
 player.everOwned[id]=true;
@@ -1871,9 +1877,10 @@ if(fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 
 if(fd<1n)fd=1n;
 
-// ミミック：全ダメージを1に固定
+// ミミック：全ダメージを1に固定（ゼニス特攻ボーナスを加算）
 if(isMimic){
-  fd=1n;
+  const _zenAtkBonus=getMimicZenithAtkBonus();
+  fd=BigInt(1+_zenAtkBonus);
 }
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
@@ -1939,7 +1946,7 @@ logH=`<div>${_dispTags}<span style="color:#07f;font-weight:bold;">攻撃！${fmt
 if(!shieldBlocked){
 // ===== ミミック撃破判定（HP整数管理） =====
 if(isMimic){
-mimicHP=Math.max(0,mimicHP-1);
+mimicHP=Math.max(0,mimicHP-Number(fd));
 currentBossHP=BigInt(mimicHP); // HPバー同期
 if(mimicHP<=0){
 comboHit=0;
@@ -1965,7 +1972,8 @@ let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max
 player.baseHP+=upHP;player.deathCount+=expDeath;
 const dropTxt=getGuaranteedDrop();
 // 不退転の力（_dropResult.log）もミミック攻撃時に有効
-logH=`<div><span class="c-mimic">💎 ミミックに攻撃！残りHP: ${mimicHP}/100</span>` +
+const _zenDmgLog=getMimicZenithAtkBonus()>0?`<span style="color:#ff80ff;font-weight:bold;">【ゼニス特攻 ${Number(fd)}ダメージ】</span>`:"";
+logH=`<div><span class="c-mimic">💎 ミミックに攻撃！残りHP: ${mimicHP}/100</span>${_zenDmgLog}` +
 `<span style="color:var(--growth);font-weight:bold;"> (基礎HP+${fmtV(upHP)})</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}</div>` +
 _dropResult.log+dropTxt;
 checkLevelUp();
@@ -2507,7 +2515,7 @@ else if(m.id===911){gemEffectHtml=`<span style="color:${gemColor};font-weight:bo
 else if(m.id===1101){const pct=(cnt*0.001).toFixed(3);gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">経験値+${pct}%</span><span class="relic-desc-line" style="color:#aaa;">次+1個で +${((cnt+1)*0.001).toFixed(3)}%</span>`;}
 else if(m.id===1102){const up=Math.min(10,+(cnt*0.01).toFixed(2));gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ミミック出現率 +${up}%（基本5%+${up}%）</span><span class="relic-desc-line" style="color:#aaa;">上限+10%まで</span>`;}
 else if(m.id===1103){const up=Math.min(10,+(cnt*0.01).toFixed(2));gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ミミックドロップレア度 +${up}%</span><span class="relic-desc-line" style="color:#aaa;">上限+10%まで</span>`;}
-else if(m.id===1104){const bonus=Math.min(10,cnt);gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ジュエルドロップ +${bonus}個（合計${1+bonus}個）</span><span class="relic-desc-line" style="color:#aaa;">上限+10個まで</span>`;}
+else if(m.id===1104){const bonus=Math.min(10,cnt);gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">ジュエルドロップ +${bonus}個（合計${1+bonus}個）　ミミック特攻 +${bonus}ダメージ</span><span class="relic-desc-line" style="color:#aaa;">上限10個まで${bonus>=10?" ／ 上限到達":""}</span>`;}
 else if(m.gemBase){const gv=1+m.gemBase*Math.pow(cnt,0.6);const gnv=1+m.gemBase*Math.pow(cnt+1,0.6);gemEffectHtml=`<span style="color:${gemColor};font-weight:bold;font-size:1.1em;">倍率 ×${gv.toFixed(3)}</span><span class="relic-desc-line" style="color:#aaa;">次+${(gnv-gv).toFixed(4)}</span>`;}
 return`<div class="relic-card ${cl2}" style="border-color:${gemColor};"><div class="relic-name"><span style="color:${gemColor};font-weight:bold;">★${m.star} ${m.name} ×${cnt.toLocaleString()}</span></div><div class="relic-effect-box">${gemEffectHtml}<span class="relic-desc-line">${m.desc}</span></div></div>`;
 }
@@ -2685,9 +2693,9 @@ const jewelDefs=[
  effect:(cnt)=>{const up=Math.min(10,+(cnt*0.01).toFixed(2));return`レア率 +${up}%`;},
  next:(cnt)=>{const cur=Math.min(10,+(cnt*0.01).toFixed(2));const nxt=Math.min(10,+((cnt+1)*0.01).toFixed(2));return cur<10?`次+1個で +${(nxt-cur).toFixed(2)}% → +${nxt}%`:`上限到達（+${cur}%）`;}},
 {id:1104,name:"竜輝石ゼニス",star:9,color:"#ff80ff",
- label:"ジュエルドロップ個数増加（基本1個）",
- effect:(cnt)=>{const b=Math.min(10,cnt);return`ドロップ ${1+b}個/討伐`;},
- next:(cnt)=>{const b=Math.min(10,cnt);return b<10?`次+1個で ${1+b+1}個`:`上限到達（${1+b}個）`;}}
+ label:"ジュエルドロップ個数増加 & ミミック特攻（上限10個）",
+ effect:(cnt)=>{const b=Math.min(10,cnt);return`ドロップ ${1+b}個/討伐　特攻 +${b}ダメージ`;},
+ next:(cnt)=>{const b=Math.min(10,cnt);return b<10?`次+1個で ${1+b+1}個・特攻+${b+1}dmg`:`上限到達（${1+b}個 / +${b}dmg）`;}}
 ];
 const ownedJewels=jewelDefs.filter(j=>(player.inventory[j.id]||0)>0);
 const mimicEverKilled=(player.mimicKillCount||0)>0;
