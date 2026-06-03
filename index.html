@@ -1229,6 +1229,9 @@ function updateBossHeaderStyle(){
 const fill=document.getElementById("hp-bar-fill");
 const btn=document.getElementById("attackBtn");
 const nameEl=document.getElementById("boss-display-name");
+// ボスタイプが前回と同じなら何もしない
+if(updateBossHeaderStyle._lastType===bossType)return;
+updateBossHeaderStyle._lastType=bossType;
 // HPバーとボタンのクラスをリセット
 fill.className="";
 btn.className="btn-attack";
@@ -1688,7 +1691,8 @@ for(let s=1;s<=9;s++){if(sc[s]>0){_anyGained=true;break;}}
 if(_anyGained){_highStarRelicSig++;invalidateRelicBonusCache();
 }if(!player.gemUnlocked)checkGemUnlock();
 const gainedAtk=0n,gainedHp=0n;
-let fe=[];for(let s=1;s<=9;s++){if(!sc[s])continue;if(sc[s]>20)fe.push(`<span class="c${Math.min(s,9)}">★${s}遺物 合計${sc[s]}個</span>`);else Object.entries(sg[s]).forEach(([id,c])=>{const m=RELIC_MAP.get(parseInt(id));if(!m)return;fe.push(`<span class="c${Math.min(m.star,9)}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`);});}
+// パフォーマンス改善: 5個超は個別名称列挙をやめ「★N遺物 合計X個」のみ表示
+let fe=[];for(let s=1;s<=9;s++){if(!sc[s])continue;if(sc[s]>5)fe.push(`<span class="c${Math.min(s,9)}">★${s}遺物 合計${sc[s]}個</span>`);else Object.entries(sg[s]).forEach(([id,c])=>{const m=RELIC_MAP.get(parseInt(id));if(!m)return;fe.push(`<span class="c${Math.min(m.star,9)}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`);});}
 return{log:fe.length?`<div style="font-size:.82em;">獲得：${fe.join("、")}</div>`:"",gainedAtk,gainedHp};
 }
 
@@ -1984,7 +1988,7 @@ _dropResult.log+dropTxt;
 checkLevelUp();
 }
 addLog(logH);
-_attackSaveCounter++;if(_attackSaveCounter>=10){saveGame();_attackSaveCounter=0;}
+_attackSaveCounter++;if(_attackSaveCounter>=30){saveGame();_attackSaveCounter=0;}
 triggerUIUpdate();
 return;
 }
@@ -2001,7 +2005,7 @@ currentBossHP-=fd;
 logH+=`<div><span class="c-zeus">⚡ エク＝ゼウスの反撃……！再起の誓いは通用しない！</span></div>`;
 addLog(logH);
 _attackSaveCounter++;
-if(_attackSaveCounter>=10){saveGame();_attackSaveCounter=0;}
+if(_attackSaveCounter>=30){saveGame();_attackSaveCounter=0;}
 onZeusVictory("");
 return;
 }
@@ -2112,7 +2116,7 @@ checkLevelUp();
 }
 addLog(logH);
 _attackSaveCounter++;
-if(_attackSaveCounter>=10){saveGame();_attackSaveCounter=0;}
+if(_attackSaveCounter>=30){saveGame();_attackSaveCounter=0;}
 // auto-attack 動的インターバル調整（処理時間に応じて33ms〜100msに自動調整）
 if(isAutoAttack&&autoAttackInterval){
 const _atkElapsed=performance.now()-_atkT0;
@@ -2626,23 +2630,29 @@ _relicRenderCache.inv[id]=cnt;
 
 function renderStatus(){
 const b=getRelicBonus();
-document.getElementById("st-totalclicks").textContent=fmtV(player.totalClicks);
-document.getElementById("v-death").textContent=`${fmtV(player.deathCount)} / ${fmtV(getExpThreshold(player.totalLevel))}`;
-document.getElementById("st-totalrelics").textContent=fmtV(player.totalRelics||0);
-document.getElementById("st-maxdmg").textContent=fmtMD(player.maxDmg);
-document.getElementById("st-dmgmult").textContent="x"+(calcFinalDmgMult()*b.mult).toFixed(4);
+// 差分キャッシュ（変化した要素だけ更新）
+const _sc=renderStatus._cache||(renderStatus._cache={});
+function _setText(id,val){if(_sc[id]===val)return;_sc[id]=val;const el=document.getElementById(id);if(el)el.textContent=val;}
+function _setHtml(id,val){if(_sc[id]===val)return;_sc[id]=val;const el=document.getElementById(id);if(el)el.innerHTML=val;}
+
+const _tcStr=fmtV(player.totalClicks);
+_setText("st-totalclicks",_tcStr);
+_setText("v-death",`${fmtV(player.deathCount)} / ${fmtV(getExpThreshold(player.totalLevel))}`);
+_setText("st-totalrelics",fmtV(player.totalRelics||0));
+_setText("st-maxdmg",fmtMD(player.maxDmg));
+_setText("st-dmgmult","x"+(calcFinalDmgMult()*b.mult).toFixed(4));
 const rates=getCurrentDropRates();let mx=1;for(let s in rates)if(player.maxDmg>=rates[s].cond)mx=Math.max(mx,parseInt(s));
-document.getElementById("st-rank").textContent=`★${mx}まで`;
+_setText("st-rank",`★${mx}まで`);
 const _normalRelics=getNormalRelics();
 const _normalCnt=_normalRelics.filter(m=>player.everOwned[m.id]).length;
 const _gemCnt=GEM_IDS.filter(id=>(player.inventory[id]||0)>0).length;
 const _totalOwned=player.gemUnlocked?_normalCnt+_gemCnt:_normalCnt;
 const _totalMax=player.gemUnlocked
  ? _normalRelics.length + GEM_IDS.length
- : _normalRelics.length;document.getElementById("st-collection").textContent=`${_totalOwned}/${_totalMax}`;
-document.getElementById("st-comp-count").textContent=b.compCount;
-document.getElementById("st-comp-bonus").textContent="x"+b.compBonus.toFixed(2);
-document.getElementById("st-kousa-kill").textContent=fmtV(player.kousaKillCount||0);
+ : _normalRelics.length;_setText("st-collection",`${_totalOwned}/${_totalMax}`);
+_setText("st-comp-count",String(b.compCount));
+_setText("st-comp-bonus","x"+b.compBonus.toFixed(2));
+_setText("st-kousa-kill",fmtV(player.kousaKillCount||0));
 // 溢れし討伐数・虹災討伐数はクリア後のみ表示（ネタバレ防止）
 const killCountEl=document.getElementById("kill-count-box");
 if(killCountEl){killCountEl.style.display=player.isCleared?"":"none";}
@@ -2654,18 +2664,19 @@ const lv100el=document.getElementById("st-lv100bonus");
 if(lv100el){
 const la=BigInt(player.lv100AtkBonus||"0");
 const lh=BigInt(player.lv100HpBonus||"0");
-lv100el.innerHTML=
+const _lv100Html=
 `<div style="font-weight:bold;color:var(--gold);margin-bottom:6px;">覚醒ボーナス</div>`+
 `<div style="display:flex;flex-direction:column;gap:4px;font-size:.9em;">`+
 `<div><span style="color:#888;min-width:90px;display:inline-block;">ATK累積</span><span style="color:var(--gold);font-weight:bold;">+${fmtV(la)}</span></div>`+
 `<div><span style="color:#888;min-width:90px;display:inline-block;">HP累積</span><span style="color:var(--growth);font-weight:bold;">+${fmtV(lh)}</span></div>`+
 `<div><span style="color:#888;min-width:90px;display:inline-block;">経験値ボーナス</span><span style="color:var(--primary);font-weight:bold;">×${(1+(player.lv100ExpBonus||0)/100).toFixed(2)}</span></div>`+
 `</div>`;
+_setHtml("st-lv100bonus",_lv100Html);
 }
-document.getElementById("st-kill-count").textContent=fmtV(player.killCount||0);
+_setText("st-kill-count",fmtV(player.killCount||0));
 // ゼウス討伐数表示
 const zeusKillSpan=document.getElementById("st-zeus-kill");
-if(zeusKillSpan)zeusKillSpan.textContent=fmtV(player.zeusKillCount||0);
+if(zeusKillSpan)_setText("st-zeus-kill",fmtV(player.zeusKillCount||0));
 // 宝玉シリーズ表示
 const gemBox=document.getElementById("gem-box");
 const gemIds=[
@@ -2677,10 +2688,11 @@ const gemIds=[
 const ownedGems=gemIds.filter(g=>(player.inventory[g.id]||0)>0);
 if(ownedGems.length>0){
 gemBox.style.display="block";
-document.getElementById("gem-status").innerHTML=ownedGems.map(g=>{
+const _gemHtml=ownedGems.map(g=>{
 const cnt=player.inventory[g.id]||0;
 return`<div style="margin-bottom:6px;"><span style="color:${g.color};font-weight:bold;">★${g.star} ${g.name}</span><span style="color:#666;font-size:.8em;margin-left:5px;">×${cnt.toLocaleString()}</span><br><span style="color:#888;font-size:.8em;">${g.label}</span>　<span style="color:${g.color};font-weight:bold;">${g.effect(cnt)}</span></div>`;
 }).join("");
+_setHtml("gem-status",_gemHtml);
 }else{gemBox.style.display="none";}
 // ジュエルシリーズ表示
 const jewelBox=document.getElementById("jewel-box");
@@ -2707,15 +2719,21 @@ const mimicEverKilled=(player.mimicKillCount||0)>0;
 if(ownedJewels.length>0||mimicEverKilled){
 jewelBox.style.display="block";
 const killLbl=document.getElementById("jewel-kill-label");
-if(killLbl)killLbl.textContent=`ミミック討伐: ${(player.mimicKillCount||0).toLocaleString()}体`;
-document.getElementById("jewel-status").innerHTML=ownedJewels.map(j=>{
+if(killLbl)_setText("jewel-kill-label",`ミミック討伐: ${(player.mimicKillCount||0).toLocaleString()}体`);
+const _jewelHtml=ownedJewels.map(j=>{
 const cnt=player.inventory[j.id]||0;
 const nextTxt=j.next?`<span style="color:#666;font-size:.8em;margin-left:4px;">${j.next(cnt)}</span>`:"";
 return`<div style="margin-bottom:6px;"><span style="color:#7fff7f;font-weight:bold;">★${j.star} ${j.name}</span><span style="color:#666;font-size:.8em;margin-left:5px;">×${cnt.toLocaleString()}</span><br><span style="color:#888;font-size:.8em;">${j.label}</span>　<span style="color:#7fff7f;font-weight:bold;">${j.effect(cnt)}</span>${nextTxt}</div>`;
 }).join("");
+_setHtml("jewel-status",_jewelHtml);
 }else{jewelBox.style.display="none";}
 if(lv100el)(player.lv100ExpBonus||0)>0?lv100el.style.display="block":lv100el.style.display="none";
+// prob-list: maxDmgまたはgemUnlocked変化時のみ再生成
+const _probKey=player.maxDmg.toString()+"|"+player.gemUnlocked;
+if(_sc._probKey!==_probKey){
+_sc._probKey=_probKey;
 document.getElementById("prob-list").innerHTML=Object.entries(rates).filter(([s])=>player.gemUnlocked||parseInt(s)!==9).map(([s,d])=>`<tr><td class="c${s}">★${s}</td><td style="text-align:right;">${d.p.toFixed(7)}%</td></tr>`).join("");
+}
 }
 
 function checkDropEligibility(){let m="【獲得資格詳細】\n";Object.entries(getCurrentDropRates()).forEach(([s,d])=>{m+=`★${s}: ${player.maxDmg>=d.cond?"解放済み":"未解放 (要:"+fmtV(d.cond)+")"}\n`;});alert(m);}
