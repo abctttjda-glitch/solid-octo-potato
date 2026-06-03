@@ -1898,12 +1898,13 @@ isRescue=true;
 }
 
 // ===== maxDmg・lastDmg更新 =====
-// 救済ダメージ確定後に更新（救済によって実際のダメージが fd を超える場合に正しく記録）
-// ミミックへのダメージ（fd=1）は除外
-if(!isMimic){
-const _effectiveDmg=rescueFd>fd?rescueFd:fd;
-lastDmg=_effectiveDmg;
-if(_effectiveDmg>player.maxDmg)player.maxDmg=_effectiveDmg;
+// 救済ダメージ（rescueFd）はmaxDmg・lastDmgに反映しない
+// → 救済はあくまで「詰み防止の補助」であり、戦力評価には使わない
+// → これを反映すると次ボスHPが跳ね上がり、ATK・敵HP・最大ダメージの乖離が拡大するバグの原因になる
+// ミミックへのダメージも除外
+if(!isMimic&&!isRescue){
+lastDmg=fd;
+if(fd>player.maxDmg)player.maxDmg=fd;
 }
 
 // === Geminiシールド処理 ===
