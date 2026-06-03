@@ -1594,9 +1594,7 @@ const c2=CANDS_BASE[2].filter(m=>m.id!==117),c3=CANDS3_WITH311;
 const n=Math.min(100,lv);let g={};
 for(let i=0;i<n;i++){const s=hasZ&&Math.random()<0.5?c3[Math.floor(Math.random()*c3.length)]:c2[Math.floor(Math.random()*c2.length)];player.inventory[s.id]=(player.inventory[s.id]||0)+1;player.everOwned[s.id]=true;g[s.id]=(g[s.id]||0)+1;}
 player.totalRelics+=n;
-// パフォーマンス改善: getDropLogと同様にレア度別総数表示
-const sc={};Object.entries(g).forEach(([id,c])=>{const m=RELIC_MAP.get(parseInt(id));if(!m)return;sc[m.star]=(sc[m.star]||0)+c;});
-return`<div style="font-size:.82em;">【狼煙】${Object.entries(sc).map(([s,c])=>`<span class="c${s}">★${s}遺物 合計${c}個</span>`).join("、")}</div>`;
+return`<div style="font-size:.82em;">【狼煙】${Object.entries(g).map(([id,c])=>{const m=RELIC_MAP.get(parseInt(id));return m?`<span class="c${m.star}">★${m.star} ${m.name}${c>1?"×"+c:""}</span>`:"";}).join("、")}</div>`;
 }
 function getDropLog(count){
 count=Math.min(count,100+(player.inventory[911]||0));
