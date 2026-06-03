@@ -221,6 +221,16 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 </div>
 </div>
 
+<!-- ジュエル初回獲得モーダル -->
+
+<div id="jewel-first-modal" class="modal-overlay" style="z-index:59000;">
+<div class="hado-content" style="max-width:460px;" id="jewel-first-inner">
+<div class="hado-title" id="jewel-first-star" style="font-size:1.4em;letter-spacing:3px;">💎 初入手</div>
+<div class="hado-msg" style="text-align:center;" id="jewel-first-body"></div>
+<button class="story-btn" id="jewel-first-btn" onclick="closeJewelFirstModal()">受け取る</button>
+</div>
+</div>
+
 <!-- ★9遺物ドロップモーダル -->
 
 <div id="kousa-relic-modal" class="modal-overlay" onclick="closeKousaRelicModal()">
@@ -335,7 +345,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <button onclick="showTab('status')" id="nav-status">詳細</button>
 </div>
 <div id="content-area">
-<div id="battle" class="tab active"><button class="btn-attack" id="attackBtn">こうげき</button><button class="btn-auto btn-auto-off" id="autoBtn" onclick="toggleAutoAttack()" style="display:none;">自動攻撃　OFF</button><div id="log"></div></div>
+<div id="battle" class="tab active"><button class="btn-attack" id="attackBtn">こうげき</button><button class="btn-auto btn-auto-off" id="autoBtn" onclick="toggleAutoAttack()" style="display:none;">自動攻撃　OFF</button><div id="battle-log-toggle-row" style="display:none;margin-bottom:6px;"><button id="battleLogToggleBtn" onclick="toggleBattleLog()" style="width:100%;padding:9px;font-size:.85em;font-weight:bold;border:none;border-radius:8px;cursor:pointer;letter-spacing:1px;"></button></div><div id="log"></div></div>
 <div id="vow" class="tab"><div id="vow-list" class="vow-list-container"></div></div>
 <div id="relic" class="tab">
 <div id="compression-ui" style="display:none;background:linear-gradient(135deg,#001a12,#002a1a);border:2px solid #00ffcc;border-radius:12px;padding:14px;margin-bottom:10px;color:#fff;">
@@ -493,7 +503,9 @@ mainBossMaxHP:null,
 gemUnlocked:false,
 disasterOff:false,
 lv100AtkBonus:"0",lv100HpBonus:"0",lv100ExpBonus:0,lv100MilestonesApplied:0,
-zeusKillCount:0
+zeusKillCount:0,
+showBattleLog:true,
+jewelFirstSeen:{1101:false,1102:false,1103:false,1104:false}
 };
 
 // ============ 攻撃ボタン ============
@@ -505,6 +517,74 @@ btn.style.display="";
 }else{
 btn.style.display="none";
 if(isAutoAttack){isAutoAttack=false;if(autoAttackInterval){clearInterval(autoAttackInterval);autoAttackInterval=null;}localStorage.setItem("relicore_auto","0");}
+}
+}
+
+// ============ 戦いの記録 ON/OFF ============
+function refreshBattleLogToggle(){
+const row=document.getElementById("battle-log-toggle-row");
+const btn=document.getElementById("battleLogToggleBtn");
+const log=document.getElementById("log");
+if(!row||!btn||!log)return;
+// トグルボタンは常に表示
+row.style.display="";
+if(player.showBattleLog){
+btn.textContent="戦いの記録　ON";
+btn.style.background="#28a745";
+btn.style.color="#fff";
+btn.style.border="2px solid #1e7e34";
+log.style.display="";
+}else{
+btn.textContent="戦いの記録　OFF";
+btn.style.background="#2a2a2a";
+btn.style.color="#888";
+btn.style.border="2px solid #444";
+log.style.display="none";
+}
+}
+function toggleBattleLog(){
+player.showBattleLog=!player.showBattleLog;
+refreshBattleLogToggle();
+saveGame();
+}
+
+// ============ ジュエル初回獲得モーダル ============
+const JEWEL_FIRST_DATA={
+1101:{color:"#22d3ee",star:"★6",name:"メモリークォーツ",msg:"ジュエルミミックを討伐した。<br><br>新たな輝きを持つ遺物——<span style=\"color:#22d3ee;font-weight:bold;\">メモリークォーツ</span>を手に入れた。<br><br><span style=\"color:#aaa;font-size:.9em;\">獲得経験値をわずかに増加させる。</span>"},
+1102:{color:"#c084fc",star:"★7",name:"星呼石レゾナ",msg:"再びジュエルミミックが現れた。<br><br><span style=\"color:#c084fc;font-weight:bold;\">星呼石レゾナ</span>を手に入れた。<br><br><span style=\"color:#aaa;font-size:.9em;\">ジュエルミミックの出現率を高める。</span>"},
+1103:{color:"#ffd700",star:"★8",name:"幻晶石イリス",msg:"輝きが増している。<br><br><span style=\"color:#ffd700;font-weight:bold;\">幻晶石イリス</span>を手に入れた。<br><br><span style=\"color:#aaa;font-size:.9em;\">ドロップするジュエルのレア度が上昇する。</span>"},
+1104:{color:"#ff80ff",star:"★9",name:"竜輝石ゼニス",msg:"最高位のジュエルが輝いている。<br><br><span style=\"color:#ff80ff;font-weight:bold;\">竜輝石ゼニス</span>を手に入れた。<br><br><span style=\"color:#aaa;font-size:.9em;\">ジュエルドロップ数増加＆ミミックへの特攻。上限10個。</span>"}
+};
+function showJewelFirstModal(id){
+const d=JEWEL_FIRST_DATA[id];if(!d)return;
+const inner=document.getElementById("jewel-first-inner");
+const starEl=document.getElementById("jewel-first-star");
+const bodyEl=document.getElementById("jewel-first-body");
+const btnEl=document.getElementById("jewel-first-btn");
+if(!inner||!starEl||!bodyEl||!btnEl)return;
+inner.style.borderColor=d.color;
+starEl.style.color=d.color;
+starEl.textContent=`💎 ${d.star} ${d.name}`;
+bodyEl.innerHTML=d.msg;
+btnEl.style.borderColor=d.color;
+btnEl.style.color=d.color;
+document.getElementById("jewel-first-modal").style.display="flex";
+}
+function closeJewelFirstModal(){
+document.getElementById("jewel-first-modal").style.display="none";
+}
+// ジュエル初回チェック：getMimicDropLog内で呼ぶ
+function checkJewelFirstGet(gainedIds){
+if(!player.jewelFirstSeen)player.jewelFirstSeen={1101:false,1102:false,1103:false,1104:false};
+// 優先度順（レア度高い順）で1つだけ表示
+const priority=[1104,1103,1102,1101];
+for(const id of priority){
+if(gainedIds.includes(id)&&!player.jewelFirstSeen[id]){
+player.jewelFirstSeen[id]=true;
+saveGame();
+showJewelFirstModal(id);
+return;
+}
 }
 }
 function toggleAutoAttack(){
@@ -529,6 +609,7 @@ isAutoAttack=false; // toggleが反転させるのでfalseからスタート
 toggleAutoAttack();
 }
 refreshAutoBtn();
+refreshBattleLogToggle();
 }
 const attackBtn=document.getElementById("attackBtn");
 function startAttackLoop(e){if(activePointerId!==null)return;activePointerId=e.pointerId;if(attackInterval)clearInterval(attackInterval);attack();attackInterval=setInterval(attack,100);e.preventDefault();}
@@ -677,6 +758,8 @@ player.lv100ExpBonus=p.lv100ExpBonus||0;
 player.lv100MilestonesApplied=p.lv100MilestonesApplied||0;
 player.zeusKillCount=p.zeusKillCount||0;
 player.mimicKillCount=p.mimicKillCount||0;
+player.showBattleLog=p.showBattleLog!==undefined?p.showBattleLog:true;
+player.jewelFirstSeen=p.jewelFirstSeen||{1101:false,1102:false,1103:false,1104:false};
 // ジュエル遺物ロード（旧セーブ互換）
 JEWEL_RELICS.forEach(r=>{if(p.inventory&&p.inventory[r.id]){player.inventory[r.id]=p.inventory[r.id];player.everOwned[r.id]=true;}});
 zeusPreBossHP=p.zeusPreBossHP||null;
@@ -1062,6 +1145,9 @@ player.everOwned[id]=true;
 gained[id]=(gained[id]||0)+1;
 }
 _highStarRelicSig++;invalidateRelicBonusCache();
+// ジュエル初回獲得チェック
+const gainedIds=Object.keys(gained).map(Number);
+checkJewelFirstGet(gainedIds);
 // ログ生成
 Object.entries(gained).forEach(([id,cnt])=>{
 const r=RELIC_MAP.get(parseInt(id));
@@ -2061,7 +2147,9 @@ const multForHP=BigInt(Math.max(1,Math.round(bonus.mult*1000)));
 const curHP=tb.hp*multForHP/1000n;
 const baseCut=Math.min(20,Math.floor(lv/5)*5),ingaV=Math.min(10,player.inventory[403]||0);
 const minCut=baseCut+ingaV*2;
-const eatk=curHP*3n;
+// 敵攻撃力 = 自分HPの101〜110%（わずかに超える設計）
+// cutPct(30〜100%)による軽減後のmitigと自HPを比較→障壁展開 or 再起
+const eatk=curHP*BigInt(101+Math.floor(Math.random()*10))/100n;
 const cutPct=BigInt(Math.floor(Math.random()*(101-Math.min(95,minCut)))+Math.min(95,minCut));
 const mitig=eatk*(100n-cutPct)/100n>0n?eatk*(100n-cutPct)/100n:0n;
 const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?Math.min(20,1+Math.log10(_ensTK+1)):1.0;
@@ -2096,12 +2184,12 @@ const _qtzCnt2=player.inventory[1101]||0;
 const _qtzMult2=1+_qtzCnt2*0.00001;
 const expDeath2=Math.floor(player.totalLevel*100*_qtzMult2);
 player.hadoExpAccum+=expHado2;player.deathCount+=expDeath2;
-// 虹災の攻撃力：ボスHPの0.1%相当
-const kousaAtk=bossMaxHP/1000n;
 const multForHP=BigInt(Math.max(1,Math.round(bonus.mult*1000)));
 const curHP=tb.hp*multForHP/1000n;
 const baseCut=Math.min(20,Math.floor(lv/5)*5),ingaV=Math.min(10,player.inventory[403]||0);
 const minCut=baseCut+ingaV*2;
+// 虹災の攻撃力もメイン戦と同様に自分HPの101〜110%（わずかに超える設計）
+const kousaAtk=curHP*BigInt(101+Math.floor(Math.random()*10))/100n;
 const cutPct=BigInt(Math.floor(Math.random()*(101-Math.min(95,minCut)))+Math.min(95,minCut));
 const mitig=kousaAtk*(100n-cutPct)/100n>0n?kousaAtk*(100n-cutPct)/100n:0n;
 if(curHP>mitig){
@@ -2393,7 +2481,7 @@ const nb=Math.min(50,Math.floor(rlv/10)*5),bc=Math.min(50,player.inventory[401]|
 const skills=[
 {name:"不退転の力",capLv10:true,desc:"戦闘を経験するたびにランダムな遺物を獲得する。最大100個まで。",hl:`<span class="vow-tag">ボーナス：+${nb+bc}</span><span class="vow-tag">【核Lv:+${nb}】</span><span class="vow-tag">【不退転:+${bc}】</span>`},
 {name:"刹那の堆積",capLv10:false,desc:"再起するたびにHP増加幅+1。",hl:(()=>{const sv=(player.inventory[402]||0)*5;return`<span class="vow-tag">HP増加：+${rlv+sv}</span><span class="vow-tag">【刹那：+${sv}】</span><br><span class="vow-tag" style="font-size:.9em;">/ 上限1〜${fmtV(player.deathCount||100)}</span>`})()},
-{name:"因果の拒絶",capLv10:true,desc:"稀に攻撃を無効化する。",hl:(()=>{const bc2=Math.min(20,Math.floor(lv/5)*5),iv=Math.min(10,player.inventory[403]||0);return`<span class="vow-tag">無効化：${Math.min(95,bc2+iv*2)}%〜100%</span><span class="vow-tag">【因果：+${iv*2}%】</span>`})()},
+{name:"因果の拒絶",capLv10:true,desc:"攻撃を受けるたびに30〜100%のダメージを無効化する。因果の遺物で下限UP。",hl:(()=>{const bc2=Math.min(20,Math.floor(lv/5)*5),iv=Math.min(10,player.inventory[403]||0);return`<span class="vow-tag">無効化：${Math.min(95,bc2+iv*2)}%〜100%</span><span class="vow-tag">【因果：+${iv*2}%】</span>`})()},
 {name:"反撃の狼煙",capLv10:true,desc:"生存時★2〜3の遺物を確定で入手する。",hl:`<span class="vow-tag">確定：1〜${lv}個</span><span class="vow-tag">(★2${(player.inventory[404]||0)>0?"/★3":""})</span>`},
 {name:"魂の研磨",capLv10:false,desc:"経験値ボーナスが向上。攻撃のたびに基礎値+1で永続蓄積。攻撃のたびに核レベル×100の経験値を追加獲得（核レベルは表記上限なし）。",hl:(()=>{
 const km=player.inventory[405]||0;
@@ -2405,7 +2493,7 @@ return`<span class="vow-tag">経験値ベース：${(player.totalLevel*100).toLo
 })()},
 {name:"死を刻む",capLv10:false,desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004;const lvB=Math.log10((player.totalLevel||1)+1)*0.01;const total=calcFinalDmgMult()*_vowBonus.mult;return`<span class="vow-tag">最終ダメ倍率：x${total.toFixed(4)}</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
 // 共鳴＝災核融合はクリア後のみ表示
-,...(player.isCleared?[{name:"共鳴＝災核融合",capLv10:false,fusion:true,desc:"溢れし災厄の討伐により解放。各災厄の残滓を蓄積・融合し、★1〜6遺物とオメガコアに圧倒的補正を付与する。",
+,...(player.isCleared?[{name:"共鳴＝災核融合",capLv10:false,fusion:true,desc:"溢れし災厄の討伐により解放。各災厄の残滓を蓄積・融合し、★1〜6遺物に圧倒的補正を付与する。",
 hl:(()=>{
 if(!player.hasFusionCore)return`<span class="vow-tag" style="color:#888;">【溢れし災厄を初討伐で解放】</span>`;
 const r=player.residue;
@@ -2738,7 +2826,7 @@ document.getElementById("prob-list").innerHTML=Object.entries(rates).filter(([s]
 
 function checkDropEligibility(){let m="【獲得資格詳細】\n";Object.entries(getCurrentDropRates()).forEach(([s,d])=>{m+=`★${s}: ${player.maxDmg>=d.cond?"解放済み":"未解放 (要:"+fmtV(d.cond)+")"}\n`;});alert(m);}
 function showTab(id){document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));document.getElementById(id).classList.add("active");document.getElementById("nav-"+id).classList.add("active");if(id==="vow")_vowNeedsRender=true;triggerUIUpdate();}
-function addLog(html){const l=document.getElementById("log");const d=document.createElement("div");d.className="log-set";d.innerHTML=html;l.insertBefore(d,l.firstChild);while(l.children.length>10)l.removeChild(l.lastChild);}
+function addLog(html){if(!player.showBattleLog)return;const l=document.getElementById("log");const d=document.createElement("div");d.className="log-set";d.innerHTML=html;l.insertBefore(d,l.firstChild);while(l.children.length>10)l.removeChild(l.lastChild);}
 function updateLog(msg){addLog(`<div>${msg}</div>`);}
 function resetData(){if(confirm("全リセットしますか？")){localStorage.clear();location.reload();}}
 
