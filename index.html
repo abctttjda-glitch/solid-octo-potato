@@ -706,7 +706,7 @@ erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
 compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
 zeusPreBossHP:zeusPreBossHP||null,
-gameVersion:"1.44"};
+gameVersion:"1.45.1"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -728,7 +728,7 @@ player.omegaAtkBig="0";player.omegaHpBig="0";
 }
 // v1.44未満のセーブ: 救済ダメージがmaxDmgに混入するバグ修正のため強制リセット
 // → ATK・敵HP・最大ダメージの乖離を解消する
-if(!p.gameVersion||p.gameVersion<"1.44"){player.maxDmg=0n;}
+if(!p.gameVersion||p.gameVersion<"1.45.1"){player.maxDmg=0n;}
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
 // everOwned：旧セーブは inventory から復元（入手済み = 所持 or 圧縮済みで失った分を考慮不可のため inventory ベースで補完）
@@ -2813,7 +2813,7 @@ if(killLbl)_setText("jewel-kill-label",`ミミック討伐: ${(player.mimicKillC
 const _jewelHtml=ownedJewels.map(j=>{
 const cnt=player.inventory[j.id]||0;
 const nextTxt=j.next?`<span style="color:#666;font-size:.8em;margin-left:4px;">${j.next(cnt)}</span>`:"";
-return`<div style="margin-bottom:6px;"><span style="color:#7fff7f;font-weight:bold;">★${j.star} ${j.name}</span><span style="color:#666;font-size:.8em;margin-left:5px;">×${cnt.toLocaleString()}</span><br><span style="color:#888;font-size:.8em;">${j.label}</span>　<span style="color:#7fff7f;font-weight:bold;">${j.effect(cnt)}</span>${nextTxt}</div>`;
+return`<div style="margin-bottom:6px;"><span style="color:${j.color};font-weight:bold;">★${j.star} ${j.name}</span><span style="color:#666;font-size:.8em;margin-left:5px;">×${cnt.toLocaleString()}</span><br><span style="color:#888;font-size:.8em;">${j.label}</span>　<span style="color:${j.color};font-weight:bold;">${j.effect(cnt)}</span>${nextTxt}</div>`;
 }).join("");
 _setHtml("jewel-status",_jewelHtml);
 }else{jewelBox.style.display="none";}
