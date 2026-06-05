@@ -82,6 +82,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 /* カラークラス */
 .c1{color:#888;font-weight:bold}.c2{color:#28a745;font-weight:bold}.c3{color:#007bff;font-weight:bold}.c4{color:#6610f2;font-weight:bold}.c5{color:#e83e8c;font-weight:bold}.c6{color:#fd7e14;font-weight:bold}.c7{color:#f00;font-weight:bold}.c8{color:#ffd700;font-weight:bold}
 .c9{font-weight:bold;background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.c10{font-weight:bold;background:linear-gradient(135deg,#fff9c4,#ffe57f,#fff,#ffe57f,#fff9c4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 8px rgba(255,230,100,.6);filter:drop-shadow(0 0 4px #ffe57f)}
 .c-order{color:#ffd700;font-weight:bold}.c-gemini{color:var(--gemini);font-weight:bold}
 .c-edel{color:var(--edel);font-weight:bold}.c-neria{color:var(--neria);font-weight:bold}.c-nox{color:var(--nox);font-weight:bold}.c-lilith{color:var(--lilith);font-weight:bold}.c-valka{color:var(--valka);font-weight:bold}.c-igna{color:var(--igna);font-weight:bold}.c-lux{color:var(--lux);font-weight:bold}
 .c-magmel{background:var(--magmel);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold}
@@ -482,7 +483,9 @@ const JEWEL_RELICS=[
 {id:1104,star:9,name:"竜輝石ゼニス",atk:0,hp:0,gem:true,jewel:true,desc:"ジュエルミミック討伐時のジュエル系アイテム個数増加（上限+9個）。ミミックへの与ダメージ+1（特攻）。所持上限9個。"}
 ];
 JEWEL_RELICS.forEach(r=>RELIC_MAP.set(r.id,r));
-const ZEUS_RELIC={id:1000,star:999,name:"全知全能",atk:0,hp:0,desc:"万物の理を超え、終極に到達した者の証明。効果：1回の攻撃で10回分の行動を行う（攻撃回数・報酬獲得数が10倍）。"};
+const ZEUS_RELIC={id:1000,star:10,name:"全知全能",atk:0,hp:0,zeus:true,desc:"万物の理を超え、終極に到達した者の証明。効果：1回の攻撃で10回分の行動を行う（攻撃回数・報酬獲得数が10倍）。"};
+// ZEUS_RELICをRELIC_MASTERに含める（遺物総数カウント・コンプリート対象）
+RELIC_MASTER.push(ZEUS_RELIC);
 RELIC_MAP.set(1000,ZEUS_RELIC);
 const ZEUS_LEVEL_REQ=1000000; // 再起Lv100万で攻撃解禁
 // =====
@@ -996,6 +999,8 @@ let comp=0;
 for(let s=1;s<=8;s++){const at=CANDS_BASE[s];if(at.length>0&&at.every(m=>player.everOwned[m.id]))comp++;}
 // ★9（虹災遺物8種）コンプリートで9段階目 ※STAR9配列を参照
 if(STAR9.length>0&&STAR9.every(m=>player.everOwned[m.id]))comp++;
+// ★10（全知全能）コンプリートで10段階目
+if((player.inventory[1000]||0)>0)comp++;
 const cb=Math.pow(2,comp);
 const cbBig=BigInt(Math.round(cb));
 Object.entries(player.inventory).forEach(([id,c])=>{
@@ -1585,13 +1590,24 @@ function closeOrderAwakenModal(){player.inventory[999]=1;player.rebalanceSeen=tr
 
 // ===== 宝玉解放チェック（72種コンプリート時に1度だけ発動） =====
 const GEM_IDS=[611,711,811,911,1101,1102,1103,1104];
-// コレクション対象遺物（宝玉除く）= ★1〜★9 + 特殊(再起の誓い/秩序のリバランス) = 72種
 function getNormalRelics(){
-return RELIC_MASTER.filter(m=>!m.gem);
+// コンプリートボーナス対象：★1〜10（gem/jewelフラグなし、star:999除外）
+return RELIC_MASTER.filter(m=>!m.gem&&m.star>=1&&m.star<=10);
+}
+function getNormalRelicsForGemUnlock(){
+// 宝玉解放判定用：★1〜9のみ（全知全能★10はゼウス報酬のため除外）
+return RELIC_MASTER.filter(m=>!m.gem&&m.star>=1&&m.star<=9);
+}
+function getAllRelicsForCount(){
+// 総数カウント対象：全遺物（special/gem/jewel/zeus含む）
+const baseIds=new Set(RELIC_MASTER.map(m=>m.id));
+const all=[...RELIC_MASTER];
+JEWEL_RELICS.forEach(j=>{if(!baseIds.has(j.id))all.push(j);});
+return all;
 }
 function checkGemUnlock(){
 if(player.gemUnlocked)return;
-const normal=getNormalRelics();
+const normal=getNormalRelicsForGemUnlock();
 const allOwned=normal.every(m=>player.everOwned[m.id]);
 if(allOwned){
 player.gemUnlocked=true;
@@ -2733,13 +2749,14 @@ _setText("st-maxdmg",fmtMD(player.maxDmg));
 _setText("st-dmgmult","x"+(calcFinalDmgMult()*b.mult).toFixed(4));
 const rates=getCurrentDropRates();let mx=1;for(let s in rates)if(player.maxDmg>=rates[s].cond)mx=Math.max(mx,parseInt(s));
 _setText("st-rank",`★${mx}まで`);
+const _allRelics=getAllRelicsForCount();
 const _normalRelics=getNormalRelics();
-const _normalCnt=_normalRelics.filter(m=>player.everOwned[m.id]).length;
-const _gemCnt=GEM_IDS.filter(id=>(player.inventory[id]||0)>0).length;
-const _totalOwned=player.gemUnlocked?_normalCnt+_gemCnt:_normalCnt;
-const _totalMax=player.gemUnlocked
- ? _normalRelics.length + GEM_IDS.length
- : _normalRelics.length;_setText("st-collection",`${_totalOwned}/${_totalMax}`);
+// 総数：全遺物のうち1個以上所持（または初回所持確認済み）
+const _totalOwned=_allRelics.filter(m=>(player.inventory[m.id]||0)>0||(player.everOwned&&player.everOwned[m.id])).length;
+const _totalMax=_allRelics.length;
+// コンプリート数：★1〜10の通常遺物のみ
+const _normalCnt=_normalRelics.filter(m=>player.everOwned&&player.everOwned[m.id]).length;
+_setText("st-collection",`${_totalOwned}/${_totalMax}`);
 _setText("st-comp-count",String(b.compCount));
 _setText("st-comp-bonus","x"+b.compBonus.toFixed(2));
 _setText("st-kousa-kill",fmtV(player.kousaKillCount||0));
