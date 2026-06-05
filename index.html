@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.45.1</title>
+<title>RELICORE - v1.45.2</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -378,7 +378,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.45.1</div>
+<div class="ver-footer">RELICORE v1.45.2</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -709,7 +709,7 @@ erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
 compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
 zeusPreBossHP:zeusPreBossHP||null,
-gameVersion:"1.45.1"};
+gameVersion:"1.45.2"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -731,7 +731,7 @@ player.omegaAtkBig="0";player.omegaHpBig="0";
 }
 // v1.44未満のセーブ: 救済ダメージがmaxDmgに混入するバグ修正のため強制リセット
 // → ATK・敵HP・最大ダメージの乖離を解消する
-if(!p.gameVersion||p.gameVersion<"1.45.1"){player.maxDmg=0n;}
+if(!p.gameVersion||p.gameVersion<"1.45.2"){player.maxDmg=0n;}
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
 // everOwned：旧セーブは inventory から復元（入手済み = 所持 or 圧縮済みで失った分を考慮不可のため inventory ベースで補完）
@@ -834,10 +834,12 @@ applyRetroactiveLv100Bonuses();
 // ============ レベル/ランク ============
 // 経験値閾値: 20000 × lv^3
 function getExpThreshold(lv){
-// 設計: lv*(15000 + lv*0.5)
-// → 序盤150回、Lv10000で200回の一定ペース。lv^3の爆発的増加を廃止。
+// 設計: lv*(1800 + lv*0.04)
+// 全ボーナス込みexpDeathで200〜250回攻撃/Lv のペースを想定
+// 例: Lv11511・expDeath107M → 閾値26B → 約243回/Lv
+// 例: Lv1・expDeath100 → 閾値1800 → 約18回/Lv（序盤は早め）
 const _lv=Math.max(1,lv);
-return Math.floor(_lv*(15000+_lv*0.5));
+return Math.floor(_lv*(1800+_lv*0.04));
 }
 function checkLevelUp(){
 let leveled=false;
@@ -1834,6 +1836,21 @@ const _omni=(player.inventory[1000]||0)>0;const _omniMult=_omni?10:1;player.tota
 player.attackExpBonus+=(player.totalLevel||1)*100*_omniMult;
 // attackExpBonusキャップ（totalLevel*10000）
 {const _abCap=player.totalLevel*10000;if(player.attackExpBonus>_abCap)player.attackExpBonus=_abCap;}
+// 魂の研磨：攻撃時に直接deathCount(戦闘経験値)へ加算
+{
+const _km=player.inventory[405]||0;
+const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);
+const _ens=(player.inventory[605]||0)>=1?Math.min(20,1+Math.log10(_ensTK+1)):1.0;
+const _lv100ExpMult=1+(player.lv100ExpBonus||0)/100;
+const _abCap2=player.totalLevel*10000;
+const _abClamped=Math.min(player.attackExpBonus||0,_abCap2);
+const _qtzCnt=player.inventory[1101]||0;
+const _qtzMult=1+_qtzCnt*0.00001;
+const _expPerAtk=Math.floor((player.totalLevel*100+_km*500+Math.floor(_abClamped/1000))*_ens*_lv100ExpMult*_qtzMult)*_omniMult;
+player.hadoExpAccum+=_expPerAtk;
+player.deathCount+=_expPerAtk;
+checkLevelUp();
+}
 
 // === Geminiバフ：bonus/tb計算より前に適用してATK・HP両方を即時反映 ===
 let geminiBuffTag="";
@@ -1878,13 +1895,15 @@ return;
 // Gemini効果は撃破時にonKousaDefeatで処理（per-attack廃止）
 
 // 覚醒チェック（段階的前提フラグ付き・モーダル未表示時のみ）
+// 波動解放条件：各遺物条件をクリアした後、攻撃時0.01%の確率で覚醒
 if(!isModalOpen){
-if(!player.hasHado&&(player.inventory[116]||0)>=100000&&player.hadoExpAccum>=1000000)openHadoModal("hado");
-else if(player.hasHado&&!player.hasGreatHado&&(player.inventory[116]||0)>=200000&&player.hadoExpAccum>=2000000)openHadoModal("great");
-else if(player.hasGreatHado&&!player.hasDivineGuide&&(player.inventory[116]||0)>=300000&&player.hadoExpAccum>=3000000)openHadoModal("divine");
-else if(player.hasDivineGuide&&!player.hasWorldOrder&&(player.inventory[117]||0)>=100000&&player.hadoExpAccum>=10000000)openCosmicModal("world");
-else if(player.hasWorldOrder&&!player.hasCrown&&(player.inventory[117]||0)>=200000&&player.hadoExpAccum>=20000000)openCosmicModal("crown");
-else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&player.hadoExpAccum>=30000000)openCosmicModal("meta");
+const _awakRoll=Math.random();
+if(!player.hasHado&&(player.inventory[116]||0)>=100000&&_awakRoll<0.0001)openHadoModal("hado");
+else if(player.hasHado&&!player.hasGreatHado&&(player.inventory[116]||0)>=200000&&_awakRoll<0.0001)openHadoModal("great");
+else if(player.hasGreatHado&&!player.hasDivineGuide&&(player.inventory[116]||0)>=300000&&_awakRoll<0.0001)openHadoModal("divine");
+else if(player.hasDivineGuide&&!player.hasWorldOrder&&(player.inventory[117]||0)>=100000&&_awakRoll<0.0001)openCosmicModal("world");
+else if(player.hasWorldOrder&&!player.hasCrown&&(player.inventory[117]||0)>=200000&&_awakRoll<0.0001)openCosmicModal("crown");
+else if(player.hasCrown&&!player.hasMeta&&(player.inventory[117]||0)>=300000&&_awakRoll<0.0001)openCosmicModal("meta");
 }
 
 // 星の記憶（メイン戦＋kousa戦で発動・Geminiとゼウスは除く）
@@ -2066,23 +2085,12 @@ comboHit=0;
 onMimicDefeat(logH);
 return;
 }
-// ミミック生存中：EXPと再起スキル（反撃の狼煙）は通常通り発動、ただし反撃ダメージなし
+// ミミック生存中：再起スキル（HP成長・反撃の狼煙）は通常通り発動、ただし反撃ダメージなし
+// ※経験値は攻撃時（魂の研磨）に既に加算済みのためここでは加算しない
 {
-const km=player.inventory[405]||0;
-const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);
-const ens=(player.inventory[605]||0)>=1?Math.min(20,1+Math.log10(_ensTK+1)):1.0;
-const lv100ExpMult=1+(player.lv100ExpBonus||0)/100;
-const _atkBonusCap=player.totalLevel*10000;
-const _atkBonusClamped=Math.min(player.attackExpBonus||0,_atkBonusCap);
-const expHado=Math.floor((player.totalLevel*100+km*500+Math.floor(_atkBonusClamped/1000))*ens*lv100ExpMult);
-const _qtzCnt=player.inventory[1101]||0;
-const _qtzMult=1+_qtzCnt*0.00001;
-const expDeath=Math.floor(player.totalLevel*100*_qtzMult);
-player.hadoExpAccum+=expHado;
-// 再起スキル：HP成長 + 狼煙による遺物獲得（反撃ダメージ0扱い→必ず「再起」発動）
 let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
 let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,player.totalLevel*100)+1+player.totalLevel+(Math.min(50000,player.inventory[402]||0)*5)));
-player.baseHP+=upHP;player.deathCount+=expDeath;
+player.baseHP+=upHP;
 const dropTxt=getGuaranteedDrop();
 // 不退転の力（_dropResult.log）もミミック攻撃時に有効
 const _zenDmgLog=getMimicZenithAtkBonus()>0?`<span style="color:#ff3a8c;font-weight:bold;">【ゼニス特攻 ${Number(fd)}ダメージ】</span>`:"";
@@ -2160,53 +2168,30 @@ if(luxDmg>=currentBossHP){
 
 // 敵反撃（メイン戦のみ）
 if(!isKousa&&currentBossHP>0n){
-// bonus.multを安全にBigInt変換（最低1）
 const multForHP=BigInt(Math.max(1,Math.round(bonus.mult*1000)));
 const curHP=tb.hp*multForHP/1000n;
 const baseCut=Math.min(20,Math.floor(lv/5)*5),ingaV=Math.min(10,player.inventory[403]||0);
 const minCut=baseCut+ingaV*2;
-// 敵攻撃力 = 自分HPの101〜110%（わずかに超える設計）
-// cutPct(30〜100%)による軽減後のmitigと自HPを比較→障壁展開 or 再起
 const eatk=curHP*BigInt(101+Math.floor(Math.random()*10))/100n;
 const cutPct=BigInt(Math.floor(Math.random()*(101-Math.min(95,minCut)))+Math.min(95,minCut));
 const mitig=eatk*(100n-cutPct)/100n>0n?eatk*(100n-cutPct)/100n:0n;
-const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?Math.min(20,1+Math.log10(_ensTK+1)):1.0;
-const lv100ExpMult=1+(player.lv100ExpBonus||0)/100;
-const _atkBonusCap=player.totalLevel*10000;
-const _atkBonusClamped=Math.min(player.attackExpBonus||0,_atkBonusCap);
-// hadoExpAccum(波動蓄積)はens/lv100ExpMult込みの従来式
-const expHado=Math.floor((player.totalLevel*100+km*500+Math.floor(_atkBonusClamped/1000))*ens*lv100ExpMult);
-// deathCount(LvUP経験値)はtotalLevel*100固定 — ens/multの乗算を除外してペースを安定させる
-const _qtzCnt=player.inventory[1101]||0;
-const _qtzMult=1+_qtzCnt*0.00001; // 0.001%/個
-const expDeath=Math.floor(player.totalLevel*100*_qtzMult);
-player.hadoExpAccum+=expHado;
 if(curHP>mitig){
-player.deathCount+=expDeath;logH+=`<div><span style="color:#28a745;font-weight:bold;">敵の反撃！${fmtV(mitig)} ダメージ。障壁展開！</span></div>`+getGuaranteedDrop();
+// 障壁展開（生存）→ 狼煙発動
+logH+=`<div><span style="color:#28a745;font-weight:bold;">敵の反撃！${fmtV(mitig)} ダメージ。障壁展開！</span></div>`+getGuaranteedDrop();
 }else{
+// 再起
 let rep=1;if((player.inventory[505]||0)>0&&Math.random()<0.1)rep=2;
 let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max(1,player.totalLevel*100)+1+player.totalLevel+(Math.min(50000,player.inventory[402]||0)*5)));
-player.baseHP+=upHP;player.deathCount+=expDeath;
+player.baseHP+=upHP;
 logH+=`<div><span style="color:#dc3545;">敵の反撃！${fmtV(mitig)} ダメージ。</span><span style="color:#07f;font-weight:bold;">再起の誓いによって新たなる力を得た</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}<span style="color:var(--growth);font-weight:bold;">(基礎HP+${fmtV(upHP)})</span></div>`;
 }
-checkLevelUp();
 }
 // 虹災反撃（虹災戦のみ）
 if(isKousa&&currentBossHP>0n&&kousaBossData){
-const km=player.inventory[405]||0;const _ensTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?Math.min(20,1+Math.log10(_ensTK+1)):1.0;
-const lv100ExpMult2=1+(player.lv100ExpBonus||0)/100;
-const _atkBonusCap2=player.totalLevel*10000;
-const _atkBonusClamped2=Math.min(player.attackExpBonus||0,_atkBonusCap2);
-const expHado2=Math.floor((player.totalLevel*100+km*500+Math.floor(_atkBonusClamped2/1000))*ens*lv100ExpMult2);
-const _qtzCnt2=player.inventory[1101]||0;
-const _qtzMult2=1+_qtzCnt2*0.00001;
-const expDeath2=Math.floor(player.totalLevel*100*_qtzMult2);
-player.hadoExpAccum+=expHado2;player.deathCount+=expDeath2;
 const multForHP=BigInt(Math.max(1,Math.round(bonus.mult*1000)));
 const curHP=tb.hp*multForHP/1000n;
 const baseCut=Math.min(20,Math.floor(lv/5)*5),ingaV=Math.min(10,player.inventory[403]||0);
 const minCut=baseCut+ingaV*2;
-// 虹災の攻撃力もメイン戦と同様に自分HPの101〜110%（わずかに超える設計）
 const kousaAtk=curHP*BigInt(101+Math.floor(Math.random()*10))/100n;
 const cutPct=BigInt(Math.floor(Math.random()*(101-Math.min(95,minCut)))+Math.min(95,minCut));
 const mitig=kousaAtk*(100n-cutPct)/100n>0n?kousaAtk*(100n-cutPct)/100n:0n;
@@ -2218,7 +2203,6 @@ let upHP=0n;for(let i=0;i<rep;i++)upHP+=BigInt(Math.floor(Math.random()*Math.max
 player.baseHP+=upHP;
 logH+=`<div><span style="color:${kousaBossData.colorVar};font-weight:bold;">${kousaBossData.name}の反撃！${fmtV(mitig)} ダメージ。</span><span style="color:#07f;font-weight:bold;">再起の誓いによって新たなる力を得た</span>${rep>1?'<span style="color:gold;font-weight:bold;">【双重再起】</span>':''}<span style="color:var(--growth);font-weight:bold;">(基礎HP+${fmtV(upHP)})</span></div>`;
 }
-checkLevelUp();
 }
 addLog(logH);
 _attackSaveCounter++;
@@ -2504,10 +2488,13 @@ const skills=[
 {name:"魂の研磨",capLv10:false,desc:"経験値ボーナスが向上。攻撃のたびに基礎値+1で永続蓄積。攻撃のたびに核レベル×100の経験値を追加獲得（核レベルは表記上限なし）。",hl:(()=>{
 const km=player.inventory[405]||0;
 const _hlTK=(player.killCount||0)+(player.kousaKillCount||0);const ens=(player.inventory[605]||0)>=1?Math.min(20,1+Math.log10(_hlTK+1)):1.0;
+const lv100ExpMult=1+(player.lv100ExpBonus||0)/100;
 const _abCapV=player.totalLevel*10000;
 const _abClampedV=Math.min(player.attackExpBonus||0,_abCapV);
-const total=Math.floor((player.totalLevel*100+km*500+Math.floor(_abClampedV/1000))*ens);
-return`<span class="vow-tag">経験値ベース：${(player.totalLevel*100).toLocaleString()}/回</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${Math.floor(_abClampedV/1000).toLocaleString()}】</span><span class="vow-tag">【賢者：+${km*500}】</span><span class="vow-tag" style="color:var(--gold);">現在1回: ${total.toLocaleString()}</span><span class="vow-tag" style="color:#f97316;">【レリ・エンス×${ens.toFixed(2)}】</span>`;
+const _qtzCnt=player.inventory[1101]||0;const _qtzMult=1+_qtzCnt*0.00001;
+const total=Math.floor((player.totalLevel*100+km*500+Math.floor(_abClampedV/1000))*ens*lv100ExpMult*_qtzMult);
+const threshold=getExpThreshold(player.totalLevel);
+return`<span class="vow-tag">経験値ベース：${(player.totalLevel*100).toLocaleString()}/回</span><span class="vow-tag" style="color:var(--growth);">【攻撃蓄積：+${Math.floor(_abClampedV/1000).toLocaleString()}】</span><span class="vow-tag">【賢者：+${(km*500).toLocaleString()}】</span><span class="vow-tag" style="color:var(--gold);">戦闘EXP/回: ${total.toLocaleString()}</span><span class="vow-tag" style="color:#f97316;">【レリ・エンス×${ens.toFixed(2)}】</span><span class="vow-tag" style="color:#aaa;font-size:.85em;">次Lvまで: ${fmtV(BigInt(Math.max(0,threshold-player.deathCount)))}</span>`;
 })()},
 {name:"死を刻む",capLv10:false,desc:"経験を積むたびに最終ダメージを増加させる。再起Lvが高いほどさらに増加。",hl:(()=>{const kf=(player.inventory[406]||0)*0.00004;const lvB=Math.log10((player.totalLevel||1)+1)*0.01;const total=calcFinalDmgMult()*_vowBonus.mult;return`<span class="vow-tag">最終ダメ倍率：x${total.toFixed(4)}</span><span class="vow-tag">【死神：+${(kf*100).toFixed(4)}%】</span><span class="vow-tag" style="color:var(--gold);">【再起Lv：+${(lvB*100).toFixed(4)}%】</span>`})()}
 // 共鳴＝災核融合はクリア後のみ表示
