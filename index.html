@@ -834,12 +834,13 @@ applyRetroactiveLv100Bonuses();
 // ============ レベル/ランク ============
 // 経験値閾値: 20000 × lv^3
 function getExpThreshold(lv){
-// 設計: lv*(1800 + lv*0.04)
-// 全ボーナス込みexpDeathで200〜250回攻撃/Lv のペースを想定
-// 例: Lv11511・expDeath107M → 閾値26B → 約243回/Lv
-// 例: Lv1・expDeath100 → 閾値1800 → 約18回/Lv（序盤は早め）
+// 設計: lv*(3000 + lv*20)
+// 全ボーナス込みexpDeathで200〜250回攻撃/Lvのペースを想定
+// Lv1: 閾値3001、expDeath100 → 約30回（序盤は早め）
+// Lv14314: 閾値4.15B、expDeath21M → 約198回 ✅
+// Lv11511: 閾値2.68B、expDeath107M → 約25回（賢者大量保有時は速い）
 const _lv=Math.max(1,lv);
-return Math.floor(_lv*(1800+_lv*0.04));
+return Math.floor(_lv*(3000+_lv*20));
 }
 function checkLevelUp(){
 let leveled=false;
