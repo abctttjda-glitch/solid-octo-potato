@@ -1952,18 +1952,18 @@ let fd=atvBig*(randBig>0n?randBig:100000n)/100000n;
 let tags="";
 let luxDmg=0n;
 
-// ===== ダメージキャップ基準値：tb.atk（遺物込み総ATK、スキル乗算前）×100 =====
-// bonus.mult/skillM/804/802等はATKをスケールアップするが、
-// それらを含めた後でもtb.atk×100を超えないよう最終段でクランプする。
-// tb.atkが0の場合は安全のため1として計算。
+// ===== ダメージキャップ基準値：スキル乗算後のfdに対して適用 =====
+// 災禍宝玉(811)で上限倍率を拡張。スキル倍率はCAP計算に含める。
 const RAW_ATK_BASE=tb.atk>0n?tb.atk:1n;
 // 災禍宝玉(811): 1個につき上限+1% → ×(100 + cnt)/100
 const _saigaCnt=player.inventory[811]||0;
-const RAW_ATK_CAP=RAW_ATK_BASE*BigInt(100+_saigaCnt);
+// CAPはスキル倍率(totalMult)込みで計算（スキルの差がダメージに反映される）
+// RAW_ATK_CAP = tb.atk × totalMult × (100 + 災禍宝玉) として後で適用
 
 // ===== 全乗算ボーナスをtotalMult1つに集約 → 最後に1回だけ適用 =====
 // isOvermatched: 格下判定フラグ（ブロック外でも参照するためブロック前に宣言）
 let isOvermatched=false;
+let _totalMultForCap=1.0;
 {
 let totalMult=1.0;
 
@@ -1990,8 +1990,10 @@ totalMult+=s9.multBonus;
 tags+=s9.tags;
 luxDmg=s9.luxDmg;
 
+_totalMultForCap=Math.max(1,totalMult);
+
 // totalMultを1回のみ適用
-const totalMultBig=BigInt(Math.round(Math.max(1,totalMult)*100000));
+const totalMultBig=BigInt(Math.round(_totalMultForCap*100000));
 fd=fd*totalMultBig/100000n;
 
 // 真の加算系（乗算後に適用）
@@ -2000,9 +2002,10 @@ if((player.inventory[504]||0)>0&&Math.random()<0.01){fd+=tb.atk;tags+=`<span sty
 // ★6 還元 HP比例微加算（微量なのでキャップ無視）
 if((player.inventory[601]||0)>0){const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;}
 
-// ===== ATK×100倍 ハードキャップ =====
-// 格下・格上問わず常時適用（格上でもキャップで上限を守る）
-isOvermatched=currentBossHP>=fd*100n; // 格下判定（参照用として残す）
+// ===== ハードキャップ：スキル倍率込みのATK × (100 + 災禍宝玉) =====
+// スキルの差がダメージに反映されるようtotalMult込みでCAP計算
+const RAW_ATK_CAP=RAW_ATK_BASE*BigInt(Math.round(_totalMultForCap*100000))/100000n*BigInt(100+_saigaCnt);
+isOvermatched=currentBossHP>=fd*100n;
 if(fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
