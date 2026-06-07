@@ -2015,15 +2015,15 @@ if(isMimic){
 }
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
-// 役割：「与ダメ最低保証」= どんな状況でも必ずボス最大HP×0.2%は削れる攻撃回数保証
-// 最大HPの0.2%固定なので500回で必ず討伐できる
+// 役割：「与ダメ最低保証」= ボス最大HPの0.2%を下限として保証
+// fdにguaranteedDmgを加算する方式（スキルダメージも活きる）
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
-// 保証ダメージ = ボス最大HPの0.2%（最大HPの固定値なので終盤でも下がらない）
 const guaranteedDmg=bossMaxHP/500n>0n?bossMaxHP/500n:1n;
 if(fd<guaranteedDmg){
-rescueFd=guaranteedDmg;
+// 実ダメージが保証値未満の場合：保証値をベースにfdを加算
+rescueFd=guaranteedDmg+fd;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
 }
