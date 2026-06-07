@@ -1952,18 +1952,9 @@ let fd=atvBig*(randBig>0n?randBig:100000n)/100000n;
 let tags="";
 let luxDmg=0n;
 
-// ===== ダメージキャップ基準値：スキル乗算後のfdに対して適用 =====
-// 災禍宝玉(811)で上限倍率を拡張。スキル倍率はCAP計算に含める。
-const RAW_ATK_BASE=tb.atk>0n?tb.atk:1n;
-// 災禍宝玉(811): 1個につき上限+1% → ×(100 + cnt)/100
-const _saigaCnt=player.inventory[811]||0;
-// CAPはスキル倍率(totalMult)込みで計算（スキルの差がダメージに反映される）
-// RAW_ATK_CAP = tb.atk × totalMult × (100 + 災禍宝玉) として後で適用
-
 // ===== 全乗算ボーナスをtotalMult1つに集約 → 最後に1回だけ適用 =====
 // isOvermatched: 格下判定フラグ（ブロック外でも参照するためブロック前に宣言）
 let isOvermatched=false;
-let _totalMultForCap=1.0;
 {
 let totalMult=1.0;
 
@@ -1990,23 +1981,20 @@ totalMult+=s9.multBonus;
 tags+=s9.tags;
 luxDmg=s9.luxDmg;
 
-_totalMultForCap=Math.max(1,totalMult);
-
-// totalMultを1回のみ適用
-const totalMultBig=BigInt(Math.round(_totalMultForCap*100000));
+// totalMultを全体で×99上限でキャップ後に一括適用
+const totalMultCapped=Math.min(99,Math.max(1,totalMult));
+const totalMultBig=BigInt(Math.round(totalMultCapped*100000));
 fd=fd*totalMultBig/100000n;
 
 // 真の加算系（乗算後に適用）
 // ★5 破壊 1%でATK加算
 if((player.inventory[504]||0)>0&&Math.random()<0.01){fd+=tb.atk;tags+=`<span style="color:#f00;font-weight:bold;">【破壊】</span>`;}
-// ★6 還元 HP比例微加算（微量なのでキャップ無視）
+// ★6 還元 HP比例微加算
 if((player.inventory[601]||0)>0){const hpCapped=tb.hp>1000000000000000n?1000000000000000n:tb.hp;fd+=safeBigInt(Math.log10(Number(hpCapped)+1)*1000);tags+=`<span style="color:#5f9ea0;font-weight:bold;">【還元】</span>`;}
 
-// ===== ハードキャップ：スキル倍率込みのATK × (100 + 災禍宝玉) =====
-// スキルの差がダメージに反映されるようtotalMult込みでCAP計算
-const RAW_ATK_CAP=RAW_ATK_BASE*BigInt(Math.round(_totalMultForCap*100000))/100000n*BigInt(100+_saigaCnt);
+// RAW_ATK_CAP廃止：各スキルの個別cap（STAR9_MULT_CAP等）とtotalMult×99で管理
+// 災禍宝玉(811)によるダメージ上限拡張は救済ダメージ側に影響しない
 isOvermatched=currentBossHP>=fd*100n;
-if(fd>RAW_ATK_CAP)fd=RAW_ATK_CAP;
 }
 
 if(fd<1n)fd=1n;
@@ -2018,18 +2006,17 @@ if(isMimic){
 }
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
-// 役割：「与ダメ最低保証」= ボス最大HPの0.2%を下限として保証
-// fdにguaranteedDmgを加算する方式（スキルダメージも活きる）
+// 秩序のリバランス(999)：通常ダメージとは独立して加算する
+// rescueFd = fd（通常） + bossMaxHP/500（救済保証）
+// → スキル構成でfd部分が変動し、救済は固定の底上げとして機能する
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
 const guaranteedDmg=bossMaxHP/500n>0n?bossMaxHP/500n:1n;
-if(fd<guaranteedDmg){
-// 実ダメージが保証値未満の場合：保証値をベースにfdを加算
-rescueFd=guaranteedDmg+fd;
+// 常に加算（fdが保証値以上でも底上げ）
+rescueFd=fd+guaranteedDmg;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
-}
 }
 
 // ===== maxDmg・lastDmg更新 =====
