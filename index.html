@@ -2225,11 +2225,15 @@ geminiAtkCap=0n; // Geminiバフ上限リセット
 
 // メイン戦に戻す
 bossType="main";kousaBossData=null;
-// bossMaxHP を更新：現在の戦力（maxDmg）ベースで再計算（Geminiバフ等でATKが急増しても正しく追従）
-// handleBossDefeat と同じ計算式を使用
-const _ref=player.maxDmg>0n?player.maxDmg:(lastDmg>0n?lastDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
+// bossMaxHP を更新：現在の実ATKベースで再計算
+const _bK=getRelicBonus();
+const _smK=calcFinalDmgMult();
+const _fdBaseK=(player.baseAtk+_bK.atk)*BigInt(Math.round(_bK.mult*100000))/100000n*BigInt(Math.round(_smK*100000))/100000n;
+let _refK=_fdBaseK;
+if(lastDmg>0n&&_fdBaseK>0n){const _r=lastDmg*1000n/_fdBaseK;if(_r>=100n&&_r<=1000000n)_refK=lastDmg;}
+else if(player.maxDmg>0n&&_fdBaseK>0n){const _r=player.maxDmg*1000n/_fdBaseK;if(_r>=100n&&_r<=1000000n)_refK=player.maxDmg;}
 const _hpPct=BigInt(Math.round((85+Math.random()*30)*1000));
-let newHPBig=_ref*100000n*_hpPct/100000n;
+let newHPBig=_refK*100000n*_hpPct/100000n;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
 player.bossMaxHP=newHPBig.toString();
 _bossMaxHPBigLive=newHPBig;
@@ -2284,7 +2288,20 @@ addLog(`<div><span style="color:#ffd700;font-weight:bold;">【聖閃の理】戦
 function handleBossDefeat(){
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 player.killCount++;enemyDisasterStarUsed=false;
-const _rawDmg=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b=getRelicBonus();return player.baseAtk+_b.atk;})());
+// 次ボスHP = 現在の実ATKベースで計算（lastDmg/maxDmgは救済汚染の可能性があるため使用しない）
+// fd計算式: tb.atk × bonus.mult × skillM × rand(0.8〜1.2)
+const _b=getRelicBonus();
+const _sm=calcFinalDmgMult();
+const _atkBase=player.baseAtk+_b.atk;
+const _randMid=BigInt(Math.round(1.0*100000)); // 中央値×1.0で安定したHP計算
+const _fdBase=_atkBase*BigInt(Math.round(_b.mult*100000))/100000n*BigInt(Math.round(_sm*100000))/100000n;
+// lastDmgが実ATKベースで正常な場合は優先使用、そうでなければ_fdBaseを使用
+// 判定：lastDmgが_fdBaseの0.1〜1000倍の範囲なら正常とみなす
+let _rawDmg=_fdBase;
+if(lastDmg>0n){
+const _ratio=lastDmg*1000n/_fdBase;
+if(_ratio>=100n&&_ratio<=1000000n){_rawDmg=lastDmg;} // 0.1〜1000倍の範囲なら正常
+}
 const _hpRandPct=BigInt(Math.round((85+Math.random()*30)*1000));
 let newHPBig=_rawDmg*100000n*_hpRandPct/100000n;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
@@ -2340,9 +2357,14 @@ function _setupKousaBoss(){
 if(!kousaBossData)return;
 // HP基準を現在の戦力（maxDmg）× 100000 で計算（handleBossDefeatと同じ方式）
 // これによりGeminiバフ等でATKが急増した後でも正しくスケールする
-const _ref=player.maxDmg>0n?player.maxDmg:(lastDmg>1n?lastDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})());
+const _bOff=getRelicBonus();
+const _smOff=calcFinalDmgMult();
+const _fdBaseOff=(player.baseAtk+_bOff.atk)*BigInt(Math.round(_bOff.mult*100000))/100000n*BigInt(Math.round(_smOff*100000))/100000n;
+let _refOff=_fdBaseOff;
+if(lastDmg>1n&&_fdBaseOff>0n){const _r=lastDmg*1000n/_fdBaseOff;if(_r>=100n&&_r<=1000000n)_refOff=lastDmg;}
+else if(player.maxDmg>0n&&_fdBaseOff>0n){const _r=player.maxDmg*1000n/_fdBaseOff;if(_r>=100n&&_r<=1000000n)_refOff=player.maxDmg;}
 const _hpPct=BigInt(Math.round((85+Math.random()*30)*1000));
-let mainHPBig=_ref*100000n*_hpPct/100000n;
+let mainHPBig=_refOff*100000n*_hpPct/100000n;
 if(mainHPBig<BOSS_MAX_HP_BASE)mainHPBig=BOSS_MAX_HP_BASE;
 player.mainBossMaxHP=mainHPBig.toString();
 const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
