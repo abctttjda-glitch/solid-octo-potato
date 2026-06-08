@@ -2008,17 +2008,15 @@ if(isMimic){
 }
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
-// 秩序のリバランス(999)：ボス最大HPの0.2%を保証ダメージの基準とする
-// rescueFd = guaranteedDmg × totalMult でスキル倍率を反映
-// → スキル構成によってダメージが変動し、同一ダメージが続かない
+// 秩序のリバランス(999)：詰み防止の最低保証ダメージ
+// fd が保証値未満の時のみ発動。発動時は保証値固定（スキル倍率なし）
+// → ATKが十分育てば自然に救済なしで戦える設計
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
 const guaranteedDmg=bossMaxHP/500n>0n?bossMaxHP/500n:1n;
 if(fd<guaranteedDmg){
-// 保証値にtotalMultを乗算してスキルの差をダメージに反映
-const _rescueMultBig=BigInt(Math.round(_totalMultFinal*100000));
-rescueFd=guaranteedDmg*_rescueMultBig/100000n;
+rescueFd=guaranteedDmg;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
 }
