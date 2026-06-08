@@ -1955,6 +1955,7 @@ let luxDmg=0n;
 // ===== 全乗算ボーナスをtotalMult1つに集約 → 最後に1回だけ適用 =====
 // isOvermatched: 格下判定フラグ（ブロック外でも参照するためブロック前に宣言）
 let isOvermatched=false;
+let _totalMultFinal=1.0; // 救済ダメージへの適用用にブロック外で保持
 {
 let totalMult=1.0;
 
@@ -1983,6 +1984,7 @@ luxDmg=s9.luxDmg;
 
 // totalMultを全体で×99上限でキャップ後に一括適用
 const totalMultCapped=Math.min(99,Math.max(1,totalMult));
+_totalMultFinal=totalMultCapped; // 救済ダメージ計算用に保存
 const totalMultBig=BigInt(Math.round(totalMultCapped*100000));
 fd=fd*totalMultBig/100000n;
 
@@ -2006,17 +2008,20 @@ if(isMimic){
 }
 
 // ===== 救済判定（メイン・虹災両方に適用） =====
-// 秩序のリバランス(999)：通常ダメージとは独立して加算する
-// rescueFd = fd（通常） + bossMaxHP/500（救済保証）
-// → スキル構成でfd部分が変動し、救済は固定の底上げとして機能する
+// 秩序のリバランス(999)：ボス最大HPの0.2%を保証ダメージの基準とする
+// rescueFd = guaranteedDmg × totalMult でスキル倍率を反映
+// → スキル構成によってダメージが変動し、同一ダメージが続かない
 let rescueFd=fd;
 let isRescue=false;
 if((player.inventory[999]||0)>0){
 const guaranteedDmg=bossMaxHP/500n>0n?bossMaxHP/500n:1n;
-// 常に加算（fdが保証値以上でも底上げ）
-rescueFd=fd+guaranteedDmg;
+if(fd<guaranteedDmg){
+// 保証値にtotalMultを乗算してスキルの差をダメージに反映
+const _rescueMultBig=BigInt(Math.round(_totalMultFinal*100000));
+rescueFd=guaranteedDmg*_rescueMultBig/100000n;
 tags=`<span class="c-order">【救済】</span>`+tags;
 isRescue=true;
+}
 }
 
 // ===== maxDmg・lastDmg更新 =====
