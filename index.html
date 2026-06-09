@@ -2225,10 +2225,12 @@ geminiAtkCap=0n; // Geminiバフ上限リセット
 
 // メイン戦に戻す
 bossType="main";kousaBossData=null;
-// bossMaxHP を更新：現在の実ATKベースで再計算
+// bossMaxHP を更新：現在の実ATKベースで再計算（スキル期待倍率込み）
 const _bK=getRelicBonus();
 const _smK=calcFinalDmgMult();
-const _fdBaseK=(player.baseAtk+_bK.atk)*BigInt(Math.round(_bK.mult*100000))/100000n*BigInt(Math.round(_smK*100000))/100000n;
+const _star9cntK=[901,902,903,904,905,906,907,908].filter(id=>(player.inventory[id]||0)>0).length;
+const _expectedMultK=Math.max(5,Math.min(30,5+_star9cntK*3));
+const _fdBaseK=(player.baseAtk+_bK.atk)*BigInt(Math.round(_bK.mult*100000))/100000n*BigInt(Math.round(_smK*100000))/100000n*BigInt(_expectedMultK);
 let _refK=_fdBaseK;
 if(lastDmg>0n&&_fdBaseK>0n){const _r=lastDmg*1000n/_fdBaseK;if(_r>=100n&&_r<=1000000n)_refK=lastDmg;}
 else if(player.maxDmg>0n&&_fdBaseK>0n){const _r=player.maxDmg*1000n/_fdBaseK;if(_r>=100n&&_r<=1000000n)_refK=player.maxDmg;}
@@ -2288,19 +2290,21 @@ addLog(`<div><span style="color:#ffd700;font-weight:bold;">【聖閃の理】戦
 function handleBossDefeat(){
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 player.killCount++;enemyDisasterStarUsed=false;
-// 次ボスHP = 現在の実ATKベースで計算（lastDmg/maxDmgは救済汚染の可能性があるため使用しない）
-// fd計算式: tb.atk × bonus.mult × skillM × rand(0.8〜1.2)
+// 次ボスHP計算：実ATKベース × totalMultの期待値（≒10）でスキル発動込みのダメージと釣り合わせる
+// fd ≒ tb.atk × mult × skillM × totalMult(期待値)
+// totalMultの期待値は保有スキル数に応じて変動するが10をデフォルト値として使用
 const _b=getRelicBonus();
 const _sm=calcFinalDmgMult();
 const _atkBase=player.baseAtk+_b.atk;
-const _randMid=BigInt(Math.round(1.0*100000)); // 中央値×1.0で安定したHP計算
-const _fdBase=_atkBase*BigInt(Math.round(_b.mult*100000))/100000n*BigInt(Math.round(_sm*100000))/100000n;
-// lastDmgが実ATKベースで正常な場合は優先使用、そうでなければ_fdBaseを使用
-// 判定：lastDmgが_fdBaseの0.1〜1000倍の範囲なら正常とみなす
+// スキル期待倍率：保有★9遺物数に応じて増加（最低5、最大30）
+const _star9cnt=[901,902,903,904,905,906,907,908].filter(id=>(player.inventory[id]||0)>0).length;
+const _expectedMult=Math.max(5,Math.min(30,5+_star9cnt*3));
+const _fdBase=_atkBase*BigInt(Math.round(_b.mult*100000))/100000n*BigInt(Math.round(_sm*100000))/100000n*BigInt(_expectedMult);
+// lastDmgが実ATKベースで正常な場合は優先使用
 let _rawDmg=_fdBase;
-if(lastDmg>0n){
+if(lastDmg>0n&&_fdBase>0n){
 const _ratio=lastDmg*1000n/_fdBase;
-if(_ratio>=100n&&_ratio<=1000000n){_rawDmg=lastDmg;} // 0.1〜1000倍の範囲なら正常
+if(_ratio>=100n&&_ratio<=1000000n){_rawDmg=lastDmg;}
 }
 const _hpRandPct=BigInt(Math.round((85+Math.random()*30)*1000));
 let newHPBig=_rawDmg*100000n*_hpRandPct/100000n;
@@ -2359,7 +2363,9 @@ if(!kousaBossData)return;
 // これによりGeminiバフ等でATKが急増した後でも正しくスケールする
 const _bOff=getRelicBonus();
 const _smOff=calcFinalDmgMult();
-const _fdBaseOff=(player.baseAtk+_bOff.atk)*BigInt(Math.round(_bOff.mult*100000))/100000n*BigInt(Math.round(_smOff*100000))/100000n;
+const _star9cntOff=[901,902,903,904,905,906,907,908].filter(id=>(player.inventory[id]||0)>0).length;
+const _expectedMultOff=Math.max(5,Math.min(30,5+_star9cntOff*3));
+const _fdBaseOff=(player.baseAtk+_bOff.atk)*BigInt(Math.round(_bOff.mult*100000))/100000n*BigInt(Math.round(_smOff*100000))/100000n*BigInt(_expectedMultOff);
 let _refOff=_fdBaseOff;
 if(lastDmg>1n&&_fdBaseOff>0n){const _r=lastDmg*1000n/_fdBaseOff;if(_r>=100n&&_r<=1000000n)_refOff=lastDmg;}
 else if(player.maxDmg>0n&&_fdBaseOff>0n){const _r=player.maxDmg*1000n/_fdBaseOff;if(_r>=100n&&_r<=1000000n)_refOff=player.maxDmg;}
