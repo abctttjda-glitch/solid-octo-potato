@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.45.2</title>
+<title>RELICORE - v1.45.3</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -378,7 +378,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.45.2</div>
+<div class="ver-footer">RELICORE v1.45.3</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -709,7 +709,7 @@ erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
 compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
 zeusPreBossHP:zeusPreBossHP||null,
-gameVersion:"1.45.2"};
+gameVersion:"1.45.3"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -732,6 +732,9 @@ player.omegaAtkBig="0";player.omegaHpBig="0";
 // v1.44未満のセーブ: 救済ダメージがmaxDmgに混入するバグ修正のため強制リセット
 // → ATK・敵HP・最大ダメージの乖離を解消する
 if(!p.gameVersion||p.gameVersion<"1.45.2"){player.maxDmg=0n;}
+// v1.45.3未満のセーブ: ボスHP計算式変更によりbossMaxHPをリセット
+// → 旧版の汚染されたlastDmg/maxDmgベースのボスHPを破棄し次ボス撃破時から正常スケールに
+if(!p.gameVersion||p.gameVersion<"1.45.3"){player.maxDmg=0n;lastDmg=0n;}
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
 // everOwned：旧セーブは inventory から復元（入手済み = 所持 or 圧縮済みで失った分を考慮不可のため inventory ベースで補完）
@@ -2230,10 +2233,7 @@ const _bK=getRelicBonus();
 const _smK=calcFinalDmgMult();
 const _star9cntK=[901,902,903,904,905,906,907,908].filter(id=>(player.inventory[id]||0)>0).length;
 const _expectedMultK=Math.max(5,Math.min(30,5+_star9cntK*3));
-const _fdBaseK=(player.baseAtk+_bK.atk)*BigInt(Math.round(_bK.mult*100000))/100000n*BigInt(Math.round(_smK*100000))/100000n*BigInt(_expectedMultK);
-let _refK=_fdBaseK;
-if(lastDmg>0n&&_fdBaseK>0n){const _r=lastDmg*1000n/_fdBaseK;if(_r>=100n&&_r<=1000000n)_refK=lastDmg;}
-else if(player.maxDmg>0n&&_fdBaseK>0n){const _r=player.maxDmg*1000n/_fdBaseK;if(_r>=100n&&_r<=1000000n)_refK=player.maxDmg;}
+const _refK=(player.baseAtk+_bK.atk)*BigInt(Math.round(_bK.mult*100000))/100000n*BigInt(Math.round(_smK*100000))/100000n*BigInt(_expectedMultK);
 const _hpPct=BigInt(Math.round((85+Math.random()*30)*1000));
 let newHPBig=_refK*100000n*_hpPct/100000n;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
@@ -2290,22 +2290,14 @@ addLog(`<div><span style="color:#ffd700;font-weight:bold;">【聖閃の理】戦
 function handleBossDefeat(){
 comboHit=0;erosionStack=0;waterAccumDmg=0n;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 player.killCount++;enemyDisasterStarUsed=false;
-// 次ボスHP計算：実ATKベース × totalMultの期待値（≒10）でスキル発動込みのダメージと釣り合わせる
-// fd ≒ tb.atk × mult × skillM × totalMult(期待値)
-// totalMultの期待値は保有スキル数に応じて変動するが10をデフォルト値として使用
+// 次ボスHP = 現在の実ATKベース × スキル期待倍率で計算
+// lastDmg/maxDmgは旧バグによる汚染値の可能性があるため使用しない
 const _b=getRelicBonus();
 const _sm=calcFinalDmgMult();
 const _atkBase=player.baseAtk+_b.atk;
-// スキル期待倍率：保有★9遺物数に応じて増加（最低5、最大30）
 const _star9cnt=[901,902,903,904,905,906,907,908].filter(id=>(player.inventory[id]||0)>0).length;
 const _expectedMult=Math.max(5,Math.min(30,5+_star9cnt*3));
-const _fdBase=_atkBase*BigInt(Math.round(_b.mult*100000))/100000n*BigInt(Math.round(_sm*100000))/100000n*BigInt(_expectedMult);
-// lastDmgが実ATKベースで正常な場合は優先使用
-let _rawDmg=_fdBase;
-if(lastDmg>0n&&_fdBase>0n){
-const _ratio=lastDmg*1000n/_fdBase;
-if(_ratio>=100n&&_ratio<=1000000n){_rawDmg=lastDmg;}
-}
+const _rawDmg=_atkBase*BigInt(Math.round(_b.mult*100000))/100000n*BigInt(Math.round(_sm*100000))/100000n*BigInt(_expectedMult);
 const _hpRandPct=BigInt(Math.round((85+Math.random()*30)*1000));
 let newHPBig=_rawDmg*100000n*_hpRandPct/100000n;
 if(newHPBig<BOSS_MAX_HP_BASE)newHPBig=BOSS_MAX_HP_BASE;
@@ -2365,10 +2357,7 @@ const _bOff=getRelicBonus();
 const _smOff=calcFinalDmgMult();
 const _star9cntOff=[901,902,903,904,905,906,907,908].filter(id=>(player.inventory[id]||0)>0).length;
 const _expectedMultOff=Math.max(5,Math.min(30,5+_star9cntOff*3));
-const _fdBaseOff=(player.baseAtk+_bOff.atk)*BigInt(Math.round(_bOff.mult*100000))/100000n*BigInt(Math.round(_smOff*100000))/100000n*BigInt(_expectedMultOff);
-let _refOff=_fdBaseOff;
-if(lastDmg>1n&&_fdBaseOff>0n){const _r=lastDmg*1000n/_fdBaseOff;if(_r>=100n&&_r<=1000000n)_refOff=lastDmg;}
-else if(player.maxDmg>0n&&_fdBaseOff>0n){const _r=player.maxDmg*1000n/_fdBaseOff;if(_r>=100n&&_r<=1000000n)_refOff=player.maxDmg;}
+const _refOff=(player.baseAtk+_bOff.atk)*BigInt(Math.round(_bOff.mult*100000))/100000n*BigInt(Math.round(_smOff*100000))/100000n*BigInt(_expectedMultOff);
 const _hpPct=BigInt(Math.round((85+Math.random()*30)*1000));
 let mainHPBig=_refOff*100000n*_hpPct/100000n;
 if(mainHPBig<BOSS_MAX_HP_BASE)mainHPBig=BOSS_MAX_HP_BASE;
