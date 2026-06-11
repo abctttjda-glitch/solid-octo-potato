@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RELICORE - v1.45.3</title>
+<title>RELICORE - v1.45.4</title>
 <style>
 :root{--bg:#fff;--panel:#f8f9fa;--border:#dee2e6;--primary:#007bff;--text:#212529;--hp:#dc3545;--dark:#1a1a1a;--gold:#d4af37;--growth:#ff69b4;--relic-purple:#6610f2;--relic-bg:#fcfaff;--cosmic-blue:#00d4ff;--gemini:#4b0082;--edel:#22c55e;--neria:#3b82f6;--nox:#a855f7;--lilith:#ec4899;--valka:#f97316;--igna:#ef4444;--lux:#eab308;--magmel:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7,#ec4899);--mimic:#2d9e5f}
 *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;box-sizing:border-box}
@@ -378,7 +378,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-s
 <div class="privacy-link" onclick="openPolicy()">プライバシーポリシー</div>
 </div>
 </div>
-<div class="ver-footer">RELICORE v1.45.3</div>
+<div class="ver-footer">RELICORE v1.45.4</div>
 
 <script>
 const SAVE_KEY="relicore_player_data";
@@ -415,15 +415,15 @@ const GHADO_DD={1:{p:78.98889889,cond:0n},2:{p:18.0,cond:0n},3:{p:3.0,cond:0n},4
 const DIVINE_DD = {1:{p:58.88889,cond:0n},2:{p:30.0,cond:0n},3:{p:10.0,cond:0n},4:{p:1.0,cond:100000n},5:{p:0.1,cond:1000000n},6:{p:0.01,cond:10000000n},7:{p:0.001,cond:100000000n},8:{p:0.0001,cond:1000000000n},9:{p:0.00001,cond:1000000000n}};
 // ============ 虹災ボス定義 ============
 const KOUSA_BOSSES=[
-{id:"gemini",name:"構文破壊機工:Gemini",hpMulMin:80,hpMulMax:120,relicId:null,colorVar:"var(--gemini)",hpClass:"hpfill-gemini",btnClass:"attack-kousa-gemini",intro:"EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが割り込みました。"},
-{id:"edel",name:"緑災のエデラ",hpMulMin:50,hpMulMax:80,relicId:901,colorVar:"var(--edel)",hpClass:"hpfill-edel",btnClass:"attack-kousa-edel",intro:"侵食の災厄が現れた。世界が緑に染まっていく……"},
-{id:"neria",name:"青災のネレイア",hpMulMin:60,hpMulMax:90,relicId:902,colorVar:"var(--neria)",hpClass:"hpfill-neria",btnClass:"attack-kousa-neria",intro:"流転の波が押し寄せる。青き災厄、ネレイアが現れた。"},
-{id:"nox",name:"紫災のノクス",hpMulMin:70,hpMulMax:100,relicId:903,colorVar:"var(--nox)",hpClass:"hpfill-nox",btnClass:"attack-kousa-nox",intro:"歪界の観測が始まる。紫の霧の中から、ノクスが現れた。"},
-{id:"lilith",name:"桃災のリリス",hpMulMin:60,hpMulMax:85,relicId:904,colorVar:"var(--lilith)",hpClass:"hpfill-lilith",btnClass:"attack-kousa-lilith",intro:"甘き呪縛が絡みつく。桃色の災厄、リリスが現れた。"},
-{id:"valka",name:"橙災のヴァルカ",hpMulMin:80,hpMulMax:110,relicId:905,colorVar:"var(--valka)",hpClass:"hpfill-valka",btnClass:"attack-kousa-valka",intro:"加速する鼓動。橙の炎をまとったヴァルカが現れた。"},
-{id:"igna",name:"赤災のイグナ",hpMulMin:90,hpMulMax:130,relicId:906,colorVar:"var(--igna)",hpClass:"hpfill-igna",btnClass:"attack-kousa-igna",intro:"終焉の炎が燃え上がる。赤き災厄、イグナが現れた。"},
-{id:"lux",name:"黄災のルクス",hpMulMin:40,hpMulMax:60,relicId:907,colorVar:"var(--lux)",hpClass:"hpfill-lux",btnClass:"attack-kousa-lux",intro:"眩い光が世界を暴く。黄金の災厄、ルクスが現れた。"},
-{id:"magmel",name:"虹災のマグメル",hpMulMin:200,hpMulMax:300,relicId:908,colorVar:"#ec4899",hpClass:"hpfill-magmel",btnClass:"attack-kousa-magmel",intro:"七色の混沌が渦巻く——虹災のマグメルが降臨した！"}
+{id:"gemini",name:"構文破壊機工:Gemini",hpMulMin:80,hpMulMax:120,fdMul:2.0,relicId:null,colorVar:"var(--gemini)",hpClass:"hpfill-gemini",btnClass:"attack-kousa-gemini",intro:"EXCEPTION: SYSTEM_CRASH_DETECTED... Geminiが割り込みました。"},
+{id:"edel",name:"緑災のエデラ",hpMulMin:50,hpMulMax:80,fdMul:1.0,relicId:901,colorVar:"var(--edel)",hpClass:"hpfill-edel",btnClass:"attack-kousa-edel",intro:"侵食の災厄が現れた。世界が緑に染まっていく……"},
+{id:"neria",name:"青災のネレイア",hpMulMin:60,hpMulMax:90,fdMul:1.2,relicId:902,colorVar:"var(--neria)",hpClass:"hpfill-neria",btnClass:"attack-kousa-neria",intro:"流転の波が押し寄せる。青き災厄、ネレイアが現れた。"},
+{id:"nox",name:"紫災のノクス",hpMulMin:70,hpMulMax:100,fdMul:1.5,relicId:903,colorVar:"var(--nox)",hpClass:"hpfill-nox",btnClass:"attack-kousa-nox",intro:"歪界の観測が始まる。紫の霧の中から、ノクスが現れた。"},
+{id:"lilith",name:"桃災のリリス",hpMulMin:60,hpMulMax:85,fdMul:1.3,relicId:904,colorVar:"var(--lilith)",hpClass:"hpfill-lilith",btnClass:"attack-kousa-lilith",intro:"甘き呪縛が絡みつく。桃色の災厄、リリスが現れた。"},
+{id:"valka",name:"橙災のヴァルカ",hpMulMin:80,hpMulMax:110,fdMul:1.8,relicId:905,colorVar:"var(--valka)",hpClass:"hpfill-valka",btnClass:"attack-kousa-valka",intro:"加速する鼓動。橙の炎をまとったヴァルカが現れた。"},
+{id:"igna",name:"赤災のイグナ",hpMulMin:90,hpMulMax:130,fdMul:2.0,relicId:906,colorVar:"var(--igna)",hpClass:"hpfill-igna",btnClass:"attack-kousa-igna",intro:"終焉の炎が燃え上がる。赤き災厄、イグナが現れた。"},
+{id:"lux",name:"黄災のルクス",hpMulMin:40,hpMulMax:60,fdMul:0.8,relicId:907,colorVar:"var(--lux)",hpClass:"hpfill-lux",btnClass:"attack-kousa-lux",intro:"眩い光が世界を暴く。黄金の災厄、ルクスが現れた。"},
+{id:"magmel",name:"虹災のマグメル",hpMulMin:200,hpMulMax:300,fdMul:3.0,relicId:908,colorVar:"#ec4899",hpClass:"hpfill-magmel",btnClass:"attack-kousa-magmel",intro:"七色の混沌が渦巻く——虹災のマグメルが降臨した！"}
 ];
 const KOUSA_RATES=[
 {id:"gemini",r:2},{id:"edel",r:27},{id:"neria",r:18},{id:"nox",r:13},
@@ -709,7 +709,7 @@ erosionStack,waterAccumDmg:waterAccumDmg.toString(),luxHitCounter,
 kousaBossId:kousaBossData?kousaBossData.id:null,
 compressedAtkBig:player.compressedAtkBig||"0",compressedHpBig:player.compressedHpBig||"0",
 zeusPreBossHP:zeusPreBossHP||null,
-gameVersion:"1.45.3"};
+gameVersion:"1.45.4"};
 // BigIntはJSON非対応なのでstring保存
 localStorage.setItem(SAVE_KEY,JSON.stringify(d));
 }
@@ -733,8 +733,12 @@ player.omegaAtkBig="0";player.omegaHpBig="0";
 // → ATK・敵HP・最大ダメージの乖離を解消する
 if(!p.gameVersion||p.gameVersion<"1.45.2"){player.maxDmg=0n;}
 // v1.45.3未満のセーブ: ボスHP計算式変更によりbossMaxHPをリセット
-// → 旧版の汚染されたlastDmg/maxDmgベースのボスHPを破棄し次ボス撃破時から正常スケールに
 if(!p.gameVersion||p.gameVersion<"1.45.3"){player.maxDmg=0n;lastDmg=0n;}
+// v1.45.4未満のセーブ: 汚染されたボスHPを排除、次ボス生成から正常スケールに移行
+if(!p.gameVersion||p.gameVersion<"1.45.4"){
+player.maxDmg=0n;lastDmg=0n;
+player.bossMaxHP=BOSS_MAX_HP_BASE.toString();
+}
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
 // everOwned：旧セーブは inventory から復元（入手済み = 所持 or 圧縮済みで失った分を考慮不可のため inventory ベースで補完）
@@ -1200,21 +1204,22 @@ saveGame();triggerUIUpdate();
 function trySpawnKousa(){if(bossType!=="main")return;if(Math.random()<0.50)spawnKousa();}
 function spawnKousa(){
 kousaBossData=selectKousaBoss();
-// 虹災HP基準 = 実ATKベース（lastDmg/maxDmg汚染回避）
+// 虹災HP = fdBase × fdMul（ボス個別倍率）× ランダム幅
+// fdBase = 実ATK × skillM × expectedMult（スキル期待値込み）
 const _bSpawn=getRelicBonus();
 const _smSpawn=calcFinalDmgMult();
 const _star9cntSpawn=[901,902,903,904,905,906,907,908].filter(id=>(player.inventory[id]||0)>0).length;
 const _expectedMultSpawn=Math.max(5,Math.min(30,5+_star9cntSpawn*3));
 const _fdBaseSpawn=(player.baseAtk+_bSpawn.atk)*BigInt(Math.round(_bSpawn.mult*100000))/100000n*BigInt(Math.round(_smSpawn*100000))/100000n*BigInt(_expectedMultSpawn);
-const mainHPBig=_fdBaseSpawn>0n?_fdBaseSpawn:BOSS_MAX_HP_BASE;
-// メインボスHPを別途保存（ジェネシスコード・虹災終了後の復元に使用）
-player.mainBossMaxHP=mainHPBig.toString();
-const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
+const _fdMul=kousaBossData.fdMul||1.0;
+const _fdMulBig=BigInt(Math.round(_fdMul*1000));
+// ±20%のランダム幅
 const kousaHpRand=0.80+Math.random()*0.40;
-currentBossHP=mainHPBig*BigInt(Math.round(mul*kousaHpRand))/100n;
-// 虹災戦用に bossMaxHP を一時上書き（HPバー用のみ）
+currentBossHP=_fdBaseSpawn*_fdMulBig/1000n*BigInt(Math.round(kousaHpRand*1000))/1000n;
+if(currentBossHP<BOSS_MAX_HP_BASE)currentBossHP=BOSS_MAX_HP_BASE;
+player.mainBossMaxHP=_fdBaseSpawn.toString();
 player.bossMaxHP=currentBossHP.toString();
-_bossMaxHPBigLive=currentBossHP; // 聖閃の理が虹災HPを正しく参照するために必須
+_bossMaxHPBigLive=currentBossHP;
 bossType="kousa_"+kousaBossData.id;
 erosionStack=0;waterAccumDmg=0n;comboHit=0;kushiaCounter=0;luxHitCounter=0;player.soujinCounter=0;
 // Geminiシールド初期化
