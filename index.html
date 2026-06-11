@@ -1200,18 +1200,18 @@ saveGame();triggerUIUpdate();
 function trySpawnKousa(){if(bossType!=="main")return;if(Math.random()<0.50)spawnKousa();}
 function spawnKousa(){
 kousaBossData=selectKousaBoss();
-// 虹災HP = 現在の溢れし災厄MaxHP × (hpMulMin〜hpMulMax) / 100
-const mainHPBig=BigInt(player.bossMaxHP||BOSS_MAX_HP_BASE.toString());
+// 虹災HP基準 = 実ATKベース（lastDmg/maxDmg汚染回避）
+const _bSpawn=getRelicBonus();
+const _smSpawn=calcFinalDmgMult();
+const _star9cntSpawn=[901,902,903,904,905,906,907,908].filter(id=>(player.inventory[id]||0)>0).length;
+const _expectedMultSpawn=Math.max(5,Math.min(30,5+_star9cntSpawn*3));
+const _fdBaseSpawn=(player.baseAtk+_bSpawn.atk)*BigInt(Math.round(_bSpawn.mult*100000))/100000n*BigInt(Math.round(_smSpawn*100000))/100000n*BigInt(_expectedMultSpawn);
+const mainHPBig=_fdBaseSpawn>0n?_fdBaseSpawn:BOSS_MAX_HP_BASE;
 // メインボスHPを別途保存（ジェネシスコード・虹災終了後の復元に使用）
 player.mainBossMaxHP=mainHPBig.toString();
 const mul=kousaBossData.hpMulMin+Math.random()*(kousaBossData.hpMulMax-kousaBossData.hpMulMin);
-// さらに±20%のばらつきを追加（同一ボス連続出現時もHP変化）
 const kousaHpRand=0.80+Math.random()*0.40;
 currentBossHP=mainHPBig*BigInt(Math.round(mul*kousaHpRand))/100n;
-// 虹災HPキャップ：実ATKベースで計算（lastDmg優先）
-const _rawRef=lastDmg>0n?lastDmg:(player.maxDmg>0n?player.maxDmg:(()=>{const _b2=getRelicBonus();return player.baseAtk+_b2.atk;})());
-const _kousaDmgCap=_rawRef*5000000n;
-if(currentBossHP>_kousaDmgCap)currentBossHP=_kousaDmgCap;
 // 虹災戦用に bossMaxHP を一時上書き（HPバー用のみ）
 player.bossMaxHP=currentBossHP.toString();
 _bossMaxHPBigLive=currentBossHP; // 聖閃の理が虹災HPを正しく参照するために必須
