@@ -738,6 +738,10 @@ if(!p.gameVersion||p.gameVersion<"1.45.3"){player.maxDmg=0n;lastDmg=0n;}
 if(!p.gameVersion||p.gameVersion<"1.45.4"){
 player.maxDmg=0n;lastDmg=0n;
 player.bossMaxHP=BOSS_MAX_HP_BASE.toString();
+// 虹災中だった場合はbossTypeをmainに戻す（次の攻撃で正常なボスが生成される）
+if(p.bossType&&p.bossType!=="main"&&p.bossType!=="zeus"){
+bossType="main";kousaBossData=null;
+}
 }
 player.totalRelics=p.totalRelics||0;player.killCount=p.killCount||0;player.soujinCounter=p.soujinCounter||0;
 player.totalLevel=p.totalLevel||1;player.hadoExpAccum=p.hadoExpAccum||0;player.evolutionStack=p.evolutionStack||0;
@@ -799,7 +803,9 @@ if(!kousaBossData){bossType="main";currentBossHP=BigInt(player.bossMaxHP);}
 }
 ensureOrderRelic();
 // ボスHPをセーブデータから復元（中途HPを正しく引き継ぐ）
-if(p.currentBossHP){
+// ただしv1.45.4未満のセーブはbossMaxHPをリセット済みのため旧currentBossHPは使用しない
+const _useOldBossHP=p.gameVersion&&p.gameVersion>="1.45.4";
+if(_useOldBossHP&&p.currentBossHP){
 currentBossHP=_loadBig(p.currentBossHP,BOSS_MAX_HP_BASE.toString());
 }else{currentBossHP=_loadBig(player.bossMaxHP,BOSS_MAX_HP_BASE.toString());}
 // bossMaxHP復元
